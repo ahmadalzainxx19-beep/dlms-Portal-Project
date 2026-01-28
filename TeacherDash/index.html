@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المعلم | جامعة الملك عبدالعزيز</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Inter:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --color-primary: #005941;
+            --color-accent: #C89933;
+            --bg-sidebar: #005941;
+            --bg-card: #FFFFFF;
+            --text-base: #2C3E50;
+            --text-muted: #64748b;
+            --border-custom: #E2E8F0;
+        }
+
+        .dark {
+            --color-primary: #6BBF5E;
+            --color-accent: #FFC95F;
+            --bg-sidebar: #173C2F;
+            --bg-card: #1e293b;
+            --text-base: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-custom: #334155;
+        }
+
+        body {
+            font-family: 'Cairo', 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: var(--text-base);
+        }
+
+        .dark body {
+            background-color: #0f172a;
+        }
+
+        .card-bg {
+            background-color: var(--bg-card);
+        }
+
+        .border-custom {
+            border-color: var(--border-custom);
+        }
+
+        .text-muted {
+            color: var(--text-muted);
+        }
+
+        .dark .text-muted {
+            color: #94a3b8;
+        }
+
+        .sidebar {
+            background-color: var(--bg-sidebar);
+        }
+
+        .active-link {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            color: var(--color-accent) !important;
+            border-right: 4px solid var(--color-accent);
+        }
+
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+        }
+
+        .sidebar-backdrop.active {
+            display: block;
+        }
+
+        @media (max-width: 1023px) {
+            #sidebar {
+                transform: translateX(100%);
+                transition: transform 0.3s ease-in-out;
+            }
+
+            #sidebar.is-open {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="h-full flex overflow-hidden w-screen h-screen">
+
+    <!-- Mobile Backdrop -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop lg:hidden" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar"
+        class="sidebar w-64 flex-col fixed lg:relative inset-y-0 right-0 z-50 text-white h-full hidden lg:flex">
+        <div class="h-20 flex items-center justify-center border-b border-white/10 shrink-0">
+            <img src="https://kau.edu.sa/web/static?path=%2Fuploads%2F2024%2FDec%2Fsections%2FnPG9AOdE0dEx7L5v."
+                alt="KAU Logo" class="h-10">
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 space-y-1">
+            <a href="index.html" class="flex items-center px-6 py-3 active-link transition-colors">
+                <i data-feather="grid" class="w-5 h-5 ml-3"></i>
+                <span data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</span>
+            </a>
+            <a href="MyClasses.html"
+                class="flex items-center px-6 py-3 hover:bg-white/5 transition-colors text-white/90 hover:text-white">
+                <i data-feather="users" class="w-5 h-5 ml-3"></i>
+                <span data-ar="فصولي الدراسية (المقررات)" data-en="My Courses">فصولي الدراسية (المقررات)</span>
+            </a>
+            <!-- Per Guide: Details are accessed via Course Context -->
+            <a href="Assignments.html"
+                class="flex items-center px-6 py-3 hover:bg-white/5 transition-colors text-white/90 hover:text-white">
+                <i data-feather="clipboard" class="w-5 h-5 ml-3"></i>
+                <span data-ar="الواجبات والمهام" data-en="Assignments">الواجبات والمهام</span>
+            </a>
+            <a href="Communication.html"
+                class="flex items-center px-6 py-3 hover:bg-white/5 transition-colors text-white/90 hover:text-white">
+                <i data-feather="message-circle" class="w-5 h-5 ml-3"></i>
+                <span data-ar="التواصل" data-en="Communication">التواصل</span>
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-white/10 shrink-0">
+            <button
+                class="flex items-center text-sm text-red-300 hover:text-red-100 transition-colors w-full px-2 py-2">
+                <i data-feather="log-out" class="w-4 h-4 ml-2"></i>
+                <span data-ar="تسجيل الخروج" data-en="Logout">تسجيل الخروج</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-gray-50 dark:bg-slate-900">
+        <!-- Header -->
+        <header class="sticky top-0 z-20 card-bg border-b border-custom shadow-sm">
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="flex items-center gap-4">
+                    <button id="sidebarToggle" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                        onclick="toggleSidebar()">
+                        <i data-feather="menu" class="w-5 h-5"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-xl font-bold" data-ar="أهلاً بك، د. محمد" data-en="Welcome, Dr. Mohammed">أهلاً
+                            بك، د. محمد</h2>
+                        <p class="text-sm text-muted" data-ar="كلية الحاسبات وتقنية المعلومات"
+                            data-en="College of Computing & IT">كلية الحاسبات وتقنية المعلومات</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="showPageHelp()" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700"
+                        title="Help / مساعدة">
+                        <i data-feather="help-circle" class="w-5 h-5 text-gray-500"></i>
+                    </button>
+                    <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
+                        <i data-feather="moon" id="theme-icon" class="w-5 h-5"></i>
+                    </button>
+                    <button id="lang-toggle"
+                        class="px-3 py-1.5 border border-custom rounded-lg text-sm font-bold">EN</button>
+                    <!-- User Profile with Name & Initials -->
+                    <div class="flex items-center gap-3 mr-2">
+                        <div class="hidden md:flex flex-col items-end text-sm">
+                            <span class="font-bold text-gray-800 dark:text-white" data-ar="د. محمد الغامدي"
+                                data-en="Dr. Mohammed Al-Ghamdi">د. محمد الغامدي</span>
+                            <span class="text-xs text-muted" data-ar="أستاذ مشارك" data-en="Assoc. Prof">أستاذ
+                                مشارك</span>
+                        </div>
+                        <img src="https://ui-avatars.com/api/?name=Dr+Mohammed+Al-Ghamdi&background=005941&color=fff"
+                            class="w-10 h-10 rounded-full border border-custom cursor-pointer hover:opacity-90 transition-opacity">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto main-content-full-width">
+            <div class="w-full p-6">
+
+                <!-- Alert Section (Actionable Insights) -->
+                <div class="mb-8">
+                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                        <i data-feather="alert-triangle" class="w-5 h-5 text-red-500"></i>
+                        <span data-ar="تنبيهات هامة (تحتاج تدخل)" data-en="Action Required">تنبيهات هامة (تحتاج
+                            تدخل)</span>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Alert 1 -->
+                        <div
+                            class="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 p-4 rounded-xl flex items-start gap-3">
+                            <div class="bg-red-100 dark:bg-red-900/40 p-2 rounded-full text-red-600">
+                                <i data-feather="activity" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-gray-800 dark:text-gray-100">5 طلاب معرضون للتعثر</h4>
+                                <p class="text-xs text-muted mt-1">في مقرر هياكل البيانات (CPIT-220). لم يسلموا آخر
+                                    واجبين.</p>
+                                <a href="StudentPerformance.html"
+                                    class="inline-block mt-2 text-xs font-bold text-red-600 hover:underline">عرض
+                                    الطلاب</a>
+                            </div>
+                        </div>
+                        <!-- Alert 2 -->
+                        <div
+                            class="bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-100 dark:border-yellow-900/30 p-4 rounded-xl flex items-start gap-3">
+                            <div class="bg-yellow-100 dark:bg-yellow-900/40 p-2 rounded-full text-yellow-600">
+                                <i data-feather="clock" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-gray-800 dark:text-gray-100">تصحيح واجبات معلقة</h4>
+                                <p class="text-xs text-muted mt-1">25 تسليم جديد لمقرر مقدمة في الحوسبة (CPIT-201).</p>
+                                <a href="Assignments.html"
+                                    class="inline-block mt-2 text-xs font-bold text-yellow-600 hover:underline">الذهاب
+                                    للتصحيح</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Overview (Matched to DashboardViewModel) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="card-bg p-6 rounded-xl border border-custom shadow-sm">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs text-muted font-bold" data-ar="مرات الدخول (Logins)"
+                                    data-en="Total Logins">مرات الدخول</p>
+                                <h3 class="text-3xl font-bold mt-1">1,240</h3>
+                            </div>
+                            <div class="bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg text-blue-600">
+                                <i data-feather="log-in" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-bg p-6 rounded-xl border border-custom shadow-sm">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs text-muted font-bold" data-ar="ساعات النشاط (Hours)"
+                                    data-en="Total Hours">ساعات النشاط</p>
+                                <h3 class="text-3xl font-bold mt-1">320.5</h3>
+                            </div>
+                            <div class="bg-purple-50 dark:bg-purple-900/20 p-2 rounded-lg text-purple-600">
+                                <i data-feather="clock" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-bg p-6 rounded-xl border border-custom shadow-sm">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs text-muted font-bold" data-ar="متوسط التقدم" data-en="Avg Progress">
+                                    متوسط التقدم</p>
+                                <h3 class="text-3xl font-bold mt-1">78%</h3>
+                            </div>
+                            <div class="bg-green-50 dark:bg-green-900/20 p-2 rounded-lg text-green-600">
+                                <i data-feather="bar-chart-2" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-bg p-6 rounded-xl border border-custom shadow-sm">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs text-muted font-bold" data-ar="الواجبات المكتملة"
+                                    data-en="Completed Tasks">الواجبات المكتملة</p>
+                                <h3 class="text-3xl font-bold mt-1">125 <span class="text-sm text-muted font-normal">/
+                                        140</span></h3>
+                            </div>
+                            <div class="bg-yellow-50 dark:bg-yellow-900/20 p-2 rounded-lg text-yellow-600">
+                                <i data-feather="check-square" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Engagement Chart -->
+                    <div class="card-bg rounded-xl border border-custom shadow-sm">
+                        <div class="p-6 border-b border-custom">
+                            <h3 class="font-bold text-sm">تفاعل الطلاب (أسبوعي)</h3>
+                        </div>
+                        <div class="p-6">
+                            <canvas id="engagementChart" height="250"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Submission Status -->
+                    <div class="card-bg rounded-xl border border-custom shadow-sm">
+                        <div class="p-6 border-b border-custom">
+                            <h3 class="font-bold text-sm">حالة تسليم الواجبات</h3>
+                        </div>
+                        <div class="p-6 flex justify-center">
+                            <canvas id="submissionChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Schedule -->
+                <div class="card-bg rounded-xl border border-custom shadow-sm">
+                    <div class="p-6 border-b border-custom flex justify-between items-center">
+                        <h3 class="font-bold text-lg">الأنشطة القادمة</h3>
+                        <a href="#" class="text-xs font-bold text-primary hover:underline">عرض الجدول الكامل</a>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="bg-blue-100 text-blue-700 w-12 h-12 rounded-lg flex flex-col items-center justify-center shrink-0">
+                                    <span class="text-[10px] font-bold">JAN</span>
+                                    <span class="text-lg font-bold leading-none">28</span>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-sm">اختبار قصير 2 (Quiz 2)</h4>
+                                    <p class="text-xs text-muted">CPIT-220 • قاعة 204 • 10:00 صباحاً</p>
+                                </div>
+                                <span
+                                    class="px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded text-xs font-bold">غداً</span>
+                            </div>
+
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="bg-green-100 text-green-700 w-12 h-12 rounded-lg flex flex-col items-center justify-center shrink-0">
+                                    <span class="text-[10px] font-bold">FEB</span>
+                                    <span class="text-lg font-bold leading-none">05</span>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-sm">موعد تسليم المشروع النهائي</h4>
+                                    <p class="text-xs text-muted">CPIT-499 • عبر البلاك بورد</p>
+                                </div>
+                                <span class="px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded text-xs font-bold">7
+                                    أيام</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        feather.replace();
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            sidebar.classList.toggle('is-open');
+            sidebar.classList.toggle('hidden');
+            sidebar.classList.toggle('flex');
+            if (window.innerWidth < 1024) backdrop.classList.toggle('active');
+        }
+
+        // Charts
+        const ctxEng = document.getElementById('engagementChart').getContext('2d');
+        new Chart(ctxEng, {
+            type: 'line',
+            data: {
+                labels: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'],
+                datasets: [{
+                    label: 'نسبة الدخول',
+                    data: [85, 92, 88, 75, 60],
+                    borderColor: '#005941',
+                    tension: 0.3,
+                    fill: true,
+                    backgroundColor: 'rgba(0, 89, 65, 0.1)'
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        const ctxSub = document.getElementById('submissionChart').getContext('2d');
+        new Chart(ctxSub, {
+            type: 'doughnut',
+            data: {
+                labels: ['تم التسليم', 'متأخر', 'لم يسلم'],
+                datasets: [{
+                    data: [120, 15, 7],
+                    backgroundColor: ['#005941', '#C89933', '#ef4444']
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        // Language Toggle Logic
+        const langToggle = document.getElementById('lang-toggle');
+        const langState = { current: 'AR' }; // Default Arabic
+
+        langToggle.addEventListener('click', () => {
+            langState.current = langState.current === 'AR' ? 'EN' : 'AR';
+            langToggle.textContent = langState.current === 'AR' ? 'EN' : 'AR'; // Button shows target lang
+            document.documentElement.setAttribute('dir', langState.current === 'AR' ? 'rtl' : 'ltr');
+            document.documentElement.setAttribute('lang', langState.current.toLowerCase());
+
+            // Update all elements with data-ar/data-en
+            document.querySelectorAll('[data-ar]').forEach(el => {
+                el.textContent = langState.current === 'AR' ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+            });
+        });
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        if (localStorage.getItem('theme') === 'dark') { document.documentElement.classList.add('dark'); themeIcon.setAttribute('data-feather', 'sun'); }
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            themeIcon.setAttribute('data-feather', isDark ? 'sun' : 'moon');
+            feather.replace();
+        });
+        // Help Function
+        function showPageHelp() {
+            const isAr = document.documentElement.dir === 'rtl';
+            Swal.fire({
+                title: isAr ? 'لوحة تحكم المعلم' : 'Instructor Dashboard',
+                html: isAr ?
+                    'مرحباً بك في لوحة تحكم المعلم.<br><br>' +
+                    '<ul class="text-right list-disc pr-4 space-y-2">' +
+                    '<li><b>إحصائيات سريعة:</b> مشاهدة عدد الطلاب، الشعب، وساعات النشاط.</li>' +
+                    '<li><b>الجدول اليومي:</b> متابعة محاضراتك لليوم.</li>' +
+                    '<li><b>تفاعل الطلاب:</b> مراقبة نسب التسليم والحضور.</li>' +
+                    '</ul>' :
+                    'Welcome to your Instructor Dashboard.<br><br>' +
+                    '<ul class="text-left list-disc pl-4 space-y-2">' +
+                    '<li><b>Quick Stats:</b> View total students, classes, and activity hours.</li>' +
+                    '<li><b>Daily Schedule:</b> Track your lectures for today.</li>' +
+                    '<li><b>Student Engagement:</b> Monitor submission and attendance rates.</li>' +
+                    '</ul>',
+                icon: 'info',
+                confirmButtonColor: '#005941',
+                confirmButtonText: isAr ? 'حسناً' : 'Got it'
+            });
+        }
+    </script>
+</body>
+
+</html>
