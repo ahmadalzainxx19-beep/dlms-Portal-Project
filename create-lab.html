@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة معمل جديد - KAU</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Google Fonts (Cairo & Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="assets/styles.css">
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#005941',
+                        accent: '#C89933',
+                    },
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                        english: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="h-full flex overflow-hidden">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar w-64 flex-col hidden lg:flex h-full fixed lg:relative z-30">
+        <div class="h-20 flex items-center justify-center border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary font-bold border-2 border-accent">KAU</div>
+                <h1 class="text-white font-bold text-lg" data-ar="بوابة الأنظمة" data-en="KAU Portal">بوابة الأنظمة</h1>
+            </div>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+            <a href="index.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group" data-page="index">
+                <i data-feather="grid" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</span>
+            </a>
+            
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="إدارة المباني والمعامل" data-en="Buildings & Labs">إدارة المباني والمعامل</div>
+            <a href="buildings.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group" data-page="buildings">
+                <i data-feather="home" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المباني" data-en="Buildings">إدارة المباني</span>
+            </a>
+            <a href="labs.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group" data-page="labs">
+                <i data-feather="monitor" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المعامل" data-en="Labs">إدارة المعامل</span>
+            </a>
+            
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="إدارة الاختبارات" data-en="Exams">إدارة الاختبارات</div>
+            <a href="create-exam.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group" data-page="create-exam">
+                <i data-feather="file-text" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="جدولة اختبار" data-en="Schedule Exam">جدولة اختبار</span>
+            </a>
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="التقويم الأكاديمي" data-en="Academic Calendar">التقويم الأكاديمي</div>
+            <a href="Calender-Mnagment.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group" data-page="Calender-Mnagment">
+                <i data-feather="settings" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إعدادات الفصول الدراسية" data-en="Term Configurations">إعدادات الفصول الدراسية</span>
+            </a>
+            <a href="AcadmicCalnder.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group" data-page="AcadmicCalnder">
+                <i data-feather="calendar" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="عرض التقويم" data-en="View Calendar">عرض التقويم</span>
+            </a>
+            <a href="view-archive-calendar.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group" data-page="view-archive-calendar">
+                <i data-feather="archive" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الأرشيف" data-en="Archive">الأرشيف</span>
+            </a>
+            
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="إدارة المستخدمين" data-en="Users">إدارة المستخدمين</div>
+            <a href="users.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group" data-page="users">
+                <i data-feather="users" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المستخدمين" data-en="User Management">إدارة المستخدمين</span>
+            </a>
+            
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="الإدارة المالية" data-en="Finance">الإدارة المالية</div>
+            <a href="finance-sittings.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group" data-page="finance-sittings">
+                <i data-feather="dollar-sign" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الإعدادات المالية" data-en="Finance Settings">الإعدادات المالية</span>
+            </a>
+            <a href="contracts-management.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group" data-page="contracts-management">
+                <i data-feather="file-text" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة العقود" data-en="Contracts">إدارة العقود</span>
+            </a>
+            
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="الإعدادات" data-en="Settings">الإعدادات</div>
+            <a href="setting.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group" data-page="setting">
+                <i data-feather="settings" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الإعدادات العامة" data-en="General Settings">الإعدادات العامة</span>
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-white/10">
+            <a href="Login.html" class="w-full flex items-center justify-center gap-2 text-red-300 hover:text-red-100 transition-colors">
+                <i data-feather="log-out" class="w-4 h-4"></i>
+                <span class="text-sm font-bold" data-ar="تسجيل خروج" data-en="Logout">تسجيل خروج</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <!-- Header -->
+        <header class="sticky top-0 z-20 card-bg border-b border-custom shadow-sm">
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="flex items-center gap-4">
+                    <button id="sidebarToggle" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i data-feather="menu" class="w-5 h-5"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-xl font-bold" data-ar="إضافة معمل جديد" data-en="Add New Lab">إضافة معمل جديد</h2>
+                        <p class="text-sm text-muted" data-ar="تسجيل معمل أو قاعة اختبارات جديدة في النظام" data-en="Register a new lab or exam hall in the system">تسجيل معمل أو قاعة اختبارات جديدة في النظام</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button class="header-icon-hover p-2 rounded-lg transition-colors" id="themeToggle">
+                        <i data-feather="moon" class="w-5 h-5"></i>
+                    </button>
+                    <button class="header-icon-hover p-2 rounded-lg transition-colors" id="langToggle">
+                        <i data-feather="globe" class="w-5 h-5"></i>
+                    </button>
+                    <div class="flex items-center gap-2 ps-4 border-s border-custom">
+                        <div class="text-end">
+                            <div class="font-semibold" data-ar="م. حسين القرني" data-en="Eng. Hussein Al-Qarni">م. حسين القرني</div>
+                            <small class="text-muted text-xs" data-ar="مدير نظام" data-en="System Admin">مدير نظام</small>
+                        </div>
+                        <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">AH</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto main-content-full-width">
+            <div class="w-full p-6">
+
+            <div class="flex justify-end mb-6">
+                <a href="labs.html" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2">
+                    <i data-feather="arrow-right" class="w-4 h-4"></i>
+                    عودة لقائمة المعامل
+                </a>
+            </div>
+
+            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 flex items-start gap-3 mb-6">
+                <i data-feather="info" class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5"></i>
+                <div>
+                    <strong>تذكير:</strong> المعامل التي تضيفها هنا ستكون متاحة للحجز في نظام الاختبارات. تأكد من تحديد "نوع المعمل" والجهات المستفيدة بدقة.
+                </div>
+            </div>
+
+            <!-- Form Start -->
+            <form id="hallForm">
+                
+                <!-- Step 1: Link to Building -->
+                <div class="card-bg rounded-xl shadow-lg border border-custom border-t-4 border-t-green-600 mb-6">
+                    <div class="p-6 border-b border-custom flex items-center gap-2">
+                        <i data-feather="home" class="w-5 h-5 text-green-600"></i>
+                        <span class="font-bold text-lg">1. اختيار المبنى (التبعية)</span>
+                    </div>
+                    <div class="p-6">
+                        <div class="max-w-2xl">
+                            <label class="block text-sm font-semibold mb-2">المبنى التابع له <span class="text-red-600">*</span></label>
+                            <select class="w-full px-4 py-3 text-lg border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" id="buildingSelect">
+                                <option selected disabled value="">-- اختر من المباني التي أنشأتها --</option>
+                                <option value="1">مبنى كلية الحاسبات (G) - طلاب</option>
+                                <option value="2">مبنى اللغة الإنجليزية (ELI) - مشترك</option>
+                                <option value="3">مبنى الاختبارات الإلكترونية - مشترك</option>
+                            </select>
+                            <div class="text-xs text-muted mt-1">سيتم إضافة المعمل داخل هذا المبنى.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Hall Details -->
+                <div class="card-bg rounded-xl shadow-lg border border-custom mb-6">
+                    <div class="p-6 border-b border-custom flex items-center gap-2">
+                        <i data-feather="monitor" class="w-5 h-5 text-primary"></i>
+                        <span class="font-bold text-lg">2. تفاصيل المعمل</span>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <!-- Hall Name -->
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">اسم المعمل <span class="text-red-600">*</span></label>
+                                <input type="text" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" id="hallName" placeholder="مثال: معمل البرمجة 1">
+                            </div>
+                            
+                            <!-- Hall ID (AUTO GENERATED) -->
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">رمز المعمل (Lab ID)</label>
+                                <input type="text" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 cursor-not-allowed border-dashed" value="سيتم التوليد تلقائياً بواسطة النظام" readonly>
+                                <div class="text-xs text-muted mt-1">يتم إنشاء الرمز تلقائياً عند الحفظ في قاعدة البيانات.</div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <!-- Floor -->
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">الدور <span class="text-red-600">*</span></label>
+                                <select class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" id="floorSelect">
+                                    <option selected disabled value="">اختر الدور...</option>
+                                    <option value="0">الدور الأرضي</option>
+                                    <option value="1">الدور الأول</option>
+                                    <option value="2">الدور الثاني</option>
+                                    <option value="3">الدور الثالث</option>
+                                    <option value="4">الدور الرابع</option>
+                                </select>
+                            </div>
+
+                            <!-- Type -->
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">نوع المعمل <span class="text-red-600">*</span></label>
+                                <select class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" id="hallType" onchange="toggleLabOptions()">
+                                    <option value="lab" selected>معمل حاسب (Computer Lab)</option>
+                                    <option value="exam_hall">قاعة اختبار (Exam Hall)</option>
+                                    <option value="special">مجهز لذوي احتياجات خاصة</option>
+                                    <option value="other">أخرى</option>
+                                </select>
+                            </div>
+
+                            <!-- Entity (Checkbox Dropdown) -->
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-semibold mb-2">الجهات المستفيدة <span class="text-red-600">*</span></label>
+                                <div class="relative">
+                                    <button class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-right flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors" type="button" id="entityDropdownBtn" onclick="toggleEntityDropdown()">
+                                        <span id="selectedEntitiesText" class="truncate">اختر الجهات...</span>
+                                        <i data-feather="chevron-down" class="w-4 h-4"></i>
+                                    </button>
+                                    <div id="entityDropdownMenu" class="hidden absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                        <div class="p-2">
+                                            <label class="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer" onclick="event.stopPropagation()">
+                                                <input class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary entity-checkbox" type="checkbox" value="kau" id="check_kau" checked onchange="updateEntityDisplay()">
+                                                <span class="ms-2 w-full">جامعة الملك عبد العزيز</span>
+                                            </label>
+                                            <hr class="my-2 border-gray-300 dark:border-gray-600">
+                                            <div id="dynamicEntitiesList"></div>
+                                            <label class="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer text-primary font-bold" onclick="event.stopPropagation()">
+                                                <input class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary" type="checkbox" value="add_new" id="check_add_new" onchange="handleAddEntityClick(this)">
+                                                <span class="ms-2 w-full flex items-center gap-1">
+                                                    <i data-feather="plus" class="w-4 h-4"></i>
+                                                    إضافة جهة خارجية...
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-xs text-muted mt-1">يمكنك اختيار أكثر من جهة (مثلاً الجامعة + جهة خارجية).</div>
+                            </div>
+
+                            <!-- Capacity -->
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">السعة الاستيعابية <span class="text-red-600">*</span></label>
+                                <input type="number" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" id="capacity" placeholder="مثال: 30" min="1">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Technical Options -->
+                <div class="card-bg rounded-xl shadow-lg border border-custom mb-6 bg-gray-50 dark:bg-gray-800/50" id="labOptions">
+                    <div class="p-6 border-b border-custom flex items-center gap-2">
+                        <i data-feather="monitor" class="w-5 h-5 text-gray-700 dark:text-gray-300"></i>
+                        <span class="font-bold text-lg">التجهيزات التقنية ومنصة الاختبار</span>
+                    </div>
+                    <div class="p-6 pt-0">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">عدد الأجهزة الجاهزة</label>
+                                <input type="number" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" id="pcCount" placeholder="مثال: 25">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">منصة الاختبار المعتمدة</label>
+                                <select class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" id="examPlatform">
+                                    <option>بلاك بورد (Blackboard)</option>
+                                    <option>كويسشن مارك (Questionmark)</option>
+                                    <option>أخرى</option>
+                                </select>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary" type="checkbox" id="examReady" checked>
+                                    <span class="text-sm font-semibold">جاهز للاختبارات الإلكترونية (متصفح آمن)</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-end gap-3 mb-6">
+                    <a href="labs.html" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        إلغاء
+                    </a>
+                    
+                    <button type="button" class="px-4 py-2 bg-white text-primary border-2 border-primary rounded-lg font-semibold hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors flex items-center gap-2" onclick="saveAndAddAnother()">
+                        <i data-feather="plus-circle" class="w-4 h-4"></i>
+                        حفظ وإضافة معمل آخر
+                    </button>
+                    
+                    <button type="button" class="btn-primary px-6 py-2 rounded-lg font-semibold flex items-center gap-2" onclick="showSaveConfirmation()">
+                        <i data-feather="check" class="w-4 h-4"></i>
+                        حفظ وإنهاء
+                    </button>
+                </div>
+
+            </form>
+            </div>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="p-4 border-t border-custom text-center text-muted text-sm card-bg flex-shrink-0">
+            <div id="liveDateTime" class="font-bold text-primary mb-1 font-english" style="direction: ltr;"></div>
+            <div data-ar="جميع الحقوق محفوظة © 2026 م. أحمد فلمبان | رقم الإصدار: 2.0" data-en="All rights reserved © 2026 Eng. Ahmed Filban | Version: 2.0">جميع الحقوق محفوظة © 2026 م. أحمد فلمبان | رقم الإصدار: 2.0</div>
+        </footer>
+    </div>
+</body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        updateEntityDisplay();
+    });
+
+    function toggleLabOptions() {
+        var type = document.getElementById("hallType").value;
+        var labSection = document.getElementById("labOptions");
+        if (type === "lab" || type === "exam_hall") {
+            labSection.classList.remove('hidden');
+        } else {
+            labSection.classList.add('hidden');
+        }
+    }
+
+    function toggleEntityDropdown() {
+        const menu = document.getElementById('entityDropdownMenu');
+        menu.classList.toggle('hidden');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('entityDropdownMenu');
+        const button = document.getElementById('entityDropdownBtn');
+        if (dropdown && !dropdown.contains(event.target) && !button.contains(event.target)) {
+            dropdown.classList.add('hidden');
+        }
+    });
+
+    function showSaveConfirmation() {
+        Swal.fire({
+            icon: 'success',
+            title: 'تم تسجيل المعمل بنجاح',
+            text: 'سيتم إرسال البيانات إلى مشرف المبنى.',
+            confirmButtonText: 'موافق والعودة للقائمة',
+            confirmButtonColor: '#198754'
+        }).then(() => {
+            window.location.href = 'labs.html';
+        });
+    }
+
+    function saveAndAddAnother() {
+        Swal.fire({
+            icon: 'success',
+            title: 'تم الحفظ',
+            text: 'تم حفظ المعمل بنجاح. يمكنك إضافة معمل آخر.',
+            timer: 2000,
+            showConfirmButton: false
+        });
+        document.getElementById('hallName').value = '';
+        document.getElementById('capacity').value = '';
+        document.getElementById('pcCount').value = '';
+        document.getElementById('examPlatform').value = '';
+        document.getElementById('examReady').checked = true;
+        document.getElementById('hallName').focus();
+        setTimeout(() => feather.replace(), 100);
+    }
+
+    function updateEntityDisplay() {
+        const checkboxes = document.querySelectorAll('.entity-checkbox:checked');
+        const btnText = document.getElementById('selectedEntitiesText');
+        if (checkboxes.length === 0) btnText.innerText = 'اختر الجهات...';
+        else if (checkboxes.length === 1) btnText.innerText = checkboxes[0].nextElementSibling.innerText;
+        else btnText.innerText = checkboxes.length + ' جهات محددة';
+    }
+
+    function handleAddEntityClick(checkbox) {
+        if (checkbox.checked) {
+            Swal.fire({
+                title: 'إضافة جهة خارجية',
+                html: `
+                    <div class="text-right">
+                        <label class="block text-sm font-semibold mb-2">اسم الجهة</label>
+                        <input type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg" id="newEntityName" placeholder="مثال: وادي جدة، شركة التقنية...">
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'حفظ وإضافة',
+                cancelButtonText: 'إلغاء',
+                confirmButtonColor: '#005941',
+                cancelButtonColor: '#6c757d',
+                reverseButtons: true,
+                preConfirm: () => {
+                    const name = document.getElementById('newEntityName')?.value.trim();
+                    if (!name) {
+                        Swal.showValidationMessage('يرجى إدخال اسم الجهة');
+                        return false;
+                    }
+                    return name;
+                }
+            }).then((result) => {
+                if (result.isConfirmed && result.value) {
+                    confirmAddEntity(result.value);
+                } else {
+                    document.getElementById("check_add_new").checked = false;
+                }
+            });
+        }
+    }
+
+    function confirmAddEntity(newName) {
+        const listContainer = document.getElementById('dynamicEntitiesList');
+        const newId = 'entity_' + Math.floor(Math.random() * 1000);
+        const newItemHTML = `
+            <label class="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer" onclick="event.stopPropagation()">
+                <input class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary entity-checkbox" type="checkbox" value="${newName}" id="${newId}" checked onchange="updateEntityDisplay()">
+                <span class="ms-2 w-full">${newName}</span>
+            </label>
+        `;
+        listContainer.insertAdjacentHTML('beforeend', newItemHTML);
+        updateEntityDisplay();
+        document.getElementById("check_add_new").checked = false;
+        setTimeout(() => feather.replace(), 100);
+    }
+
+    function updateLiveTime() {
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        document.getElementById('liveDateTime').innerText = now.toLocaleDateString('ar-SA', options);
+    }
+    setInterval(updateLiveTime, 1000);
+    updateLiveTime();
+    
+    // Initialize Feather Icons
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
+    
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+    const themeIcon = themeToggle?.querySelector('i');
+    
+    // Check for saved theme preference
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+        html.classList.add('dark');
+        if (themeIcon) themeIcon.setAttribute('data-feather', 'sun');
+    }
+    
+    themeToggle?.addEventListener('click', () => {
+        html.classList.toggle('dark');
+        const isDark = html.classList.contains('dark');
+        if (themeIcon) themeIcon.setAttribute('data-feather', isDark ? 'sun' : 'moon');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        feather.replace();
+    });
+    
+    // Language Toggle
+    let isArabic = true;
+    const langToggle = document.getElementById('langToggle');
+    langToggle?.addEventListener('click', () => {
+        isArabic = !isArabic;
+        document.documentElement.lang = isArabic ? 'ar' : 'en';
+        document.documentElement.dir = isArabic ? 'rtl' : 'ltr';
+        
+        // Update all text elements
+        document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+            el.textContent = isArabic ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+        });
+        feather.replace();
+    });
+    
+    // Set active page in sidebar
+    (function() {
+        const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
+        const activeLink = document.querySelector(`[data-page="${currentPage}"]`);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+        
+        // Sidebar Toggle for Mobile
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        if (sidebarToggle && sidebar) {
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('hidden');
+            });
+        }
+    })();
+</script>
+
+</body>
+</html>

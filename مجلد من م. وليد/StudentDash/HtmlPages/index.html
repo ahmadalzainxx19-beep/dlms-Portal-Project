@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد الطالب المطور | جامعة الملك عبدالعزيز</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!--
+        API Integration Notes:
+        - Blackboard Learn API: https://developer.anthology.com/portal/displayApi (Swagger)
+        - QuestionMark OData API: https://questionmark.github.io/qm-oap-docs/authoringodata/intro.html
+        - See API_INTEGRATION.md for detailed integration guide
+    -->
+
+    <style>
+        :root {
+            --color-primary: #005941;
+            --color-primary-dark: #004030;
+            --color-accent: #C89933;
+            --bg-sidebar: #005941;
+            --bg-card: #FFFFFF;
+            --text-base: #2C3E50;
+            --border-custom: #E2E8F0;
+        }
+
+        .dark {
+            --color-primary: #6BBF5E;
+            --color-accent: #FFC95F;
+            --bg-sidebar: #173C2F;
+            --bg-card: #1e293b;
+            --text-base: #E2E8F0;
+            --border-custom: #334155;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8fafc;
+            color: var(--text-base);
+        }
+
+        .dark body { background-color: #0f172a; }
+        .bg-card-custom { background-color: var(--bg-card); border: 1px solid var(--border-custom); }
+        .sidebar { background-color: var(--bg-sidebar); }
+        .active-link { background-color: var(--color-primary-dark) !important; color: var(--color-accent) !important; border-right: 4px solid var(--color-accent); }
+
+        /* Responsive Sidebar */
+        @media (max-width: 1023px) {
+            #sidebar {
+                transform: translateX(100%);
+            }
+            #sidebar.is-open {
+                transform: translateX(0);
+            }
+        }
+
+        /* Mobile Backdrop */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z: 40;
+        }
+
+        @media (max-width: 1023px) {
+            .sidebar-backdrop.active {
+                display: block;
+            }
+        }
+
+        /* Responsive Tables */
+        @media (max-width: 768px) {
+            .table-responsive {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .table-responsive table {
+                min-width: 600px;
+            }
+        }
+
+        /* Responsive Cards */
+        @media (max-width: 640px) {
+            .stat-card {
+                padding: 1rem;
+            }
+        }
+
+        /* Responsive Typography */
+        @media (max-width: 640px) {
+            h1 { font-size: 1.5rem; }
+            h2 { font-size: 1.25rem; }
+            h3 { font-size: 1.125rem; }
+        }
+
+        /* Responsive Spacing */
+        @media (max-width: 768px) {
+            main {
+                padding: 1rem;
+            }
+        }
+
+        /* Touch-friendly buttons */
+        @media (max-width: 768px) {
+            button, a {
+                min-height: 44px;
+                min-width: 44px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="flex min-h-screen overflow-hidden">
+        
+        <!-- Mobile Backdrop -->
+        <div id="sidebar-backdrop" class="sidebar-backdrop" onclick="document.getElementById('sidebar').classList.remove('is-open'); document.getElementById('sidebar-backdrop').classList.remove('active');"></div>
+        
+        <aside id="sidebar" class="sidebar fixed inset-y-0 right-0 z-50 w-64 text-white lg:static lg:block transform transition-transform duration-300">
+            <div class="p-6 text-center">
+                <div class="bg-white p-2 rounded-lg inline-block mb-4">
+                    <img src="https://kau.edu.sa/web/static?path=%2Fuploads%2F2024%2FDec%2Fsections%2FnPG9AOdE0dEx7L5v." alt="KAU Logo" class="h-12">
+                </div>
+            </div>
+
+            <nav class="mt-6">
+                <a href="index.html" class="flex items-center px-6 py-3 active-link transition-all">
+                    <i data-feather="grid" class="w-5 h-5 ml-3"></i>
+                    <span data-ar="الرئيسية" data-en="Dashboard">الرئيسية</span>
+                </a>
+                <a href="Courses.html" class="flex items-center px-6 py-3 hover:bg-[#004030] transition-all">
+                    <i data-feather="book-open" class="w-5 h-5 ml-3"></i>
+                    <span data-ar="المقررات الدراسية" data-en="Courses">المقررات الدراسية</span>
+                </a>
+                <a href="Schedule.html" class="flex items-center px-6 py-3 hover:bg-[#004030] transition-all">
+                    <i data-feather="calendar" class="w-5 h-5 ml-3"></i>
+                    <span data-ar="الجدول الدراسي" data-en="Class Schedule">الجدول الدراسي</span>
+                </a>
+                <a href="Reports.html" class="flex items-center px-6 py-3 hover:bg-[#004030] transition-all">
+                    <i data-feather="file-text" class="w-5 h-5 ml-3"></i>
+                    <span data-ar="التقارير" data-en="Reports">التقارير</span>
+                </a>
+                <a href="Exams.html" class="flex items-center px-6 py-3 hover:bg-[#004030] transition-all">
+                    <i data-feather="edit-3" class="w-5 h-5 ml-3"></i>
+                    <span data-ar="الاختبارات" data-en="Exams">الاختبارات</span>
+                </a>
+                <a href="Profile.html" class="flex items-center px-6 py-3 hover:bg-[#004030] transition-all">
+                    <i data-feather="user" class="w-5 h-5 ml-3"></i>
+                    <span data-ar="الملف الشخصي" data-en="Profile">الملف الشخصي</span>
+                </a>
+            </nav>
+        </aside>
+
+        <div class="flex-1 flex flex-col min-w-0">
+            
+            <header class="sticky top-0 z-40 bg-card-custom shadow-sm flex items-center justify-between px-3 sm:px-4 lg:px-8 py-3 sm:py-4 transition-colors">
+                <div class="flex items-center flex-1 min-w-0">
+                    <button id="menu-btn" class="lg:hidden p-2 rounded-lg mr-2"><i data-feather="menu"></i></button>
+                    <h2 class="font-bold text-sm sm:text-base md:text-lg truncate" data-ar="لوحة التحكم الأكاديمية" data-en="Academic Dashboard">لوحة التحكم الأكاديمية</h2>
+                </div>
+
+                <div class="flex items-center space-x-reverse space-x-2 sm:space-x-4 flex-shrink-0">
+                    <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
+                        <i data-feather="moon" id="theme-icon" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                    </button>
+                    <button id="lang-toggle" class="px-2 sm:px-3 py-1 border border-custom rounded-md text-xs sm:text-sm font-bold">EN</button>
+                    <div class="flex items-center space-x-reverse space-x-2 sm:space-x-3">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-xs sm:text-sm font-bold leading-none">أحمد السالم</p>
+                            <p class="text-[10px] sm:text-xs text-gray-500">2014567</p>
+                        </div>
+                        <img src="https://ui-avatars.com/api/?name=Ahmed+Alsalem&background=005941&color=fff" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-[#C89933]">
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 p-4 lg:p-8 overflow-y-auto">
+                
+                <div class="mb-8">
+                    <h1 class="text-2xl font-bold mb-2" data-ar="أهلاً بك مجدداً، أحمد! 👋" data-en="Welcome back, Ahmed! 👋">أهلاً بك مجدداً، أحمد! 👋</h1>
+                    <p class="text-gray-500" data-ar="إليك ملخص أدائك الأكاديمي والرسوم البيانية التحليلية." data-en="Here's your academic performance summary and analytical charts.">إليك ملخص أدائك الأكاديمي والرسوم البيانية التحليلية.</p>
+                    <div class="mt-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-3 rounded-lg">
+                        <p class="text-xs text-blue-700 dark:text-blue-300 flex items-center">
+                            <i data-feather="info" class="w-3 h-3 ml-2"></i>
+                            <span data-ar="هذه المنصة للعرض فقط - لعرض الإحصائيات والتقارير. لأداء إجراءات (تسليم واجبات، تقديم أعذار، إلخ) يرجى استخدام الأنظمة الأصلية." data-en="This platform is view-only - for viewing statistics and reports. To perform actions (submit assignments, submit excuses, etc.) please use the original systems.">هذه المنصة للعرض فقط - لعرض الإحصائيات والتقارير. لأداء إجراءات (تسليم واجبات، تقديم أعذار، إلخ) يرجى استخدام الأنظمة الأصلية.</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- إحصائيات عامة -->
+                <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+                    <div class="bg-card-custom p-3 sm:p-5 rounded-xl sm:rounded-2xl shadow-sm border-r-4 border-[#005941]">
+                        <div class="flex items-center justify-between mb-2">
+                            <i data-feather="book-open" class="w-4 h-4 sm:w-5 sm:h-5 text-[#005941] dark:text-[#6BBF5E]"></i>
+                            <span class="text-[10px] sm:text-xs text-gray-400" data-ar="المقررات" data-en="Courses">المقررات</span>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold">3</h3>
+                        <p class="text-[9px] sm:text-[10px] text-gray-500 mt-1" data-ar="مقررات مسجلة" data-en="Registered">مقررات مسجلة</p>
+                    </div>
+                    <div class="bg-card-custom p-3 sm:p-5 rounded-xl sm:rounded-2xl shadow-sm border-r-4 border-green-500">
+                        <div class="flex items-center justify-between mb-2">
+                            <i data-feather="trending-up" class="w-4 h-4 sm:w-5 sm:h-5 text-green-500"></i>
+                            <span class="text-[10px] sm:text-xs text-gray-400" data-ar="متوسط التقدم" data-en="Avg Progress">متوسط التقدم</span>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-green-600">62%</h3>
+                        <p class="text-[9px] sm:text-[10px] text-gray-500 mt-1" data-ar="على جميع المقررات" data-en="Across all courses">على جميع المقررات</p>
+                    </div>
+                    <div class="bg-card-custom p-3 sm:p-5 rounded-xl sm:rounded-2xl shadow-sm border-r-4 border-blue-500">
+                        <div class="flex items-center justify-between mb-2">
+                            <i data-feather="clipboard" class="w-4 h-4 sm:w-5 sm:h-5 text-blue-500"></i>
+                            <span class="text-[10px] sm:text-xs text-gray-400" data-ar="الواجبات" data-en="Assignments">الواجبات</span>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-blue-600">12/18</h3>
+                        <p class="text-[9px] sm:text-[10px] text-gray-500 mt-1" data-ar="مكتملة من إجمالي" data-en="Completed">مكتملة من إجمالي</p>
+                    </div>
+                    <div class="bg-card-custom p-3 sm:p-5 rounded-xl sm:rounded-2xl shadow-sm border-r-4 border-yellow-500">
+                        <div class="flex items-center justify-between mb-2">
+                            <i data-feather="clock" class="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500"></i>
+                            <span class="text-[10px] sm:text-xs text-gray-400" data-ar="ساعات Blackboard" data-en="BB Hours">ساعات Blackboard</span>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-yellow-600">42</h3>
+                        <p class="text-[9px] sm:text-[10px] text-gray-500 mt-1" data-ar="ساعة هذا الفصل" data-en="This semester">ساعة هذا الفصل</p>
+                    </div>
+                </div>
+
+                <!-- تنبيهات ذكية -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-bold mb-4 flex items-center" data-ar="التنبيهات والتنبيهات" data-en="Alerts & Notifications">
+                        <i data-feather="bell" class="ml-2 text-[#C89933]"></i>
+                        <span data-ar="التنبيهات والتنبيهات" data-en="Alerts & Notifications">التنبيهات والتنبيهات</span>
+                    </h2>
+                    <div class="space-y-3">
+                        <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 p-4 rounded-xl flex items-start">
+                            <i data-feather="alert-circle" class="text-yellow-600 ml-3 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold text-yellow-800 dark:text-yellow-400" data-ar="واجب قادم" data-en="Upcoming Assignment">واجب قادم</h4>
+                                <p class="text-xs text-yellow-700 dark:text-yellow-300 mt-1" data-ar="واجب CPIT-220 - هياكل البيانات (موعد التسليم: 25 يناير)" data-en="CPIT-220 Assignment - Data Structures (Due: Jan 25)">واجب CPIT-220 - هياكل البيانات (موعد التسليم: 25 يناير)</p>
+                            </div>
+                        </div>
+                        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 rounded-xl flex items-start">
+                            <i data-feather="alert-triangle" class="text-red-600 ml-3 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold text-red-800 dark:text-red-400" data-ar="انخفاض في التفاعل" data-en="Low Engagement">انخفاض في التفاعل</h4>
+                                <p class="text-xs text-red-700 dark:text-red-300 mt-1" data-ar="مقرر MATH-110 يحتاج إلى زيادة التفاعل مع المحتوى (38% فقط)" data-en="MATH-110 needs more content engagement (only 38%)">مقرر MATH-110 يحتاج إلى زيادة التفاعل مع المحتوى (38% فقط)</p>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4 rounded-xl flex items-start">
+                            <i data-feather="calendar" class="text-blue-600 ml-3 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-bold text-blue-800 dark:text-blue-400" data-ar="اختبار قادم" data-en="Upcoming Exam">اختبار قادم</h4>
+                                <p class="text-xs text-blue-700 dark:text-blue-300 mt-1" data-ar="اختبار منتصف الفصل - CPIT-201 (20 فبراير - قاعة 204)" data-en="Midterm Exam - CPIT-201 (Feb 20 - Room 204)">اختبار منتصف الفصل - CPIT-201 (20 فبراير - قاعة 204)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- إحصائيات Blackboard -->
+                <!-- Data Source: Blackboard Learn API (https://developer.anthology.com/portal/displayApi) -->
+                <div class="bg-card-custom p-6 rounded-2xl shadow-sm mb-8">
+                    <h3 class="font-bold mb-6 flex items-center">
+                        <i data-feather="monitor" class="ml-2 text-[#005941] dark:text-[#6BBF5E]"></i>
+                        <span data-ar="إحصائيات Blackboard" data-en="Blackboard Statistics">إحصائيات Blackboard</span>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center p-4 bg-gray-50 dark:bg-slate-800 rounded-xl">
+                            <i data-feather="log-in" class="w-8 h-8 mx-auto mb-2 text-[#005941] dark:text-[#6BBF5E]"></i>
+                            <h4 class="text-2xl font-bold mb-1">127</h4>
+                            <p class="text-xs text-gray-500" data-ar="مرة دخول" data-en="Logins">مرة دخول</p>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 dark:bg-slate-800 rounded-xl">
+                            <i data-feather="clock" class="w-8 h-8 mx-auto mb-2 text-[#C89933]"></i>
+                            <h4 class="text-2xl font-bold mb-1">42</h4>
+                            <p class="text-xs text-gray-500" data-ar="ساعة نشاط" data-en="Active Hours">ساعة نشاط</p>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 dark:bg-slate-800 rounded-xl">
+                            <i data-feather="clipboard" class="w-8 h-8 mx-auto mb-2 text-blue-500"></i>
+                            <h4 class="text-2xl font-bold mb-1">12/18</h4>
+                            <p class="text-xs text-gray-500" data-ar="واجبات مكتملة" data-en="Completed">واجبات مكتملة</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الاختبارات القادمة من QuestionMark -->
+                <!-- Data Source: QuestionMark OData API (https://questionmark.github.io/qm-oap-docs/authoringodata/intro.html) -->
+                <div class="bg-card-custom p-6 rounded-2xl shadow-sm mb-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold flex items-center">
+                            <i data-feather="edit-3" class="ml-2 text-[#C89933]"></i>
+                            <span data-ar="الاختبارات القادمة - QuestionMark" data-en="Upcoming Exams - QuestionMark">الاختبارات القادمة - QuestionMark</span>
+                        </h3>
+                        <a href="#" class="text-xs text-[#005941] dark:text-[#6BBF5E] font-bold hover:underline" data-ar="عرض الكل" data-en="View All">عرض الكل</a>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <p class="text-sm font-bold">CPIT-201 - Midterm</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">20 فبراير 2026 - 10:00 صباحاً</p>
+                                </div>
+                                <span class="px-2 py-1 bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 text-[10px] rounded" data-ar="قادم" data-en="Upcoming">قادم</span>
+                            </div>
+                            <div class="flex items-center text-xs text-gray-600 dark:text-gray-300">
+                                <i data-feather="map-pin" class="w-3 h-3 ml-1"></i>
+                                <span data-ar="مبنى 31 - قاعة 204" data-en="Building 31 - Room 204">مبنى 31 - قاعة 204</span>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-gray-50 dark:bg-slate-800 rounded-xl">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-sm font-bold">CPIT-220 - Quiz 2</p>
+                                    <p class="text-xs text-gray-400 mt-1">28 يناير 2026 - 01:00 مساءً</p>
+                                </div>
+                                <i data-feather="clock" class="w-4 h-4 text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-card-custom p-6 rounded-2xl shadow-sm">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-bold flex items-center">
+                                <i data-feather="trending-up" class="ml-2 text-green-500"></i>
+                                <span data-ar="تحليل المعدل التراكمي (GPA)" data-en="GPA Analysis">تحليل المعدل التراكمي (GPA)</span>
+                            </h3>
+                        </div>
+                        <div class="h-64">
+                            <canvas id="gpaChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-card-custom p-6 rounded-2xl shadow-sm">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-bold flex items-center">
+                                <i data-feather="pie-chart" class="ml-2 text-blue-500"></i>
+                                <span data-ar="توزيع ساعات المذاكرة / المواد" data-en="Study Hours Distribution">توزيع ساعات المذاكرة / المواد</span>
+                            </h3>
+                        </div>
+                        <div class="h-64 flex justify-center">
+                            <canvas id="studyHoursChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold flex items-center">
+                        <i data-feather="activity" class="ml-2 text-[#C89933]"></i>
+                        <span data-ar="تقدم المقررات الحالية" data-en="Current Courses Progress">تقدم المقررات الحالية</span>
+                    </h2>
+                    <a href="Courses.html" class="text-sm text-[#005941] dark:text-[#6BBF5E] font-bold hover:underline" data-ar="عرض جميع المقررات" data-en="View All Courses">عرض جميع المقررات</a>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                    <div class="bg-card-custom p-4 sm:p-5 rounded-xl sm:rounded-2xl hover:shadow-md transition-shadow cursor-pointer" onclick="location.href='CourseDetails.html'">
+                        <div class="flex justify-between items-start mb-3 sm:mb-4">
+                            <div>
+                                <h4 class="font-bold text-xs sm:text-sm">CPIT-201</h4>
+                                <p class="text-[10px] sm:text-xs text-gray-500">مقدمة في الحوسبة</p>
+                            </div>
+                            <i data-feather="chevron-left" class="w-3 h-3 sm:w-4 sm:h-4 text-gray-300"></i>
+                        </div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] sm:text-xs font-semibold">85%</span>
+                            <span class="text-[9px] sm:text-[10px] text-green-500 font-bold">مستواك ممتاز</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 sm:h-2">
+                            <div class="bg-green-500 h-1.5 sm:h-2 rounded-full" style="width: 85%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-card-custom p-4 sm:p-5 rounded-xl sm:rounded-2xl hover:shadow-md transition-shadow cursor-pointer" onclick="location.href='CourseDetails.html'">
+                        <div class="flex justify-between items-start mb-3 sm:mb-4">
+                            <div>
+                                <h4 class="font-bold text-xs sm:text-sm">CPIT-220</h4>
+                                <p class="text-[10px] sm:text-xs text-gray-500">هياكل البيانات</p>
+                            </div>
+                            <i data-feather="chevron-left" class="w-3 h-3 sm:w-4 sm:h-4 text-gray-300"></i>
+                        </div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] sm:text-xs font-semibold">62%</span>
+                            <span class="text-[9px] sm:text-[10px] text-yellow-500 font-bold">مستوى متوسط</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 sm:h-2">
+                            <div class="bg-yellow-500 h-1.5 sm:h-2 rounded-full" style="width: 62%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-card-custom p-4 sm:p-5 rounded-xl sm:rounded-2xl hover:shadow-md transition-shadow cursor-pointer" onclick="location.href='CourseDetails.html'">
+                        <div class="flex justify-between items-start mb-3 sm:mb-4">
+                            <div>
+                                <h4 class="font-bold text-xs sm:text-sm">MATH-110</h4>
+                                <p class="text-[10px] sm:text-xs text-gray-500">رياضيات عامة</p>
+                            </div>
+                            <i data-feather="chevron-left" class="w-3 h-3 sm:w-4 sm:h-4 text-gray-300"></i>
+                        </div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] sm:text-xs font-semibold">38%</span>
+                            <span class="text-[9px] sm:text-[10px] text-red-500 font-bold">يحتاج اهتمام</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 sm:h-2">
+                            <div class="bg-red-500 h-1.5 sm:h-2 rounded-full" style="width: 38%"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+
+        // 1. الرسم البياني للمعدل (Line Chart)
+        const ctxGpa = document.getElementById('gpaChart').getContext('2d');
+        new Chart(ctxGpa, {
+            type: 'line',
+            data: {
+                labels: ['تحضيري 1', 'تحضيري 2', 'مستوى 3', 'مستوى 4', 'مستوى 5 (الحالي)'],
+                datasets: [{
+                    label: 'المعدل الفصلي',
+                    data: [4.2, 4.5, 4.3, 4.8, 4.85],
+                    borderColor: '#005941',
+                    backgroundColor: 'rgba(0, 89, 65, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointBackgroundColor: '#C89933'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { min: 3, max: 5 },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // 2. الرسم البياني لتوزيع الساعات (Doughnut Chart)
+        const ctxHours = document.getElementById('studyHoursChart').getContext('2d');
+        new Chart(ctxHours, {
+            type: 'doughnut',
+            data: {
+                labels: ['حوسبة', 'هياكل بيانات', 'رياضيات', 'أخرى'],
+                datasets: [{
+                    data: [15, 12, 10, 5],
+                    backgroundColor: ['#005941', '#C89933', '#ef4444', '#cbd5e1'],
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { font: { family: 'Cairo' } } }
+                }
+            }
+        });
+
+        // Sidebar & Theme Logic
+        const menuBtn = document.getElementById('menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+        
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('is-open');
+            sidebarBackdrop.classList.toggle('active');
+        });
+
+        // Close sidebar when clicking backdrop
+        sidebarBackdrop.addEventListener('click', () => {
+            sidebar.classList.remove('is-open');
+            sidebarBackdrop.classList.remove('active');
+        });
+
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            document.getElementById('theme-icon').setAttribute('data-feather', isDark ? 'sun' : 'moon');
+            feather.replace();
+        });
+
+        // Language Toggle
+        const langToggle = document.getElementById('lang-toggle');
+        if (langToggle) {
+            let currentLang = 'ar';
+            langToggle.addEventListener('click', () => {
+                currentLang = currentLang === 'ar' ? 'en' : 'ar';
+                langToggle.innerText = currentLang === 'ar' ? 'EN' : 'AR';
+                document.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+                document.querySelectorAll('[data-ar]').forEach(el => {
+                    el.innerText = el.getAttribute(`data-${currentLang}`);
+                });
+                feather.replace();
+            });
+        }
+    </script>
+</body>
+</html>

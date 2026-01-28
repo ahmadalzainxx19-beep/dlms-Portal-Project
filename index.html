@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-ar="لوحة التحكم الرئيسية" data-en="Main Dashboard">لوحة التحكم الرئيسية - بوابة الأنظمة المتكاملة
+    </title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Cairo & Inter) -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="assets/styles.css">
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase Configuration -->
+    <script src="assets/supabase-config.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#005941',
+                        accent: '#C89933',
+                    },
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                        english: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="h-full flex overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar w-64 flex-col hidden lg:flex h-full fixed lg:relative z-30">
+        <div class="h-20 flex items-center justify-center border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary font-bold border-2 border-accent">
+                    KAU</div>
+                <h1 class="text-white font-bold text-lg" data-ar="بوابة الأنظمة" data-en="KAU Portal">بوابة الأنظمة</h1>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+            <!-- Dashboard -->
+            <a href="index.html" class="sidebar-link active flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="grid" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</span>
+            </a>
+
+            <!-- Buildings & Labs -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="إدارة المباني والمعامل" data-en="Buildings & Labs">إدارة المباني والمعامل</div>
+            <a href="buildings.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="home" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المباني" data-en="Buildings">إدارة المباني</span>
+            </a>
+            <a href="labs.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="monitor" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المعامل" data-en="Labs">إدارة المعامل</span>
+            </a>
+
+            <!-- Exams -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="إدارة الاختبارات" data-en="Exams">إدارة الاختبارات</div>
+            <a href="create-exam.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="create-exam">
+                <i data-feather="file-text" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="جدولة اختبار" data-en="Schedule Exam">جدولة اختبار</span>
+            </a>
+
+            <!-- Academic Calendar -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="التقويم الأكاديمي" data-en="Academic Calendar">التقويم الأكاديمي</div>
+            <a href="Calender-Mnagment.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="Calender-Mnagment">
+                <i data-feather="settings" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إعدادات الفصول الدراسية" data-en="Term Configurations">إعدادات الفصول
+                    الدراسية</span>
+            </a>
+            <a href="AcadmicCalnder.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="AcadmicCalnder">
+                <i data-feather="calendar" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="عرض التقويم" data-en="View Calendar">عرض التقويم</span>
+            </a>
+            <a href="view-archive-calendar.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="view-archive-calendar">
+                <i data-feather="archive" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الأرشيف" data-en="Archive">الأرشيف</span>
+            </a>
+
+            <!-- Users -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="إدارة المستخدمين" data-en="Users">إدارة المستخدمين</div>
+            <a href="users.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="users" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المستخدمين" data-en="User Management">إدارة المستخدمين</span>
+            </a>
+
+            <!-- Finance -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="الإدارة المالية" data-en="Finance">الإدارة المالية</div>
+            <a href="finance-sittings.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="dollar-sign" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الإعدادات المالية" data-en="Finance Settings">الإعدادات
+                    المالية</span>
+            </a>
+            <a href="contracts-management.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="file-text" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة العقود" data-en="Contracts">إدارة العقود</span>
+            </a>
+
+            <!-- Settings -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="الإعدادات"
+                data-en="Settings">الإعدادات</div>
+            <a href="setting.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="settings" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الإعدادات العامة" data-en="General Settings">الإعدادات العامة</span>
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-white/10">
+            <a href="Login.html"
+                class="w-full flex items-center justify-center gap-2 text-red-300 hover:text-red-100 transition-colors">
+                <i data-feather="log-out" class="w-4 h-4"></i>
+                <span class="text-sm font-bold" data-ar="تسجيل خروج" data-en="Logout">تسجيل خروج</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <!-- Header -->
+        <header class="sticky top-0 z-20 card-bg border-b border-custom shadow-sm">
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="flex items-center gap-4">
+                    <button id="sidebarToggle"
+                        class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i data-feather="menu" class="w-5 h-5"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-xl font-bold" data-ar="لوحة التحكم الرئيسية" data-en="Main Dashboard">لوحة
+                            التحكم الرئيسية</h2>
+                        <p class="text-sm text-muted" data-ar="أهلاً بعودتك، نظرة عامة على حالة النظام اليوم"
+                            data-en="Welcome back, overview of today's system status">أهلاً بعودتك، نظرة عامة على حالة
+                            النظام اليوم</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button class="header-icon-hover p-2 rounded-lg transition-colors" id="themeToggle">
+                        <i data-feather="moon" class="w-5 h-5"></i>
+                    </button>
+                    <button class="header-icon-hover p-2 rounded-lg transition-colors" id="langToggle">
+                        <i data-feather="globe" class="w-5 h-5"></i>
+                    </button>
+                    <div class="flex items-center gap-2 ps-4 border-s border-custom">
+                        <div class="text-end">
+                            <div class="font-semibold" data-ar="م. حسين القرني" data-en="Eng. Hussein Al-Qarni">م. حسين
+                                القرني</div>
+                            <small class="text-muted text-xs" data-ar="مدير نظام" data-en="System Admin">مدير
+                                نظام</small>
+                        </div>
+                        <div
+                            class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">
+                            AH</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto main-content-full-width">
+            <div class="w-full p-6">
+                <!-- Role Selector (Hidden by default, shown based on user role) -->
+                <div id="roleSelector" class="mb-6 hidden">
+                    <div class="card-bg rounded-xl border border-custom p-4">
+                        <label class="text-sm font-semibold text-muted mb-2 block" data-ar="عرض Dashboard لـ:"
+                            data-en="View Dashboard for:">عرض Dashboard لـ:</label>
+                        <select id="userRoleSelect" class="form-control w-full max-w-xs">
+                            <option value="student" data-ar="طالب" data-en="Student">طالب</option>
+                            <option value="teacher" data-ar="عضو هيئة تدريس" data-en="Teacher">عضو هيئة تدريس</option>
+                            <option value="employee" data-ar="موظف" data-en="Employee">موظف</option>
+                            <option value="admin" data-ar="مدير نظام" data-en="Admin">مدير نظام</option>
+                            <option value="building-supervisor" data-ar="مشرف مبنى" data-en="Building Supervisor">مشرف
+                                مبنى</option>
+                            <option value="exams" data-ar="إدارة الاختبارات" data-en="Exams">إدارة الاختبارات</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Dashboard Overview Statistics Cards -->
+                <div id="dashboardOverview" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <!-- Total Logins -->
+                    <div>
+                        <div class="stat-card teal">
+                            <div>
+                                <h6 class="text-muted mb-1" data-ar="مرات الدخول" data-en="Total Logins">مرات الدخول
+                                </h6>
+                                <h3 class="fw-bold mb-0" id="totalLogins">0</h3>
+                            </div>
+                            <div class="stat-icon bg-light-teal">
+                                <i data-feather="log-in"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Hours -->
+                    <div>
+                        <div class="stat-card blue">
+                            <div>
+                                <h6 class="text-muted mb-1" data-ar="ساعات النشاط" data-en="Total Hours">ساعات النشاط
+                                </h6>
+                                <h3 class="fw-bold mb-0" id="totalHours">0 <span class="text-sm text-muted font-normal"
+                                        data-ar="ساعة" data-en="hours">ساعة</span></h3>
+                            </div>
+                            <div class="stat-icon bg-light-blue">
+                                <i data-feather="clock"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Average Progress -->
+                    <div>
+                        <div class="stat-card green">
+                            <div>
+                                <h6 class="text-muted mb-1" data-ar="متوسط التقدم" data-en="Average Progress">متوسط
+                                    التقدم</h6>
+                                <h3 class="fw-bold mb-0" id="averageProgress">0%</h3>
+                                <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                    <div class="bg-green-600 h-2 rounded-full transition-all" id="progressBar"
+                                        style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="stat-icon bg-light-green">
+                                <i data-feather="trending-up"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assignments -->
+                    <div>
+                        <div class="stat-card orange">
+                            <div>
+                                <h6 class="text-muted mb-1" data-ar="الواجبات" data-en="Assignments">الواجبات</h6>
+                                <h3 class="fw-bold mb-0" id="assignmentsCount">
+                                    <span id="completedAssignments">0</span> / <span id="totalAssignments">0</span>
+                                </h3>
+                            </div>
+                            <div class="stat-icon bg-light-orange">
+                                <i data-feather="file-text"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin/Building Supervisor Statistics (Hidden by default) -->
+                <div id="adminStats" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 hidden">
+                    <!-- 1. إجمالي المباني النشطة -->
+                    <div>
+                        <div class="stat-card teal">
+                            <div>
+                                <h6 class="text-muted mb-1" data-ar="إجمالي المباني النشطة"
+                                    data-en="Total Active Buildings">إجمالي المباني النشطة</h6>
+                                <h3 class="fw-bold mb-0">12 <span class="text-sm text-muted font-normal" data-ar="مبنى"
+                                        data-en="buildings">مبنى</span></h3>
+                            </div>
+                            <div class="stat-icon bg-light-teal">
+                                <i data-feather="building"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. إجمالي المعامل والقاعات -->
+                    <div>
+                        <div class="stat-card blue">
+                            <div>
+                                <h6 class="text-muted mb-1" data-ar="إجمالي المعامل والقاعات"
+                                    data-en="Total Labs & Halls">إجمالي المعامل والقاعات</h6>
+                                <h3 class="fw-bold mb-0">45 <span class="text-sm text-muted font-normal" data-ar="معمل"
+                                        data-en="labs">معمل</span></h3>
+                            </div>
+                            <div class="stat-icon bg-light-blue">
+                                <i data-feather="layout"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. تنبيهات الصيانة -->
+                    <div>
+                        <div class="stat-card red">
+                            <div>
+                                <h6 class="text-muted mb-1" data-ar="تنبيهات الصيانة" data-en="Maintenance Alerts">
+                                    تنبيهات الصيانة</h6>
+                                <h3 class="fw-bold mb-0">3 <span class="text-sm text-muted font-normal" data-ar="بلاغات"
+                                        data-en="reports">بلاغات</span></h3>
+                            </div>
+                            <div class="stat-icon bg-light-red">
+                                <i data-feather="alert-triangle"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. الاختبارات المجدولة اليوم -->
+                    <div>
+                        <div class="stat-card orange">
+                            <div>
+                                <h6 class="text-muted mb-1" data-ar="الاختبارات المجدولة اليوم"
+                                    data-en="Today's Scheduled Exams">الاختبارات المجدولة اليوم</h6>
+                                <h3 class="fw-bold mb-0" id="todayExams">5 <span class="text-sm text-muted font-normal"
+                                        data-ar="اختبارات" data-en="exams">اختبارات</span></h3>
+                            </div>
+                            <div class="stat-icon bg-light-orange">
+                                <i data-feather="calendar"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Course Engagement Section (For Students/Teachers) -->
+                <div id="courseEngagementSection" class="mb-8 hidden">
+                    <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h5 class="font-bold text-lg" data-ar="التفاعل مع المقررات" data-en="Course Engagement">
+                                التفاعل مع المقررات</h5>
+                            <button id="refreshEngagement"
+                                class="btn-primary px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+                                <i data-feather="refresh-cw" class="w-4 h-4"></i>
+                                <span data-ar="تحديث" data-en="Refresh">تحديث</span>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Content Views -->
+                            <div class="text-center">
+                                <div class="text-sm font-semibold text-muted mb-2" data-ar="مشاهدة المحتوى"
+                                    data-en="Content Views">مشاهدة المحتوى</div>
+                                <div class="text-4xl font-bold text-primary mb-2" id="contentViewsPercentage">0%</div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="bg-primary h-3 rounded-full transition-all" id="contentViewsBar"
+                                        style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <!-- Assignment Submission -->
+                            <div class="text-center">
+                                <div class="text-sm font-semibold text-muted mb-2" data-ar="تسليم الواجبات"
+                                    data-en="Assignment Submission">تسليم الواجبات</div>
+                                <div class="text-4xl font-bold text-blue-600 mb-2" id="assignmentSubmissionPercentage">
+                                    0%</div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="bg-blue-600 h-3 rounded-full transition-all"
+                                        id="assignmentSubmissionBar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <!-- Forum Participation -->
+                            <div class="text-center">
+                                <div class="text-sm font-semibold text-muted mb-2" data-ar="المشاركة في المنتديات"
+                                    data-en="Forum Participation">المشاركة في المنتديات</div>
+                                <div class="text-4xl font-bold text-green-600 mb-2" id="forumParticipationPercentage">0%
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="bg-green-600 h-3 rounded-full transition-all" id="forumParticipationBar"
+                                        style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                <div class="text-sm text-muted mb-1" data-ar="عدد مرات الدخول" data-en="Access Count">
+                                    عدد مرات الدخول</div>
+                                <div class="text-2xl font-bold" id="accessCount">0</div>
+                            </div>
+                            <div class="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                <div class="text-sm text-muted mb-1" data-ar="إجمالي الساعات" data-en="Total Hours">
+                                    إجمالي الساعات</div>
+                                <div class="text-2xl font-bold" id="totalHoursEngagement">0 <span
+                                        class="text-sm text-muted">ساعة</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts for Students/Teachers -->
+                <div id="studentTeacherCharts" class="mb-8 hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Course Progress Chart -->
+                        <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                            <h5 class="font-bold text-lg mb-4" data-ar="تقدم المقررات" data-en="Course Progress">تقدم
+                                المقررات</h5>
+                            <canvas id="courseProgressChart"></canvas>
+                        </div>
+
+                        <!-- Weekly Activity Chart -->
+                        <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                            <h5 class="font-bold text-lg mb-4" data-ar="النشاط الأسبوعي" data-en="Weekly Activity">
+                                النشاط الأسبوعي</h5>
+                            <canvas id="weeklyActivityChart"></canvas>
+                        </div>
+
+                        <!-- Grades Distribution Chart -->
+                        <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                            <h5 class="font-bold text-lg mb-4" data-ar="توزيع الدرجات" data-en="Grades Distribution">
+                                توزيع الدرجات</h5>
+                            <canvas id="gradesDistributionChart"></canvas>
+                        </div>
+
+                        <!-- Assignment Status Chart -->
+                        <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                            <h5 class="font-bold text-lg mb-4" data-ar="حالة الواجبات" data-en="Assignment Status">حالة
+                                الواجبات</h5>
+                            <canvas id="assignmentStatusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assignments List (For Students/Teachers) -->
+                <div id="assignmentsSection" class="mb-8 hidden">
+                    <div class="card-bg rounded-xl shadow-lg border border-custom overflow-hidden">
+                        <div class="p-6 border-b border-custom">
+                            <div class="flex items-center justify-between">
+                                <h5 class="font-bold text-lg" data-ar="الواجبات" data-en="Assignments">الواجبات</h5>
+                                <select id="courseSelect" class="form-control w-auto">
+                                    <option value="" data-ar="جميع المقررات" data-en="All Courses">جميع المقررات
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50 dark:bg-gray-800 border-b border-custom">
+                                    <tr>
+                                        <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider"
+                                            data-ar="اسم الواجب" data-en="Assignment Name">اسم الواجب</th>
+                                        <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider"
+                                            data-ar="المقرر" data-en="Course">المقرر</th>
+                                        <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider"
+                                            data-ar="تاريخ التسليم" data-en="Due Date">تاريخ التسليم</th>
+                                        <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider"
+                                            data-ar="الحالة" data-en="Status">الحالة</th>
+                                        <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider"
+                                            data-ar="الدرجة" data-en="Grade">الدرجة</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="assignmentsTableBody" class="divide-y divide-custom">
+                                    <tr>
+                                        <td colspan="5" class="px-6 py-8 text-center text-muted"
+                                            data-ar="لا توجد واجبات" data-en="No assignments">لا توجد واجبات</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exams Schedule (From QuestionMark) -->
+                <div id="examsSection" class="mb-8 hidden">
+                    <div class="card-bg rounded-xl shadow-lg border border-custom overflow-hidden">
+                        <div class="p-6 border-b border-custom">
+                            <div class="flex items-center justify-between">
+                                <h5 class="font-bold text-lg" data-ar="الاختبارات المجدولة" data-en="Scheduled Exams">
+                                    الاختبارات المجدولة</h5>
+                                <button id="refreshExams"
+                                    class="btn-primary px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+                                    <i data-feather="refresh-cw" class="w-4 h-4"></i>
+                                    <span data-ar="تحديث" data-en="Refresh">تحديث</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50 dark:bg-gray-800 border-b border-custom">
+                                    <tr>
+                                        <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider"
+                                            data-ar="اسم الاختبار" data-en="Exam Name">اسم الاختبار</th>
+                                        <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider"
+                                            data-ar="التاريخ والوقت" data-en="Date & Time">التاريخ والوقت</th>
+                                        <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider"
+                                            data-ar="المدة" data-en="Duration">المدة</th>
+                                        <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider"
+                                            data-ar="الموقع" data-en="Location">الموقع</th>
+                                        <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider"
+                                            data-ar="الحالة" data-en="Status">الحالة</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="examsTableBody" class="divide-y divide-custom">
+                                    <tr>
+                                        <td colspan="5" class="px-6 py-8 text-center text-muted"
+                                            data-ar="لا توجد اختبارات مجدولة" data-en="No scheduled exams">لا توجد
+                                            اختبارات مجدولة</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================ -->
+                <!-- Components for All Users -->
+                <!-- ============================================ -->
+                <div id="allUsersComponents" class="mb-8">
+                    <h3 class="text-2xl font-bold mb-6" data-ar="المكونات العامة" data-en="General Components">المكونات
+                        العامة</h3>
+
+                    <!-- Quick Actions Section -->
+                    <div class="mb-8">
+                        <h5 class="font-bold text-lg mb-4" data-ar="وصول سريع" data-en="Quick Actions">وصول سريع</h5>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <a href="create-building.html"
+                                class="card-bg rounded-xl border border-custom p-6 flex flex-col items-center justify-center text-center hover:border-primary hover:shadow-lg transition-all">
+                                <i data-feather="plus-circle" class="w-8 h-8 text-primary mb-2"></i>
+                                <span class="font-semibold text-sm" data-ar="إضافة مبنى" data-en="Add Building">إضافة
+                                    مبنى</span>
+                            </a>
+                            <a href="create-lab.html"
+                                class="card-bg rounded-xl border border-custom p-6 flex flex-col items-center justify-center text-center hover:border-primary hover:shadow-lg transition-all">
+                                <i data-feather="monitor" class="w-8 h-8 text-blue-600 mb-2"></i>
+                                <span class="font-semibold text-sm" data-ar="إضافة معمل" data-en="Add Lab">إضافة
+                                    معمل</span>
+                            </a>
+                            <a href="create-exam.html"
+                                class="card-bg rounded-xl border border-custom p-6 flex flex-col items-center justify-center text-center hover:border-primary hover:shadow-lg transition-all">
+                                <i data-feather="file-text" class="w-8 h-8 text-orange-600 mb-2"></i>
+                                <span class="font-semibold text-sm" data-ar="جدولة اختبار" data-en="Schedule Exam">جدولة
+                                    اختبار</span>
+                            </a>
+                            <a href="users.html"
+                                class="card-bg rounded-xl border border-custom p-6 flex flex-col items-center justify-center text-center hover:border-primary hover:shadow-lg transition-all">
+                                <i data-feather="users" class="w-8 h-8 text-purple-600 mb-2"></i>
+                                <span class="font-semibold text-sm" data-ar="المستخدمين"
+                                    data-en="Users">المستخدمين</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Notifications Section -->
+                    <div class="mb-8">
+                        <h5 class="font-bold text-lg mb-4" data-ar="الإشعارات" data-en="Notifications">الإشعارات</h5>
+                        <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                            <div class="space-y-3">
+                                <div
+                                    class="flex items-start gap-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                                    <i data-feather="bell" class="w-5 h-5 text-blue-600 mt-0.5"></i>
+                                    <div class="flex-1">
+                                        <div class="font-semibold text-sm" data-ar="إشعار جديد"
+                                            data-en="New Notification">إشعار جديد</div>
+                                        <div class="text-sm text-muted" data-ar="تم إضافة واجب جديد في مقرر البرمجة"
+                                            data-en="New assignment added in Programming course">تم إضافة واجب جديد في
+                                            مقرر البرمجة</div>
+                                        <div class="text-xs text-muted mt-1" data-ar="منذ 5 دقائق"
+                                            data-en="5 minutes ago">منذ 5 دقائق</div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="flex items-start gap-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                                    <i data-feather="check-circle" class="w-5 h-5 text-green-600 mt-0.5"></i>
+                                    <div class="flex-1">
+                                        <div class="font-semibold text-sm" data-ar="تم التحديث" data-en="Updated">تم
+                                            التحديث</div>
+                                        <div class="text-sm text-muted" data-ar="تم تحديث جدول الاختبارات"
+                                            data-en="Exam schedule has been updated">تم تحديث جدول الاختبارات</div>
+                                        <div class="text-xs text-muted mt-1" data-ar="منذ ساعة" data-en="1 hour ago">منذ
+                                            ساعة</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activities Section -->
+                    <div class="mb-8">
+                        <h5 class="font-bold text-lg mb-4" data-ar="آخر النشاطات في النظام" data-en="Recent Activities">
+                            آخر النشاطات في النظام</h5>
+                        <div class="card-bg rounded-xl shadow-lg border border-custom overflow-hidden">
+                            <div class="p-6 border-b border-custom">
+                                <div class="flex items-center gap-2 font-bold">
+                                    <i data-feather="clock" class="w-5 h-5"></i>
+                                    <span data-ar="سجل العمليات الحديثة" data-en="Recent Activity Log">سجل العمليات
+                                        الحديثة</span>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead class="bg-gray-50 dark:bg-gray-800 border-b border-custom">
+                                        <tr>
+                                            <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider"
+                                                data-ar="العملية" data-en="Action">العملية</th>
+                                            <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider"
+                                                data-ar="التفاصيل" data-en="Details">التفاصيل</th>
+                                            <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider"
+                                                data-ar="بواسطة" data-en="By">بواسطة</th>
+                                            <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider"
+                                                data-ar="التوقيت" data-en="Time">التوقيت</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentActivitiesBody" class="divide-y divide-custom">
+                                        <tr
+                                            class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200"
+                                                    data-ar="إضافة مبنى" data-en="Add Building">إضافة مبنى</span>
+                                            </td>
+                                            <td class="px-6 py-4" data-ar="تم إضافة 'مبنى اللغة الإنجليزية'"
+                                                data-en="Added 'English Language Building'">تم إضافة "مبنى اللغة
+                                                الإنجليزية"</td>
+                                            <td class="px-6 py-4" data-ar="م. حسين القرني"
+                                                data-en="Eng. Hussein Al-Qarni">م. حسين القرني</td>
+                                            <td class="px-6 py-4 text-muted text-sm" data-ar="منذ 10 دقائق"
+                                                data-en="10 minutes ago">منذ 10 دقائق</td>
+                                        </tr>
+                                        <tr
+                                            class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200"
+                                                    data-ar="إضافة معمل" data-en="Add Lab">إضافة معمل</span>
+                                            </td>
+                                            <td class="px-6 py-4" data-ar="تم إضافة 'معمل البرمجة 1' في G-101"
+                                                data-en="Added 'Programming Lab 1' in G-101">تم إضافة "معمل البرمجة 1"
+                                                في G-101</td>
+                                            <td class="px-6 py-4" data-ar="م. ولاء الحبشي"
+                                                data-en="Eng. Walaa Al-Habshi">م. ولاء الحبشي</td>
+                                            <td class="px-6 py-4 text-muted text-sm" data-ar="منذ ساعتين"
+                                                data-en="2 hours ago">منذ ساعتين</td>
+                                        </tr>
+                                        <tr
+                                            class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200"
+                                                    data-ar="صيانة" data-en="Maintenance">صيانة</span>
+                                            </td>
+                                            <td class="px-6 py-4" data-ar="بلاغ عطل أجهزة في معمل الشبكات"
+                                                data-en="Device malfunction report in Networks Lab">بلاغ عطل أجهزة في
+                                                معمل الشبكات</td>
+                                            <td class="px-6 py-4" data-ar="دعم فني" data-en="Technical Support">دعم فني
+                                            </td>
+                                            <td class="px-6 py-4 text-muted text-sm" data-ar="أمس 09:30 ص"
+                                                data-en="Yesterday 09:30 AM">أمس 09:30 ص</td>
+                                        </tr>
+                                        <tr
+                                            class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200"
+                                                    data-ar="تسجيل دخول" data-en="Login">تسجيل دخول</span>
+                                            </td>
+                                            <td class="px-6 py-4" data-ar="تسجيل دخول ناجح للنظام"
+                                                data-en="Successful system login">تسجيل دخول ناجح للنظام</td>
+                                            <td class="px-6 py-4" data-ar="م. أمجد خوجة" data-en="Eng. Amjad Khawja">م.
+                                                أمجد خوجة</td>
+                                            <td class="px-6 py-4 text-muted text-sm" data-ar="أمس 08:00 ص"
+                                                data-en="Yesterday 08:00 AM">أمس 08:00 ص</td>
+                                        </tr>
+                                        <tr
+                                            class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200"
+                                                    data-ar="تعديل عقد" data-en="Contract Update">تعديل عقد</span>
+                                            </td>
+                                            <td class="px-6 py-4" data-ar="تم تعديل عقد عضو هيئة التدريس د. أحمد محمد"
+                                                data-en="Updated contract for Dr. Ahmed Mohammed">تم تعديل عقد عضو هيئة
+                                                التدريس د. أحمد محمد</td>
+                                            <td class="px-6 py-4" data-ar="م. سارة العتيبي"
+                                                data-en="Eng. Sarah Al-Otaibi">م. سارة العتيبي</td>
+                                            <td class="px-6 py-4 text-muted text-sm" data-ar="منذ 3 ساعات"
+                                                data-en="3 hours ago">منذ 3 ساعات</td>
+                                        </tr>
+                                        <tr
+                                            class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200"
+                                                    data-ar="جدولة اختبار" data-en="Exam Scheduling">جدولة اختبار</span>
+                                            </td>
+                                            <td class="px-6 py-4" data-ar="تم جدولة اختبار البرمجة المتقدمة في معمل 101"
+                                                data-en="Scheduled Advanced Programming exam in Lab 101">تم جدولة اختبار
+                                                البرمجة المتقدمة في معمل 101</td>
+                                            <td class="px-6 py-4" data-ar="م. خالد المطيري"
+                                                data-en="Eng. Khalid Al-Mutairi">م. خالد المطيري</td>
+                                            <td class="px-6 py-4 text-muted text-sm" data-ar="منذ 5 ساعات"
+                                                data-en="5 hours ago">منذ 5 ساعات</td>
+                                        </tr>
+                                        <tr
+                                            class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200"
+                                                    data-ar="إلغاء حجز" data-en="Booking Cancellation">إلغاء حجز</span>
+                                            </td>
+                                            <td class="px-6 py-4" data-ar="تم إلغاء حجز معمل قواعد البيانات G-102"
+                                                data-en="Cancelled Database Lab booking G-102">تم إلغاء حجز معمل قواعد
+                                                البيانات G-102</td>
+                                            <td class="px-6 py-4" data-ar="م. فهد الشمري"
+                                                data-en="Eng. Fahad Al-Shammari">م. فهد الشمري</td>
+                                            <td class="px-6 py-4 text-muted text-sm" data-ar="منذ 6 ساعات"
+                                                data-en="6 hours ago">منذ 6 ساعات</td>
+                                        </tr>
+                                        <tr
+                                            class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
+                                            <td class="px-6 py-4">
+                                                <span
+                                                    class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-200"
+                                                    data-ar="إضافة مستخدم" data-en="Add User">إضافة مستخدم</span>
+                                            </td>
+                                            <td class="px-6 py-4" data-ar="تم إضافة مستخدم جديد: مشرف مبنى العلوم"
+                                                data-en="Added new user: Science Building Supervisor">تم إضافة مستخدم
+                                                جديد: مشرف مبنى العلوم</td>
+                                            <td class="px-6 py-4" data-ar="م. نورة القحطاني"
+                                                data-en="Eng. Noura Al-Qahtani">م. نورة القحطاني</td>
+                                            <td class="px-6 py-4 text-muted text-sm" data-ar="أمس 02:30 م"
+                                                data-en="Yesterday 02:30 PM">أمس 02:30 م</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================ -->
+                <!-- Components for Students -->
+                <!-- ============================================ -->
+                <div id="studentComponents" class="mb-8 hidden">
+                    <h3 class="text-2xl font-bold mb-6" data-ar="مكونات الطلاب" data-en="Student Components">مكونات
+                        الطلاب</h3>
+
+                    <!-- My Courses Section -->
+                    <div class="mb-8">
+                        <h5 class="font-bold text-lg mb-4" data-ar="مقرراتي الدراسية" data-en="My Courses">مقرراتي
+                            الدراسية</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div
+                                class="card-bg rounded-xl border border-custom p-6 hover:shadow-lg transition-all cursor-pointer">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                        <i data-feather="book" class="w-6 h-6 text-primary"></i>
+                                    </div>
+                                    <span
+                                        class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200"
+                                        data-ar="نشط" data-en="Active">نشط</span>
+                                </div>
+                                <h6 class="font-bold mb-1" data-ar="البرمجة المتقدمة" data-en="Advanced Programming">
+                                    البرمجة المتقدمة</h6>
+                                <p class="text-sm text-muted mb-3" data-ar="CS-301" data-en="CS-301">CS-301</p>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-muted" data-ar="التقدم" data-en="Progress">التقدم</span>
+                                    <span class="font-semibold">75%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                    <div class="bg-primary h-2 rounded-full" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            <div
+                                class="card-bg rounded-xl border border-custom p-6 hover:shadow-lg transition-all cursor-pointer">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div
+                                        class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                        <i data-feather="book" class="w-6 h-6 text-blue-600"></i>
+                                    </div>
+                                    <span
+                                        class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200"
+                                        data-ar="نشط" data-en="Active">نشط</span>
+                                </div>
+                                <h6 class="font-bold mb-1" data-ar="قواعد البيانات" data-en="Database Systems">قواعد
+                                    البيانات</h6>
+                                <p class="text-sm text-muted mb-3" data-ar="CS-302" data-en="CS-302">CS-302</p>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-muted" data-ar="التقدم" data-en="Progress">التقدم</span>
+                                    <span class="font-semibold">60%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                    <div class="bg-blue-600 h-2 rounded-full" style="width: 60%"></div>
+                                </div>
+                            </div>
+                            <div
+                                class="card-bg rounded-xl border border-custom p-6 hover:shadow-lg transition-all cursor-pointer">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div
+                                        class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                                        <i data-feather="book" class="w-6 h-6 text-purple-600"></i>
+                                    </div>
+                                    <span
+                                        class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200"
+                                        data-ar="قادم" data-en="Upcoming">قادم</span>
+                                </div>
+                                <h6 class="font-bold mb-1" data-ar="الشبكات" data-en="Networks">الشبكات</h6>
+                                <p class="text-sm text-muted mb-3" data-ar="CS-303" data-en="CS-303">CS-303</p>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-muted" data-ar="يبدأ" data-en="Starts">يبدأ</span>
+                                    <span class="font-semibold" data-ar="الأسبوع القادم" data-en="Next Week">الأسبوع
+                                        القادم</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Deadlines Section -->
+                    <div class="mb-8">
+                        <h5 class="font-bold text-lg mb-4" data-ar="المواعيد النهائية القادمة"
+                            data-en="Upcoming Deadlines">المواعيد النهائية القادمة</h5>
+                        <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                            <div class="space-y-4">
+                                <div
+                                    class="flex items-center gap-4 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                                    <div
+                                        class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+                                        <i data-feather="alert-circle" class="w-5 h-5 text-red-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="font-semibold" data-ar="مشروع البرمجة المتقدمة"
+                                            data-en="Advanced Programming Project">مشروع البرمجة المتقدمة</div>
+                                        <div class="text-sm text-muted" data-ar="متبقي يومان"
+                                            data-en="2 days remaining">متبقي يومان</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-bold text-red-600">15/01/2026</div>
+                                        <div class="text-xs text-muted" data-ar="تاريخ التسليم" data-en="Due Date">تاريخ
+                                            التسليم</div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="flex items-center gap-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                                    <div
+                                        class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center">
+                                        <i data-feather="clock" class="w-5 h-5 text-yellow-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="font-semibold" data-ar="واجب قواعد البيانات"
+                                            data-en="Database Assignment">واجب قواعد البيانات</div>
+                                        <div class="text-sm text-muted" data-ar="متبقي 5 أيام"
+                                            data-en="5 days remaining">متبقي 5 أيام</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-bold text-yellow-600">18/01/2026</div>
+                                        <div class="text-xs text-muted" data-ar="تاريخ التسليم" data-en="Due Date">تاريخ
+                                            التسليم</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================ -->
+                <!-- Components for Teachers -->
+                <!-- ============================================ -->
+                <div id="teacherComponents" class="mb-8 hidden">
+                    <h3 class="text-2xl font-bold mb-6" data-ar="مكونات أعضاء هيئة التدريس"
+                        data-en="Teacher Components">مكونات أعضاء هيئة التدريس</h3>
+
+                    <!-- My Teaching Courses Section -->
+                    <div class="mb-8">
+                        <h5 class="font-bold text-lg mb-4" data-ar="المقررات التي أدرسها" data-en="My Teaching Courses">
+                            المقررات التي أدرسها</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div class="card-bg rounded-xl border border-custom p-6 hover:shadow-lg transition-all">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h6 class="font-bold" data-ar="البرمجة المتقدمة" data-en="Advanced Programming">
+                                        البرمجة المتقدمة</h6>
+                                    <span
+                                        class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200"
+                                        data-ar="نشط" data-en="Active">نشط</span>
+                                </div>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-muted" data-ar="الطلاب" data-en="Students">الطلاب</span>
+                                        <span class="font-semibold">45</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-muted" data-ar="الواجبات المعلقة"
+                                            data-en="Pending Assignments">الواجبات المعلقة</span>
+                                        <span class="font-semibold text-orange-600">12</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-muted" data-ar="الواجبات المكتملة"
+                                            data-en="Completed">الواجبات المكتملة</span>
+                                        <span class="font-semibold text-green-600">33</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-bg rounded-xl border border-custom p-6 hover:shadow-lg transition-all">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h6 class="font-bold" data-ar="قواعد البيانات" data-en="Database Systems">قواعد
+                                        البيانات</h6>
+                                    <span
+                                        class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200"
+                                        data-ar="نشط" data-en="Active">نشط</span>
+                                </div>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-muted" data-ar="الطلاب" data-en="Students">الطلاب</span>
+                                        <span class="font-semibold">38</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-muted" data-ar="الواجبات المعلقة"
+                                            data-en="Pending Assignments">الواجبات المعلقة</span>
+                                        <span class="font-semibold text-orange-600">8</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-muted" data-ar="الواجبات المكتملة"
+                                            data-en="Completed">الواجبات المكتملة</span>
+                                        <span class="font-semibold text-green-600">30</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Grading Section -->
+                    <div class="mb-8">
+                        <h5 class="font-bold text-lg mb-4" data-ar="الواجبات التي تحتاج تقييم"
+                            data-en="Assignments Pending Grading">الواجبات التي تحتاج تقييم</h5>
+                        <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                            <div class="space-y-3">
+                                <div
+                                    class="flex items-center justify-between p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                                    <div class="flex items-center gap-3">
+                                        <i data-feather="file-text" class="w-5 h-5 text-orange-600"></i>
+                                        <div>
+                                            <div class="font-semibold" data-ar="مشروع البرمجة المتقدمة"
+                                                data-en="Advanced Programming Project">مشروع البرمجة المتقدمة</div>
+                                            <div class="text-sm text-muted" data-ar="15 طالب في الانتظار"
+                                                data-en="15 students pending">15 طالب في الانتظار</div>
+                                        </div>
+                                    </div>
+                                    <button class="btn-primary px-4 py-2 rounded-lg text-sm" data-ar="ابدأ التقييم"
+                                        data-en="Start Grading">ابدأ التقييم</button>
+                                </div>
+                                <div
+                                    class="flex items-center justify-between p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                                    <div class="flex items-center gap-3">
+                                        <i data-feather="file-text" class="w-5 h-5 text-orange-600"></i>
+                                        <div>
+                                            <div class="font-semibold" data-ar="واجب قواعد البيانات"
+                                                data-en="Database Assignment">واجب قواعد البيانات</div>
+                                            <div class="text-sm text-muted" data-ar="8 طلاب في الانتظار"
+                                                data-en="8 students pending">8 طلاب في الانتظار</div>
+                                        </div>
+                                    </div>
+                                    <button class="btn-primary px-4 py-2 rounded-lg text-sm" data-ar="ابدأ التقييم"
+                                        data-en="Start Grading">ابدأ التقييم</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================ -->
+                <!-- Components for Admins -->
+                <!-- ============================================ -->
+                <div id="adminComponents" class="mb-8 hidden">
+                    <h3 class="text-2xl font-bold mb-6" data-ar="مكونات المديرين" data-en="Admin Components">مكونات
+                        المديرين</h3>
+
+                    <!-- System Statistics Section -->
+                    <div class="mb-8">
+                        <h5 class="font-bold text-lg mb-4" data-ar="إحصائيات النظام" data-en="System Statistics">
+                            إحصائيات النظام</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                            <!-- 1. إجمالي المستخدمين -->
+                            <div>
+                                <div class="stat-card blue">
+                                    <div>
+                                        <h6 class="text-muted mb-1" data-ar="إجمالي المستخدمين" data-en="Total Users">
+                                            إجمالي المستخدمين</h6>
+                                        <h3 class="fw-bold mb-0">1,245</h3>
+                                    </div>
+                                    <div class="stat-icon bg-light-blue">
+                                        <i data-feather="users"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 2. المقررات النشطة -->
+                            <div>
+                                <div class="stat-card green">
+                                    <div>
+                                        <h6 class="text-muted mb-1" data-ar="المقررات النشطة" data-en="Active Courses">
+                                            المقررات النشطة</h6>
+                                        <h3 class="fw-bold mb-0">156</h3>
+                                    </div>
+                                    <div class="stat-icon bg-light-green">
+                                        <i data-feather="book"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 3. الاختبارات المجدولة -->
+                            <div>
+                                <div class="stat-card orange">
+                                    <div>
+                                        <h6 class="text-muted mb-1" data-ar="الاختبارات المجدولة"
+                                            data-en="Scheduled Exams">الاختبارات المجدولة</h6>
+                                        <h3 class="fw-bold mb-0">342</h3>
+                                    </div>
+                                    <div class="stat-icon bg-light-orange">
+                                        <i data-feather="file-text"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 4. المباني النشطة -->
+                            <div>
+                                <div class="stat-card purple">
+                                    <div>
+                                        <h6 class="text-muted mb-1" data-ar="المباني النشطة" data-en="Active Buildings">
+                                            المباني النشطة</h6>
+                                        <h3 class="fw-bold mb-0">12</h3>
+                                    </div>
+                                    <div class="stat-icon bg-light-purple">
+                                        <i data-feather="building"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Health Section -->
+                    <div class="mb-8">
+                        <h5 class="font-bold text-lg mb-4" data-ar="صحة النظام" data-en="System Health">صحة النظام</h5>
+                        <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="text-center">
+                                    <div
+                                        class="w-20 h-20 mx-auto mb-4 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                                        <i data-feather="check-circle" class="w-10 h-10 text-green-600"></i>
+                                    </div>
+                                    <div class="font-bold text-lg mb-1" data-ar="Blackboard API"
+                                        data-en="Blackboard API">Blackboard API</div>
+                                    <div class="text-sm text-muted" data-ar="متصل" data-en="Connected">متصل</div>
+                                </div>
+                                <div class="text-center">
+                                    <div
+                                        class="w-20 h-20 mx-auto mb-4 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                                        <i data-feather="check-circle" class="w-10 h-10 text-green-600"></i>
+                                    </div>
+                                    <div class="font-bold text-lg mb-1" data-ar="QuestionMark API"
+                                        data-en="QuestionMark API">QuestionMark API</div>
+                                    <div class="text-sm text-muted" data-ar="متصل" data-en="Connected">متصل</div>
+                                </div>
+                                <div class="text-center">
+                                    <div
+                                        class="w-20 h-20 mx-auto mb-4 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                                        <i data-feather="check-circle" class="w-10 h-10 text-green-600"></i>
+                                    </div>
+                                    <div class="font-bold text-lg mb-1" data-ar="Banner API" data-en="Banner API">Banner
+                                        API</div>
+                                    <div class="text-sm text-muted" data-ar="متصل" data-en="Connected">متصل</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Admin Charts -->
+                    <div class="mb-8">
+                        <h5 class="font-bold text-lg mb-4" data-ar="الرسوم البيانية" data-en="Charts">الرسوم البيانية
+                        </h5>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- System Usage Chart -->
+                            <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                                <h6 class="font-bold mb-4" data-ar="استخدام النظام" data-en="System Usage">استخدام
+                                    النظام</h6>
+                                <canvas id="systemUsageChart"></canvas>
+                            </div>
+
+                            <!-- API Performance Chart -->
+                            <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                                <h6 class="font-bold mb-4" data-ar="أداء APIs" data-en="API Performance">أداء APIs</h6>
+                                <canvas id="apiPerformanceChart"></canvas>
+                            </div>
+
+                            <!-- User Activity Chart -->
+                            <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                                <h6 class="font-bold mb-4" data-ar="نشاط المستخدمين" data-en="User Activity">نشاط
+                                    المستخدمين</h6>
+                                <canvas id="userActivityChart"></canvas>
+                            </div>
+
+                            <!-- Exams Distribution Chart -->
+                            <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                                <h6 class="font-bold mb-4" data-ar="توزيع الاختبارات" data-en="Exams Distribution">توزيع
+                                    الاختبارات</h6>
+                                <canvas id="examsDistributionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================ -->
+                <!-- Components for Building Supervisors -->
+                <!-- ============================================ -->
+                <div id="buildingSupervisorComponents" class="mb-8 hidden">
+                    <h3 class="text-2xl font-bold mb-6" data-ar="مكونات مشرفي المباني"
+                        data-en="Building Supervisor Components">مكونات مشرفي المباني</h3>
+
+                    <!-- Building Status Section -->
+                    <div class="mb-8">
+                        <h5 class="font-bold text-lg mb-4" data-ar="حالة المباني" data-en="Building Status">حالة المباني
+                        </h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="card-bg rounded-xl border border-custom p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h6 class="font-bold text-lg" data-ar="مبنى العلوم" data-en="Science Building">مبنى
+                                        العلوم</h6>
+                                    <span
+                                        class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200"
+                                        data-ar="نشط" data-en="Active">نشط</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-muted" data-ar="المعامل المتاحة"
+                                            data-en="Available Labs">المعامل المتاحة</span>
+                                        <span class="font-semibold">12 / 15</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-muted" data-ar="المعامل قيد الصيانة"
+                                            data-en="Under Maintenance">المعامل قيد الصيانة</span>
+                                        <span class="font-semibold text-orange-600">2</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-muted" data-ar="المعامل غير متاحة"
+                                            data-en="Unavailable">المعامل غير متاحة</span>
+                                        <span class="font-semibold text-red-600">1</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-bg rounded-xl border border-custom p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h6 class="font-bold text-lg" data-ar="مبنى الهندسة" data-en="Engineering Building">
+                                        مبنى الهندسة</h6>
+                                    <span
+                                        class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200"
+                                        data-ar="نشط" data-en="Active">نشط</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-muted" data-ar="المعامل المتاحة"
+                                            data-en="Available Labs">المعامل المتاحة</span>
+                                        <span class="font-semibold">18 / 20</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-muted" data-ar="المعامل قيد الصيانة"
+                                            data-en="Under Maintenance">المعامل قيد الصيانة</span>
+                                        <span class="font-semibold text-orange-600">1</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-muted" data-ar="المعامل غير متاحة"
+                                            data-en="Unavailable">المعامل غير متاحة</span>
+                                        <span class="font-semibold text-red-600">1</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Maintenance Requests Section -->
+                    <div class="mb-8">
+                        <h5 class="font-bold text-lg mb-4" data-ar="طلبات الصيانة" data-en="Maintenance Requests">طلبات
+                            الصيانة</h5>
+                        <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                            <div class="space-y-3">
+                                <div
+                                    class="flex items-center justify-between p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                                    <div class="flex items-center gap-3">
+                                        <i data-feather="alert-triangle" class="w-5 h-5 text-red-600"></i>
+                                        <div>
+                                            <div class="font-semibold" data-ar="معمل 101 - مبنى العلوم"
+                                                data-en="Lab 101 - Science Building">معمل 101 - مبنى العلوم</div>
+                                            <div class="text-sm text-muted" data-ar="مشكلة في الشبكة"
+                                                data-en="Network issue">مشكلة في الشبكة</div>
+                                        </div>
+                                    </div>
+                                    <button class="btn-primary px-4 py-2 rounded-lg text-sm" data-ar="عرض التفاصيل"
+                                        data-en="View Details">عرض التفاصيل</button>
+                                </div>
+                                <div
+                                    class="flex items-center justify-between p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                                    <div class="flex items-center gap-3">
+                                        <i data-feather="tool" class="w-5 h-5 text-yellow-600"></i>
+                                        <div>
+                                            <div class="font-semibold" data-ar="معمل 205 - مبنى الهندسة"
+                                                data-en="Lab 205 - Engineering Building">معمل 205 - مبنى الهندسة</div>
+                                            <div class="text-sm text-muted" data-ar="صيانة دورية"
+                                                data-en="Routine maintenance">صيانة دورية</div>
+                                        </div>
+                                    </div>
+                                    <button class="btn-primary px-4 py-2 rounded-lg text-sm" data-ar="عرض التفاصيل"
+                                        data-en="View Details">عرض التفاصيل</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Building Supervisor Charts -->
+                    <div class="mb-8">
+                        <h5 class="font-bold text-lg mb-4" data-ar="الرسوم البيانية" data-en="Charts">الرسوم البيانية
+                        </h5>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Lab Status Chart -->
+                            <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                                <h6 class="font-bold mb-4" data-ar="حالة المعامل" data-en="Lab Status">حالة المعامل</h6>
+                                <canvas id="labStatusChart"></canvas>
+                            </div>
+
+                            <!-- Maintenance Requests Chart -->
+                            <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                                <h6 class="font-bold mb-4" data-ar="طلبات الصيانة" data-en="Maintenance Requests">طلبات
+                                    الصيانة</h6>
+                                <canvas id="maintenanceRequestsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================ -->
+                <!-- Components for Exams Management -->
+                <!-- ============================================ -->
+                <div id="examsComponents" class="mb-8 hidden">
+                    <h3 class="text-2xl font-bold mb-6" data-ar="مكونات إدارة الاختبارات"
+                        data-en="Exams Management Components">مكونات إدارة الاختبارات</h3>
+
+                    <!-- Today's Exams Section -->
+                    <div class="mb-8">
+                        <h5 class="font-bold text-lg mb-4" data-ar="اختبارات اليوم" data-en="Today's Exams">اختبارات
+                            اليوم</h5>
+                        <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                            <div class="space-y-4">
+                                <div
+                                    class="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                                    <div class="flex items-center gap-4">
+                                        <div
+                                            class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                            <i data-feather="file-text" class="w-6 h-6 text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-semibold" data-ar="اختبار البرمجة المتقدمة"
+                                                data-en="Advanced Programming Exam">اختبار البرمجة المتقدمة</div>
+                                            <div class="text-sm text-muted" data-ar="10:00 ص - 12:00 م | معمل 101"
+                                                data-en="10:00 AM - 12:00 PM | Lab 101">10:00 ص - 12:00 م | معمل 101
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200"
+                                        data-ar="قيد التنفيذ" data-en="In Progress">قيد التنفيذ</span>
+                                </div>
+                                <div
+                                    class="flex items-center justify-between p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                                    <div class="flex items-center gap-4">
+                                        <div
+                                            class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                                            <i data-feather="file-text" class="w-6 h-6 text-purple-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-semibold" data-ar="اختبار قواعد البيانات"
+                                                data-en="Database Systems Exam">اختبار قواعد البيانات</div>
+                                            <div class="text-sm text-muted" data-ar="02:00 م - 04:00 م | معمل 205"
+                                                data-en="02:00 PM - 04:00 PM | Lab 205">02:00 م - 04:00 م | معمل 205
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200"
+                                        data-ar="قادم" data-en="Upcoming">قادم</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exam Statistics Section -->
+                    <div class="mb-8">
+                        <h5 class="font-bold text-lg mb-4" data-ar="إحصائيات الاختبارات" data-en="Exam Statistics">
+                            إحصائيات الاختبارات</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div>
+                                <div class="stat-card teal">
+                                    <div>
+                                        <h6 class="text-muted mb-1" data-ar="اختبارات هذا الأسبوع"
+                                            data-en="This Week's Exams">اختبارات هذا الأسبوع</h6>
+                                        <h3 class="fw-bold mb-0">15</h3>
+                                    </div>
+                                    <div class="stat-icon bg-light-teal">
+                                        <i data-feather="calendar"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="stat-card blue">
+                                    <div>
+                                        <h6 class="text-muted mb-1" data-ar="إجمالي الطلاب المسجلين"
+                                            data-en="Total Registered Students">إجمالي الطلاب المسجلين</h6>
+                                        <h3 class="fw-bold mb-0">342</h3>
+                                    </div>
+                                    <div class="stat-icon bg-light-blue">
+                                        <i data-feather="users"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="stat-card green">
+                                    <div>
+                                        <h6 class="text-muted mb-1" data-ar="المعامل المستخدمة" data-en="Labs in Use">
+                                            المعامل المستخدمة</h6>
+                                        <h3 class="fw-bold mb-0">45</h3>
+                                    </div>
+                                    <div class="stat-icon bg-light-green">
+                                        <i data-feather="monitor"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exams Charts -->
+                    <div class="mb-8">
+                        <h5 class="font-bold text-lg mb-4" data-ar="الرسوم البيانية" data-en="Charts">الرسوم البيانية
+                        </h5>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Exams Schedule Chart -->
+                            <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                                <h6 class="font-bold mb-4" data-ar="جدول الاختبارات" data-en="Exams Schedule">جدول
+                                    الاختبارات</h6>
+                                <canvas id="examsScheduleChart"></canvas>
+                            </div>
+
+                            <!-- Lab Utilization Chart -->
+                            <div class="card-bg rounded-xl shadow-lg border border-custom p-6">
+                                <h6 class="font-bold mb-4" data-ar="استخدام المعامل" data-en="Lab Utilization">استخدام
+                                    المعامل</h6>
+                                <canvas id="labUtilizationChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="p-4 border-t border-custom text-center text-muted text-sm card-bg flex-shrink-0">
+            <div id="liveClockDisplay" class="font-bold text-primary mb-1 font-english" style="direction: ltr;"></div>
+            <div data-ar="جميع الحقوق محفوظة © 2026 م. أحمد فلمبان | رقم الإصدار: 2.0"
+                data-en="All rights reserved © 2026 Eng. Ahmed Filban | Version: 2.0">جميع الحقوق محفوظة © 2026 م. أحمد
+                فلمبان | رقم الإصدار: 2.0</div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Backend API Configuration
+        const BACKEND_API_BASE_URL = 'https://api.yourdomain.com'; // Replace with your Backend API URL
+        let currentUserRole = 'admin'; // Default role, should be fetched from auth
+        let authToken = null; // Should be fetched from auth system
+
+        // Initialize Feather Icons
+        feather.replace();
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        const themeIcon = themeToggle.querySelector('i');
+
+        // Check for saved theme preference
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'dark') {
+            html.classList.add('dark');
+            themeIcon.setAttribute('data-feather', 'sun');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            themeIcon.setAttribute('data-feather', isDark ? 'sun' : 'moon');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            feather.replace();
+        });
+
+        // Language Toggle
+        let isArabic = true;
+        const langToggle = document.getElementById('langToggle');
+        langToggle.addEventListener('click', () => {
+            isArabic = !isArabic;
+            document.documentElement.lang = isArabic ? 'ar' : 'en';
+            document.documentElement.dir = isArabic ? 'rtl' : 'ltr';
+
+            // Update all text elements
+            document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+                el.textContent = isArabic ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+            });
+        });
+
+        // Sidebar Toggle (Mobile)
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        sidebarToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('hidden');
+        });
+
+        // Live Clock
+        function updateClock() {
+            const now = new Date();
+            const options = {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            };
+            const clock = document.getElementById('liveClockDisplay');
+            if (clock) {
+                clock.textContent = now.toLocaleDateString(isArabic ? 'ar-SA' : 'en-US', options);
+            }
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ============================================
+        // Backend API Service Functions
+        // ============================================
+
+        // Get Authorization Headers
+        function getAuthHeaders() {
+            const headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            };
+            if (authToken) {
+                headers['Authorization'] = `Bearer ${authToken}`;
+            }
+            return headers;
+        }
+
+        // Fetch Dashboard Overview from Backend API
+        async function fetchDashboardOverview() {
+            try {
+                const response = await fetch(`${BACKEND_API_BASE_URL}/api/blackboard/dashboard/overview`, {
+                    method: 'GET',
+                    headers: getAuthHeaders()
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                updateDashboardOverview(data);
+            } catch (error) {
+                console.error('Error fetching dashboard overview:', error);
+                // Show error message or use fallback data
+                showError('فشل في جلب بيانات Dashboard. يرجى المحاولة لاحقاً.');
+            }
+        }
+
+        // Update Dashboard Overview UI
+        function updateDashboardOverview(data) {
+            document.getElementById('totalLogins').textContent = data.totalLogins || 0;
+            document.getElementById('totalHours').textContent = (data.totalHours || 0).toFixed(1);
+            document.getElementById('averageProgress').textContent = (data.averageProgress || 0).toFixed(1) + '%';
+            document.getElementById('progressBar').style.width = (data.averageProgress || 0) + '%';
+            document.getElementById('completedAssignments').textContent = data.completedAssignments || 0;
+            document.getElementById('totalAssignments').textContent = data.totalAssignments || 0;
+        }
+
+        // Fetch Course Engagement from Backend API
+        async function fetchCourseEngagement(courseId) {
+            try {
+                const response = await fetch(`${BACKEND_API_BASE_URL}/api/blackboard/courses/${courseId}/engagement`, {
+                    method: 'GET',
+                    headers: getAuthHeaders()
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                updateCourseEngagement(data);
+            } catch (error) {
+                console.error('Error fetching course engagement:', error);
+                showError('فشل في جلب بيانات التفاعل مع المقرر.');
+            }
+        }
+
+        // Update Course Engagement UI
+        function updateCourseEngagement(data) {
+            const contentViews = data.contentViewsPercentage || 0;
+            const assignmentSubmission = data.assignmentSubmissionPercentage || 0;
+            const forumParticipation = data.forumParticipationPercentage || 0;
+
+            document.getElementById('contentViewsPercentage').textContent = contentViews.toFixed(1) + '%';
+            document.getElementById('contentViewsBar').style.width = contentViews + '%';
+
+            document.getElementById('assignmentSubmissionPercentage').textContent = assignmentSubmission.toFixed(1) + '%';
+            document.getElementById('assignmentSubmissionBar').style.width = assignmentSubmission + '%';
+
+            document.getElementById('forumParticipationPercentage').textContent = forumParticipation.toFixed(1) + '%';
+            document.getElementById('forumParticipationBar').style.width = forumParticipation + '%';
+
+            document.getElementById('accessCount').textContent = data.accessCount || 0;
+            document.getElementById('totalHoursEngagement').textContent = (data.totalHours || 0).toFixed(1) + ' ساعة';
+        }
+
+        // Fetch Assignments from Backend API
+        async function fetchAssignments(courseId = null) {
+            try {
+                let url = `${BACKEND_API_BASE_URL}/api/blackboard/courses/${courseId || 'all'}/assignments`;
+                if (!courseId) {
+                    url = `${BACKEND_API_BASE_URL}/api/blackboard/assignments`;
+                }
+
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: getAuthHeaders()
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const assignments = await response.json();
+                updateAssignmentsTable(assignments);
+            } catch (error) {
+                console.error('Error fetching assignments:', error);
+                showError('فشل في جلب الواجبات.');
+            }
+        }
+
+        // Update Assignments Table
+        function updateAssignmentsTable(assignments) {
+            const tbody = document.getElementById('assignmentsTableBody');
+            if (!assignments || assignments.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-muted" data-ar="لا توجد واجبات" data-en="No assignments">لا توجد واجبات</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = assignments.map(assignment => {
+                const dueDate = assignment.dueDate ? new Date(assignment.dueDate).toLocaleDateString('ar-SA') : '-';
+                const status = assignment.status === 'Completed' ?
+                    '<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200">مكتمل</span>' :
+                    '<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200">قيد الانتظار</span>';
+                const grade = assignment.grade && assignment.maxGrade ?
+                    `${assignment.grade} / ${assignment.maxGrade}` : '-';
+
+                return `
+                    <tr class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
+                        <td class="px-6 py-4 font-medium">${assignment.name || '-'}</td>
+                        <td class="px-6 py-4 text-muted">${assignment.courseName || '-'}</td>
+                        <td class="px-6 py-4">${dueDate}</td>
+                        <td class="px-6 py-4">${status}</td>
+                        <td class="px-6 py-4">${grade}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Fetch Exams Schedule from QuestionMark API (via Backend)
+        async function fetchExamsSchedule() {
+            try {
+                const response = await fetch(`${BACKEND_API_BASE_URL}/api/questionmark/exams/scheduled`, {
+                    method: 'GET',
+                    headers: getAuthHeaders()
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const exams = await response.json();
+                updateExamsTable(exams);
+            } catch (error) {
+                console.error('Error fetching exams schedule:', error);
+                showError('فشل في جلب جدول الاختبارات.');
+            }
+        }
+
+        // Update Exams Table
+        function updateExamsTable(exams) {
+            const tbody = document.getElementById('examsTableBody');
+            if (!exams || exams.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-muted" data-ar="لا توجد اختبارات مجدولة" data-en="No scheduled exams">لا توجد اختبارات مجدولة</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = exams.map(exam => {
+                const examDate = exam.scheduledDateTime ? new Date(exam.scheduledDateTime).toLocaleString('ar-SA') : '-';
+                const duration = exam.duration ? `${exam.duration} دقيقة` : '-';
+                const location = exam.location || '-';
+                const status = new Date(exam.scheduledDateTime) > new Date() ?
+                    '<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200">قادم</span>' :
+                    '<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-200">منتهي</span>';
+
+                return `
+                    <tr class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
+                        <td class="px-6 py-4 font-medium">${exam.title || '-'}</td>
+                        <td class="px-6 py-4">${examDate}</td>
+                        <td class="px-6 py-4">${duration}</td>
+                        <td class="px-6 py-4">${location}</td>
+                        <td class="px-6 py-4">${status}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Update today's exams count
+            const todayExams = exams.filter(exam => {
+                const examDate = new Date(exam.scheduledDateTime);
+                const today = new Date();
+                return examDate.toDateString() === today.toDateString();
+            });
+            document.getElementById('todayExams').textContent = todayExams.length;
+        }
+
+        // Chart instances storage
+        let chartInstances = {};
+
+        // Initialize Charts for Students/Teachers
+        function initStudentTeacherCharts() {
+            // Course Progress Chart
+            const courseProgressCtx = document.getElementById('courseProgressChart');
+            if (courseProgressCtx && !chartInstances.courseProgress) {
+                chartInstances.courseProgress = new Chart(courseProgressCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['البرمجة المتقدمة', 'قواعد البيانات', 'الشبكات', 'الذكاء الاصطناعي', 'أمن المعلومات'],
+                        datasets: [{
+                            label: 'التقدم (%)',
+                            data: [75, 60, 45, 80, 55],
+                            backgroundColor: ['#005941', '#3B82F6', '#10B981', '#F59E0B', '#EF4444'],
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, max: 100 }
+                        }
+                    }
+                });
+            }
+
+            // Weekly Activity Chart
+            const weeklyActivityCtx = document.getElementById('weeklyActivityChart');
+            if (weeklyActivityCtx && !chartInstances.weeklyActivity) {
+                chartInstances.weeklyActivity = new Chart(weeklyActivityCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
+                        datasets: [{
+                            label: 'ساعات النشاط',
+                            data: [2, 3, 4, 3, 5, 4, 2],
+                            borderColor: '#005941',
+                            backgroundColor: 'rgba(0, 89, 65, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+
+            // Grades Distribution Chart
+            const gradesDistributionCtx = document.getElementById('gradesDistributionChart');
+            if (gradesDistributionCtx && !chartInstances.gradesDistribution) {
+                chartInstances.gradesDistribution = new Chart(gradesDistributionCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['ممتاز (90-100)', 'جيد جداً (80-89)', 'جيد (70-79)', 'مقبول (60-69)', 'راسب (<60)'],
+                        datasets: [{
+                            data: [5, 8, 12, 6, 2],
+                            backgroundColor: ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#6B7280']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            }
+
+            // Assignment Status Chart
+            const assignmentStatusCtx = document.getElementById('assignmentStatusChart');
+            if (assignmentStatusCtx && !chartInstances.assignmentStatus) {
+                chartInstances.assignmentStatus = new Chart(assignmentStatusCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['مكتمل', 'قيد الانتظار', 'متأخر'],
+                        datasets: [{
+                            data: [15, 8, 3],
+                            backgroundColor: ['#10B981', '#F59E0B', '#EF4444']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Initialize Charts for Admins
+        function initAdminCharts() {
+            // System Usage Chart
+            const systemUsageCtx = document.getElementById('systemUsageChart');
+            if (systemUsageCtx && !chartInstances.systemUsage) {
+                chartInstances.systemUsage = new Chart(systemUsageCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+                        datasets: [{
+                            label: 'المستخدمين النشطين',
+                            data: [850, 920, 1100, 1050, 1200, 1150],
+                            borderColor: '#005941',
+                            backgroundColor: 'rgba(0, 89, 65, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }, {
+                            label: 'الطلبات',
+                            data: [1200, 1350, 1500, 1400, 1600, 1550],
+                            borderColor: '#3B82F6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { position: 'top' }
+                        }
+                    }
+                });
+            }
+
+            // API Performance Chart
+            const apiPerformanceCtx = document.getElementById('apiPerformanceChart');
+            if (apiPerformanceCtx && !chartInstances.apiPerformance) {
+                chartInstances.apiPerformance = new Chart(apiPerformanceCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Blackboard', 'QuestionMark', 'Banner'],
+                        datasets: [{
+                            label: 'الاستجابة (ms)',
+                            data: [120, 95, 150],
+                            backgroundColor: ['#005941', '#3B82F6', '#F59E0B']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+            }
+
+            // User Activity Chart
+            const userActivityCtx = document.getElementById('userActivityChart');
+            if (userActivityCtx && !chartInstances.userActivity) {
+                chartInstances.userActivity = new Chart(userActivityCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['طلاب', 'معلمين', 'موظفين', 'مديرين'],
+                        datasets: [{
+                            data: [1200, 150, 80, 15],
+                            backgroundColor: ['#005941', '#3B82F6', '#F59E0B', '#EF4444']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            }
+
+            // Exams Distribution Chart
+            const examsDistributionCtx = document.getElementById('examsDistributionChart');
+            if (examsDistributionCtx && !chartInstances.examsDistribution) {
+                chartInstances.examsDistribution = new Chart(examsDistributionCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+                        datasets: [{
+                            label: 'عدد الاختبارات',
+                            data: [45, 52, 48, 60, 55, 50],
+                            backgroundColor: '#005941',
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Initialize Charts for Building Supervisors
+        function initBuildingSupervisorCharts() {
+            // Lab Status Chart
+            const labStatusCtx = document.getElementById('labStatusChart');
+            if (labStatusCtx && !chartInstances.labStatus) {
+                chartInstances.labStatus = new Chart(labStatusCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['متاح', 'قيد الاستخدام', 'قيد الصيانة', 'غير متاح'],
+                        datasets: [{
+                            data: [30, 15, 3, 2],
+                            backgroundColor: ['#10B981', '#3B82F6', '#F59E0B', '#EF4444']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            }
+
+            // Maintenance Requests Chart
+            const maintenanceRequestsCtx = document.getElementById('maintenanceRequestsChart');
+            if (maintenanceRequestsCtx && !chartInstances.maintenanceRequests) {
+                chartInstances.maintenanceRequests = new Chart(maintenanceRequestsCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+                        datasets: [{
+                            label: 'طلبات الصيانة',
+                            data: [8, 12, 6, 10, 9, 7],
+                            backgroundColor: '#EF4444',
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Initialize Charts for Exams Management
+        function initExamsCharts() {
+            // Exams Schedule Chart
+            const examsScheduleCtx = document.getElementById('examsScheduleChart');
+            if (examsScheduleCtx && !chartInstances.examsSchedule) {
+                chartInstances.examsSchedule = new Chart(examsScheduleCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['الأسبوع 1', 'الأسبوع 2', 'الأسبوع 3', 'الأسبوع 4', 'الأسبوع 5', 'الأسبوع 6'],
+                        datasets: [{
+                            label: 'عدد الاختبارات',
+                            data: [5, 8, 12, 10, 15, 12],
+                            borderColor: '#005941',
+                            backgroundColor: 'rgba(0, 89, 65, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+
+            // Lab Utilization Chart
+            const labUtilizationCtx = document.getElementById('labUtilizationChart');
+            if (labUtilizationCtx && !chartInstances.labUtilization) {
+                chartInstances.labUtilization = new Chart(labUtilizationCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['معمل 101', 'معمل 102', 'معمل 103', 'معمل 201', 'معمل 202', 'معمل 203'],
+                        datasets: [{
+                            label: 'ساعات الاستخدام',
+                            data: [45, 38, 42, 50, 35, 40],
+                            backgroundColor: '#3B82F6',
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Role-based Dashboard Display
+        function showDashboardByRole(role) {
+            currentUserRole = role;
+
+            // Hide all sections first
+            document.getElementById('dashboardOverview').classList.add('hidden');
+            document.getElementById('adminStats').classList.add('hidden');
+            document.getElementById('courseEngagementSection').classList.add('hidden');
+            document.getElementById('assignmentsSection').classList.add('hidden');
+            document.getElementById('examsSection').classList.add('hidden');
+
+            // Hide all component sections
+            document.getElementById('allUsersComponents').classList.add('hidden');
+            document.getElementById('studentComponents').classList.add('hidden');
+            document.getElementById('teacherComponents').classList.add('hidden');
+            document.getElementById('adminComponents').classList.add('hidden');
+            document.getElementById('buildingSupervisorComponents').classList.add('hidden');
+            document.getElementById('examsComponents').classList.add('hidden');
+            document.getElementById('studentTeacherCharts').classList.add('hidden');
+
+            // Show sections based on role
+            switch (role) {
+                case 'student':
+                    document.getElementById('dashboardOverview').classList.remove('hidden');
+                    document.getElementById('courseEngagementSection').classList.remove('hidden');
+                    document.getElementById('assignmentsSection').classList.remove('hidden');
+                    document.getElementById('examsSection').classList.remove('hidden');
+                    document.getElementById('allUsersComponents').classList.remove('hidden');
+                    document.getElementById('studentComponents').classList.remove('hidden');
+                    document.getElementById('studentTeacherCharts').classList.remove('hidden');
+                    fetchDashboardOverview();
+                    fetchAssignments();
+                    fetchExamsSchedule();
+                    setTimeout(() => initStudentTeacherCharts(), 100);
+                    break;
+                case 'teacher':
+                    document.getElementById('dashboardOverview').classList.remove('hidden');
+                    document.getElementById('courseEngagementSection').classList.remove('hidden');
+                    document.getElementById('assignmentsSection').classList.remove('hidden');
+                    document.getElementById('examsSection').classList.remove('hidden');
+                    document.getElementById('allUsersComponents').classList.remove('hidden');
+                    document.getElementById('teacherComponents').classList.remove('hidden');
+                    document.getElementById('studentTeacherCharts').classList.remove('hidden');
+                    fetchDashboardOverview();
+                    fetchAssignments();
+                    fetchExamsSchedule();
+                    setTimeout(() => initStudentTeacherCharts(), 100);
+                    break;
+                case 'admin':
+                    document.getElementById('adminStats').classList.remove('hidden');
+                    document.getElementById('allUsersComponents').classList.remove('hidden');
+                    document.getElementById('adminComponents').classList.remove('hidden');
+                    setTimeout(() => initAdminCharts(), 100);
+                    break;
+                case 'building-supervisor':
+                    document.getElementById('adminStats').classList.remove('hidden');
+                    document.getElementById('allUsersComponents').classList.remove('hidden');
+                    document.getElementById('buildingSupervisorComponents').classList.remove('hidden');
+                    setTimeout(() => initBuildingSupervisorCharts(), 100);
+                    break;
+                case 'exams':
+                    document.getElementById('examsSection').classList.remove('hidden');
+                    document.getElementById('allUsersComponents').classList.remove('hidden');
+                    document.getElementById('examsComponents').classList.remove('hidden');
+                    fetchExamsSchedule();
+                    setTimeout(() => initExamsCharts(), 100);
+                    break;
+                default:
+                    document.getElementById('dashboardOverview').classList.remove('hidden');
+                    document.getElementById('adminStats').classList.remove('hidden');
+                    document.getElementById('allUsersComponents').classList.remove('hidden');
+            }
+
+            // Re-initialize Feather Icons after showing/hiding components
+            feather.replace();
+        }
+
+        // Error Handler
+        function showError(message) {
+            // You can use SweetAlert2 or any other notification library
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: message,
+                    confirmButtonText: 'حسناً'
+                });
+            } else {
+                console.error(message);
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('refreshEngagement')?.addEventListener('click', () => {
+            const courseId = document.getElementById('courseSelect')?.value;
+            if (courseId) {
+                fetchCourseEngagement(courseId);
+            }
+        });
+
+        document.getElementById('refreshExams')?.addEventListener('click', () => {
+            fetchExamsSchedule();
+        });
+
+        document.getElementById('courseSelect')?.addEventListener('change', (e) => {
+            const courseId = e.target.value;
+            if (courseId) {
+                fetchCourseEngagement(courseId);
+                fetchAssignments(courseId);
+            } else {
+                fetchAssignments();
+            }
+        });
+
+        document.getElementById('userRoleSelect')?.addEventListener('change', (e) => {
+            showDashboardByRole(e.target.value);
+        });
+
+        // Initialize Dashboard on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Detect user role from auth or default to admin
+            // currentUserRole = getUserRoleFromAuth(); // Implement this based on your auth system
+            showDashboardByRole(currentUserRole);
+
+            // Load initial data
+            if (['student', 'teacher'].includes(currentUserRole)) {
+                fetchDashboardOverview();
+                fetchAssignments();
+                fetchExamsSchedule();
+            }
+        });
+        
+        // Uncomment to enable Supabase auth check on page load
+        // supabase.auth.requireAuth();
+        
+        // يمكنك استخدام الوظائف التالية من window.supabase:
+        // - supabase.auth.signIn(email, password)
+        // - supabase.auth.signUp(email, password, metadata)
+        // - supabase.auth.signOut()
+        // - supabase.auth.getCurrentUser()
+        // - supabase.db.fetch('table_name', options)
+        // - supabase.db.insert('table_name', data)
+        // - supabase.db.update('table_name', updates, filters)
+        // - supabase.db.delete('table_name', filters)
+
+
+    </script>
+</body>
+
+</html>

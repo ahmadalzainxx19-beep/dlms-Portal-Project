@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة وأرشيف التقاويم - KAU</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Google Fonts (Cairo & Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="assets/styles.css">
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#005941',
+                        accent: '#C89933',
+                    },
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                        english: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+</head>
+<body class="h-full flex overflow-hidden">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar w-64 flex-col hidden lg:flex h-full fixed lg:relative z-30">
+        <div class="h-20 flex items-center justify-center border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary font-bold border-2 border-accent">KAU</div>
+                <h1 class="text-white font-bold text-lg" data-ar="بوابة الأنظمة" data-en="KAU Portal">بوابة الأنظمة</h1>
+            </div>
+    </div>
+    
+        <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+            <!-- Dashboard -->
+            <a href="index.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="grid" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</span>
+            </a>
+            
+            <!-- Buildings & Labs -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="إدارة المباني والمعامل" data-en="Buildings & Labs">إدارة المباني والمعامل</div>
+            <a href="buildings.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="home" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المباني" data-en="Buildings">إدارة المباني</span>
+            </a>
+            <a href="labs.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="monitor" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المعامل" data-en="Labs">إدارة المعامل</span>
+            </a>
+            
+            <!-- Exams -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="إدارة الاختبارات" data-en="Exams">إدارة الاختبارات</div>
+            <a href="create-exam.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group" data-page="create-exam">
+                <i data-feather="file-text" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="جدولة اختبار" data-en="Schedule Exam">جدولة اختبار</span>
+            </a>
+            
+            <!-- Academic Calendar -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="التقويم الأكاديمي" data-en="Academic Calendar">التقويم الأكاديمي</div>
+            <a href="Calender-Mnagment.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group" data-page="Calender-Mnagment">
+                <i data-feather="settings" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إعدادات الفصول الدراسية" data-en="Term Configurations">إعدادات الفصول الدراسية</span>
+            </a>
+            <a href="AcadmicCalnder.html" class="sidebar-link active flex items-center px-4 py-3 rounded-lg group" data-page="AcadmicCalnder">
+                <i data-feather="calendar" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="عرض التقويم" data-en="View Calendar">عرض التقويم</span>
+            </a>
+            <a href="view-archive-calendar.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group" data-page="view-archive-calendar">
+                <i data-feather="archive" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الأرشيف" data-en="Archive">الأرشيف</span>
+            </a>
+            
+            <!-- Users -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="إدارة المستخدمين" data-en="Users">إدارة المستخدمين</div>
+            <a href="users.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="users" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المستخدمين" data-en="User Management">إدارة المستخدمين</span>
+            </a>
+            
+            <!-- Finance -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="الإدارة المالية" data-en="Finance">الإدارة المالية</div>
+            <a href="finance-sittings.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="dollar-sign" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الإعدادات المالية" data-en="Finance Settings">الإعدادات المالية</span>
+            </a>
+            <a href="contracts-management.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="file-text" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة العقود" data-en="Contracts">إدارة العقود</span>
+            </a>
+            
+            <!-- Settings -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="الإعدادات" data-en="Settings">الإعدادات</div>
+            <a href="setting.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="settings" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الإعدادات العامة" data-en="General Settings">الإعدادات العامة</span>
+            </a>
+    </nav>
+
+        <div class="p-4 border-t border-white/10">
+            <a href="Login.html" class="w-full flex items-center justify-center gap-2 text-red-300 hover:text-red-100 transition-colors">
+                <i data-feather="log-out" class="w-4 h-4"></i>
+                <span class="text-sm font-bold" data-ar="تسجيل خروج" data-en="Logout">تسجيل خروج</span>
+            </a>
+    </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <!-- Header -->
+        <header class="sticky top-0 z-20 card-bg border-b border-custom shadow-sm">
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="flex items-center gap-4">
+                    <button id="sidebarToggle" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i data-feather="menu" class="w-5 h-5"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-xl font-bold" data-ar="إدارة وأرشيف التقاويم" data-en="Calendar Management & Archive">إدارة وأرشيف التقاويم</h2>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button class="header-icon-hover p-2 rounded-lg transition-colors" id="themeToggle">
+                        <i data-feather="moon" class="w-5 h-5"></i>
+                    </button>
+                    <button class="header-icon-hover p-2 rounded-lg transition-colors" id="langToggle">
+                        <i data-feather="globe" class="w-5 h-5"></i>
+                    </button>
+                    <div class="flex items-center gap-2 ps-4 border-s border-custom">
+                        <div class="text-end">
+                            <div class="font-semibold" data-ar="م. حسين القرني" data-en="Eng. Hussein Al-Qarni">م. حسين القرني</div>
+                            <small class="text-muted text-xs" data-ar="مدير نظام" data-en="System Admin">مدير نظام</small>
+                        </div>
+                        <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">AH</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto main-content-full-width">
+            <div class="w-full p-6">
+                <!-- جداول التقاويم -->
+                <div class="card-bg rounded-xl shadow-lg border border-custom border-t-4 border-t-yellow-500 mb-6">
+                    <div class="p-6 border-b border-custom flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i data-feather="edit" class="w-5 h-5 text-yellow-600"></i>
+                            <span class="font-bold text-lg">مسودات وتقاويم قيد المراجعة (غير معتمدة)</span>
+                        </div>
+                        <a href="CreateAcadmicCalender.html" class="btn-primary px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+                            <i data-feather="plus" class="w-4 h-4"></i>
+                            <span>إنشاء مسودة جديدة</span>
+                        </a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50 dark:bg-gray-800 border-b border-custom">
+                                <tr>
+                                    <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">الفصل الدراسي</th>
+                                    <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">البرنامج</th>
+                                    <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">تاريخ البدء</th>
+                                    <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">الحالة</th>
+                                    <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">آخر تعديل</th>
+                                    <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-custom">
+                                <tr class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
+                                    <td class="px-6 py-4 font-bold">الفصل الدراسي الثاني 1447هـ</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 rounded text-gray-700 dark:text-gray-300">بكالوريوس عن بعد</span>
+                                    </td>
+                                    <td class="px-6 py-4">15-01-2026</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 flex items-center gap-1 w-fit">
+                                            <i data-feather="edit" class="w-3 h-3"></i>
+                                            <span>مسودة</span>
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-muted">اليوم، 10:30 ص</td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2">
+                                            <button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg transition-all hover:translate-y-[-3px] hover:shadow-md bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 border border-yellow-200 dark:border-yellow-800" title="تعديل" onclick="window.location.href='create-calendar.html?edit=true'">
+                                                <i data-feather="edit" class="w-4 h-4"></i>
+                                            </button>
+                                            <button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg transition-all hover:translate-y-[-3px] hover:shadow-md bg-green-50 dark:bg-green-900/30 text-green-600 border border-green-200 dark:border-green-800" title="رفع للعميد" onclick="requestApproval('الفصل الثاني 1447هـ')">
+                                                <i data-feather="send" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card-bg rounded-xl shadow-lg border border-custom border-t-4 border-t-primary mb-6">
+                    <div class="p-6 border-b border-custom">
+                        <div class="flex items-center gap-2">
+                            <i data-feather="archive" class="w-5 h-5 text-primary"></i>
+                            <span class="font-bold text-lg">أرشيف التقاويم المعتمدة</span>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50 dark:bg-gray-800 border-b border-custom">
+                                <tr>
+                                    <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">الفصل الدراسي</th>
+                                    <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">البرنامج</th>
+                                    <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">تاريخ البدء</th>
+                                    <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">عدد الأسابيع</th>
+                                    <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">الحالة</th>
+                                    <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-custom">
+                                <tr class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
+                                    <td class="px-6 py-4 font-bold">الفصل الدراسي الأول 1447هـ</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 rounded text-gray-700 dark:text-gray-300">الكل</span>
+                                    </td>
+                                    <td class="px-6 py-4">20-08-2025</td>
+                                    <td class="px-6 py-4">15 اسبوع</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 flex items-center gap-1 w-fit">
+                                            <i data-feather="check-circle" class="w-3 h-3"></i>
+                                            <span>معتمد</span>
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2">
+                                            <button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg transition-all hover:translate-y-[-3px] hover:shadow-md bg-blue-50 dark:bg-blue-900/30 text-blue-600 border border-blue-200 dark:border-blue-800" title="استعراض">
+                                                <i data-feather="eye" class="w-4 h-4"></i>
+                                            </button>
+                                            <button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg transition-all hover:translate-y-[-3px] hover:shadow-md bg-green-50 dark:bg-green-900/30 text-green-600 border border-green-200 dark:border-green-800" title="استنساخ">
+                                                <i data-feather="copy" class="w-4 h-4"></i>
+                                            </button>
+                                            <button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg transition-all hover:translate-y-[-3px] hover:shadow-md bg-red-50 dark:bg-red-900/30 text-red-600 border border-red-200 dark:border-red-800" title="تصدير نسخة">
+                                                <i data-feather="file-text" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="p-4 border-t border-custom text-center text-muted text-sm card-bg flex-shrink-0">
+            <div id="liveDateTime" class="font-bold text-primary mb-1 font-english" style="direction: ltr;"></div>
+            <div data-ar="جميع الحقوق محفوظة © 2026 م. أحمد فلمبان | رقم الإصدار: 2.0" data-en="All rights reserved © 2026 Eng. Ahmed Filban | Version: 2.0">جميع الحقوق محفوظة © 2026 م. أحمد فلمبان | رقم الإصدار: 2.0</div>
+        </footer>
+    </div>
+</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function requestApproval(name) {
+        Swal.fire({
+            icon: 'question',
+            title: '<span>رفع للعميد للاعتماد</span>',
+            html: `
+                <div class="text-center py-4">
+                    <i data-feather="send" class="w-16 h-16 text-primary mx-auto mb-4"></i>
+                    <p class="text-lg">سيتم إرسال التقويم الخاص بـ<br><strong>${name}</strong><br>إلى سعادة العميد للاعتماد النهائي.</p>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: '<span>نعم، رفع الطلب</span>',
+            cancelButtonText: '<span>تراجع</span>',
+            confirmButtonColor: '#005941',
+            cancelButtonColor: '#6b7280',
+            didOpen: () => {
+                feather.replace();
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '<span>تم رفع الطلب</span>',
+                    text: '<span>تم رفع الطلب بنجاح.</span>',
+                    confirmButtonColor: '#005941'
+                }).then(() => {
+                    location.reload();
+                });
+            }
+        });
+    }
+    function confirmRequest() {
+        // This function is now handled by SweetAlert2 in requestApproval
+    }
+    function updateTime() {
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        document.getElementById('liveDateTime').innerText = now.toLocaleDateString('ar-SA', options);
+    }
+    setInterval(updateTime, 1000); updateTime();
+    
+    // Initialize Feather Icons
+    feather.replace();
+    
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+    const themeIcon = themeToggle?.querySelector('i');
+    
+    // Check for saved theme preference
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+        html.classList.add('dark');
+        if (themeIcon) themeIcon.setAttribute('data-feather', 'sun');
+    }
+    
+    themeToggle?.addEventListener('click', () => {
+        html.classList.toggle('dark');
+        const isDark = html.classList.contains('dark');
+        if (themeIcon) themeIcon.setAttribute('data-feather', isDark ? 'sun' : 'moon');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        feather.replace();
+    });
+    
+    // Language Toggle
+    let isArabic = true;
+    const langToggle = document.getElementById('langToggle');
+    langToggle?.addEventListener('click', () => {
+        isArabic = !isArabic;
+        document.documentElement.lang = isArabic ? 'ar' : 'en';
+        document.documentElement.dir = isArabic ? 'rtl' : 'ltr';
+        
+        // Update all text elements
+        document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+            el.textContent = isArabic ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+        });
+        feather.replace();
+    });
+    
+    // Set active page in sidebar
+    (function() {
+        const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
+        const activeLink = document.querySelector(`[data-page="${currentPage}"]`);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+        
+        // Sidebar Toggle for Mobile
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        if (sidebarToggle && sidebar) {
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('hidden');
+            });
+        }
+    })();
+</script>
+</body>
+</html>

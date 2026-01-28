@@ -1,0 +1,3187 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-ar="جدولة اختبار" data-en="Schedule Exam">جدولة اختبار - KAU</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Cairo & Inter) -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="assets/styles.css">
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#005941',
+                        accent: '#C89933',
+                    },
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                        english: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* إصلاح حقل التاريخ */
+        input[type="date"] {
+            direction: ltr;
+            text-align: right;
+        }
+
+        /* تحسينات Drag & Drop */
+        .drop-zone {
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone.drag-over {
+            border-color: #005941 !important;
+            background-color: rgba(0, 89, 65, 0.1) !important;
+        }
+
+        [draggable="true"] {
+            cursor: move;
+            user-select: none;
+        }
+
+        [draggable="true"]:hover {
+            transform: scale(1.05);
+            transition: transform 0.2s ease;
+        }
+
+        [draggable="true"]:active {
+            opacity: 0.5;
+        }
+
+        /* Wizard Steps Circles */
+        .wizard-step-circle {
+            flex: 1;
+            min-width: 80px;
+            max-width: 120px;
+        }
+
+        .step-circle {
+            width: 60px;
+            height: 60px;
+        }
+
+        @media (min-width: 768px) {
+            .step-circle {
+                width: 80px;
+                height: 80px;
+            }
+
+            .step-circle svg {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .step-circle {
+                width: 100px;
+                height: 100px;
+            }
+
+            .step-circle svg {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        .step-number {
+            font-size: 1.25rem;
+            z-index: 10;
+        }
+
+        @media (min-width: 768px) {
+            .step-number {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .step-number {
+                font-size: 1.75rem;
+            }
+        }
+
+        .step-bg {
+            stroke: #e5e7eb;
+            transition: stroke 0.3s ease;
+        }
+
+        .dark .step-bg {
+            stroke: #374151;
+        }
+
+        .step-progress-circle {
+            stroke: #005941;
+            stroke-dasharray: 175.9;
+            stroke-dashoffset: 175.9;
+            transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;
+            transform: rotate(-90deg);
+            transform-origin: center;
+        }
+
+        .wizard-step-circle.active .step-bg {
+            stroke: #005941;
+        }
+
+        .wizard-step-circle.active .step-progress-circle {
+            stroke: #005941;
+            stroke-dashoffset: 0;
+        }
+
+        .wizard-step-circle.completed .step-bg {
+            stroke: #10b981;
+        }
+
+        .wizard-step-circle.completed .step-progress-circle {
+            stroke: #10b981;
+            stroke-dashoffset: 0;
+        }
+
+        .wizard-step-circle.completed .step-number {
+            color: #10b981;
+        }
+
+        .wizard-step-circle.active .step-number {
+            color: #005941;
+        }
+
+        .wizard-step-circle:not(.active):not(.completed) .step-number {
+            color: #9ca3af;
+        }
+
+        .wizard-step-circle:hover:not(.active) {
+            transform: scale(1.1);
+        }
+
+        .wizard-step-circle.active {
+            transform: scale(1.15);
+        }
+
+        .step-title {
+            max-width: 100px;
+        }
+
+        @media (min-width: 768px) {
+            .step-title {
+                max-width: 120px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .step-title {
+                max-width: 150px;
+            }
+        }
+    </style>
+</head>
+
+<body class="h-full flex overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar w-64 flex-col hidden lg:flex h-full fixed lg:relative z-30">
+        <div class="h-20 flex items-center justify-center border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary font-bold border-2 border-accent">
+                    KAU</div>
+                <h1 class="text-white font-bold text-lg" data-ar="بوابة الأنظمة" data-en="KAU Portal">بوابة الأنظمة</h1>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+            <!-- Dashboard -->
+            <a href="index.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="grid" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</span>
+            </a>
+
+            <!-- Buildings & Labs -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="إدارة المباني والمعامل" data-en="Buildings & Labs">إدارة المباني والمعامل</div>
+            <a href="buildings.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="home" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المباني" data-en="Buildings">إدارة المباني</span>
+            </a>
+            <a href="labs.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="monitor" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المعامل" data-en="Labs">إدارة المعامل</span>
+            </a>
+
+            <!-- Exams -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="إدارة الاختبارات" data-en="Exams">إدارة الاختبارات</div>
+            <a href="create-exam.html" class="sidebar-link active flex items-center px-4 py-3 rounded-lg group"
+                data-page="create-exam">
+                <i data-feather="file-text" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="جدولة اختبار" data-en="Schedule Exam">جدولة اختبار</span>
+            </a>
+
+            <!-- Academic Calendar -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="التقويم الأكاديمي" data-en="Academic Calendar">التقويم الأكاديمي</div>
+            <a href="Calender-Mnagment.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="Calender-Mnagment">
+                <i data-feather="settings" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إعدادات الفصول الدراسية" data-en="Term Configurations">إعدادات الفصول
+                    الدراسية</span>
+            </a>
+            <a href="AcadmicCalnder.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="AcadmicCalnder">
+                <i data-feather="calendar" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="عرض التقويم" data-en="View Calendar">عرض التقويم</span>
+            </a>
+            <a href="view-archive-calendar.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="view-archive-calendar">
+                <i data-feather="archive" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الأرشيف" data-en="Archive">الأرشيف</span>
+            </a>
+
+            <!-- Users -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="إدارة المستخدمين" data-en="Users">إدارة المستخدمين</div>
+            <a href="users.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="users" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المستخدمين" data-en="User Management">إدارة المستخدمين</span>
+            </a>
+
+            <!-- Finance -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="الإدارة المالية" data-en="Finance">الإدارة المالية</div>
+            <a href="finance-sittings.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="dollar-sign" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الإعدادات المالية" data-en="Finance Settings">الإعدادات
+                    المالية</span>
+            </a>
+            <a href="contracts-management.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="file-text" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة العقود" data-en="Contracts">إدارة العقود</span>
+            </a>
+
+            <!-- Settings -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="الإعدادات"
+                data-en="Settings">الإعدادات</div>
+            <a href="setting.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="settings" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الإعدادات العامة" data-en="General Settings">الإعدادات العامة</span>
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-white/10">
+            <a href="Login.html"
+                class="w-full flex items-center justify-center gap-2 text-red-300 hover:text-red-100 transition-colors">
+                <i data-feather="log-out" class="w-4 h-4"></i>
+                <span class="text-sm font-bold" data-ar="تسجيل خروج" data-en="Logout">تسجيل خروج</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <!-- Header -->
+        <header class="sticky top-0 z-20 card-bg border-b border-custom shadow-sm">
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="flex items-center gap-4">
+                    <button id="sidebarToggle"
+                        class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i data-feather="menu" class="w-5 h-5"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-xl font-bold" data-ar="جدولة اختبار جديد" data-en="Schedule New Exam">جدولة
+                            اختبار جديد</h2>
+                        <p class="text-sm text-muted" data-ar="إنشاء جدول جديد وتعيين المعامل والمراقبين"
+                            data-en="Create a new schedule and assign labs and supervisors">إنشاء جدول جديد وتعيين
+                            المعامل والمراقبين</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button class="header-icon-hover p-2 rounded-lg transition-colors" id="themeToggle">
+                        <i data-feather="moon" class="w-5 h-5"></i>
+                    </button>
+                    <button class="header-icon-hover p-2 rounded-lg transition-colors" id="langToggle">
+                        <i data-feather="globe" class="w-5 h-5"></i>
+                    </button>
+                    <div class="flex items-center gap-2 ps-4 border-s border-custom">
+                        <div class="text-end">
+                            <div class="font-semibold" data-ar="م. حسين القرني" data-en="Eng. Hussein Al-Qarni">م. حسين
+                                القرني</div>
+                            <small class="text-muted text-xs" data-ar="مدير نظام" data-en="System Admin">مدير
+                                نظام</small>
+                        </div>
+                        <div
+                            class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">
+                            AH</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto main-content-full-width">
+            <div class="w-full p-6">
+
+                <!-- Wizard Header -->
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold" data-ar="جدولة اختبار جديد" data-en="Schedule New Exam">جدولة
+                            اختبار جديد</h3>
+                        <a href="index.html"
+                            class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2">
+                            <i data-feather="x" class="w-4 h-4"></i>
+                            <span data-ar="إلغاء" data-en="Cancel">إلغاء</span>
+                        </a>
+                    </div>
+
+                    <!-- Wizard Steps Display -->
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between flex-wrap gap-4 md:gap-2" id="wizardStepsDisplay">
+                            <!-- Step 1 -->
+                            <div class="wizard-step-circle flex flex-col items-center cursor-pointer transition-all duration-300"
+                                data-step="1" onclick="goToStep(1)">
+                                <div class="step-circle relative flex items-center justify-center mb-2"
+                                    id="stepCircle1">
+                                    <div class="step-number absolute z-10 font-bold text-white">1</div>
+                                    <svg class="step-progress" width="60" height="60" viewBox="0 0 60 60">
+                                        <circle class="step-bg" cx="30" cy="30" r="28" fill="none" stroke="#e5e7eb"
+                                            stroke-width="3" />
+                                        <circle class="step-progress-circle" cx="30" cy="30" r="28" fill="none"
+                                            stroke="#005941" stroke-width="3" stroke-dasharray="175.9"
+                                            stroke-dashoffset="175.9" transform="rotate(-90 30 30)" />
+                                    </svg>
+                                </div>
+                                <div class="step-title text-center">
+                                    <p class="text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300"
+                                        data-ar="بيانات المقرر" data-en="Course Data">بيانات المقرر</p>
+                                </div>
+                            </div>
+
+                            <!-- Connector Line -->
+                            <div class="hidden md:flex flex-1 h-0.5 bg-gray-200 dark:bg-gray-700 mx-2"></div>
+
+                            <!-- Step 2 -->
+                            <div class="wizard-step-circle flex flex-col items-center cursor-pointer transition-all duration-300"
+                                data-step="2" onclick="goToStep(2)">
+                                <div class="step-circle relative flex items-center justify-center mb-2"
+                                    id="stepCircle2">
+                                    <div class="step-number absolute z-10 font-bold text-white">2</div>
+                                    <svg class="step-progress" width="60" height="60" viewBox="0 0 60 60">
+                                        <circle class="step-bg" cx="30" cy="30" r="28" fill="none" stroke="#e5e7eb"
+                                            stroke-width="3" />
+                                        <circle class="step-progress-circle" cx="30" cy="30" r="28" fill="none"
+                                            stroke="#005941" stroke-width="3" stroke-dasharray="175.9"
+                                            stroke-dashoffset="175.9" transform="rotate(-90 30 30)" />
+                                    </svg>
+                                </div>
+                                <div class="step-title text-center">
+                                    <p class="text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300"
+                                        data-ar="اختيار الاختبار" data-en="Select Exam">اختيار الاختبار</p>
+                                </div>
+                            </div>
+
+                            <!-- Connector Line -->
+                            <div class="hidden md:flex flex-1 h-0.5 bg-gray-200 dark:bg-gray-700 mx-2"></div>
+
+                            <!-- Step 3 -->
+                            <div class="wizard-step-circle flex flex-col items-center cursor-pointer transition-all duration-300"
+                                data-step="3" onclick="goToStep(3)">
+                                <div class="step-circle relative flex items-center justify-center mb-2"
+                                    id="stepCircle3">
+                                    <div class="step-number absolute z-10 font-bold text-white">3</div>
+                                    <svg class="step-progress" width="60" height="60" viewBox="0 0 60 60">
+                                        <circle class="step-bg" cx="30" cy="30" r="28" fill="none" stroke="#e5e7eb"
+                                            stroke-width="3" />
+                                        <circle class="step-progress-circle" cx="30" cy="30" r="28" fill="none"
+                                            stroke="#005941" stroke-width="3" stroke-dasharray="175.9"
+                                            stroke-dashoffset="175.9" transform="rotate(-90 30 30)" />
+                                    </svg>
+                                </div>
+                                <div class="step-title text-center">
+                                    <p class="text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300"
+                                        data-ar="الفئة المستهدفة" data-en="Target Category">الفئة المستهدفة</p>
+                                </div>
+                            </div>
+
+                            <!-- Connector Line -->
+                            <div class="hidden md:flex flex-1 h-0.5 bg-gray-200 dark:bg-gray-700 mx-2"></div>
+
+                            <!-- Step 4 -->
+                            <div class="wizard-step-circle flex flex-col items-center cursor-pointer transition-all duration-300"
+                                data-step="4" onclick="goToStep(4)">
+                                <div class="step-circle relative flex items-center justify-center mb-2"
+                                    id="stepCircle4">
+                                    <div class="step-number absolute z-10 font-bold text-white">4</div>
+                                    <svg class="step-progress" width="60" height="60" viewBox="0 0 60 60">
+                                        <circle class="step-bg" cx="30" cy="30" r="28" fill="none" stroke="#e5e7eb"
+                                            stroke-width="3" />
+                                        <circle class="step-progress-circle" cx="30" cy="30" r="28" fill="none"
+                                            stroke="#005941" stroke-width="3" stroke-dasharray="175.9"
+                                            stroke-dashoffset="175.9" transform="rotate(-90 30 30)" />
+                                    </svg>
+                                </div>
+                                <div class="step-title text-center">
+                                    <p class="text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300"
+                                        data-ar="إعدادات الموعد" data-en="Appointment">إعدادات الموعد</p>
+                                </div>
+                            </div>
+
+                            <!-- Connector Line -->
+                            <div class="hidden md:flex flex-1 h-0.5 bg-gray-200 dark:bg-gray-700 mx-2"></div>
+
+                            <!-- Step 5 -->
+                            <div class="wizard-step-circle flex flex-col items-center cursor-pointer transition-all duration-300"
+                                data-step="5" onclick="goToStep(5)">
+                                <div class="step-circle relative flex items-center justify-center mb-2"
+                                    id="stepCircle5">
+                                    <div class="step-number absolute z-10 font-bold text-white">5</div>
+                                    <svg class="step-progress" width="60" height="60" viewBox="0 0 60 60">
+                                        <circle class="step-bg" cx="30" cy="30" r="28" fill="none" stroke="#e5e7eb"
+                                            stroke-width="3" />
+                                        <circle class="step-progress-circle" cx="30" cy="30" r="28" fill="none"
+                                            stroke="#005941" stroke-width="3" stroke-dasharray="175.9"
+                                            stroke-dashoffset="175.9" transform="rotate(-90 30 30)" />
+                                    </svg>
+                                </div>
+                                <div class="step-title text-center">
+                                    <p class="text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300"
+                                        data-ar="حجز المعامل" data-en="Lab Booking">حجز المعامل</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Wizard Steps (Left Column) -->
+                    <div class="lg:col-span-2">
+                        <form id="examWizardForm">
+
+                            <!-- Step 1: بيانات المقرر -->
+                            <div class="wizard-step card-bg rounded-xl shadow-lg border border-custom mb-6"
+                                data-step="1">
+                                <div class="px-6 py-4 border-b border-custom flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <i data-feather="book" class="w-5 h-5 text-primary"></i>
+                                        <h3 class="font-bold text-lg" data-ar="1. بيانات المقرر والاختبار"
+                                            data-en="1. Course and Exam Data">1. بيانات المقرر والاختبار</h3>
+                                    </div>
+                                    <div id="step1Validation" class="flex items-center gap-2 text-sm hidden">
+                                        <i data-feather="check-circle" class="w-5 h-5 text-green-600"></i>
+                                        <span class="text-green-600 font-semibold" data-ar="✓ تم التحقق"
+                                            data-en="✓ Verified">✓ تم التحقق</span>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                                        <div class="md:col-span-4">
+                                            <label
+                                                class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                                                <span data-ar="المقرر الدراسي" data-en="Course">المقرر الدراسي</span>
+                                                <span class="text-red-500 mr-1">*</span>
+                                            </label>
+                                            <select
+                                                class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                id="courseSelect" onchange="loadSections()">
+                                                <option selected disabled value="" data-ar="اختر المقرر لعرض الشعب..."
+                                                    data-en="Select course to view sections...">اختر المقرر لعرض
+                                                    الشعب...</option>
+                                                <option value="CPCS-202">CPCS-202: مقدمة في البرمجة</option>
+                                                <option value="CPCS-203">CPCS-203: برمجة (2)</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="md:col-span-8">
+                                            <label
+                                                class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300"
+                                                data-ar="منصة الاختبار" data-en="Exam Platform">منصة الاختبار</label>
+                                            <select
+                                                class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                id="platformSelect" onchange="loadExamsFromPlatform(this.value)">
+                                                <option value="" selected disabled data-ar="اختر المنصة..."
+                                                    data-en="Select platform...">اختر المنصة...</option>
+                                                <option value="Questionmark" data-ar="كويسشن مارك (Questionmark)"
+                                                    data-en="Questionmark">كويسشن مارك (Questionmark)</option>
+                                                <option value="Blackboard" data-ar="بلاكبورد (Blackboard)"
+                                                    data-en="Blackboard">بلاكبورد (Blackboard)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 2: الاختبارات المتاحة من المنصة -->
+                            <div class="wizard-step card-bg rounded-xl shadow-lg border border-custom mb-6 hidden"
+                                data-step="2" id="availableExamsCard">
+                                <div class="px-6 py-4 border-b border-custom flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <i data-feather="list" class="w-5 h-5 text-blue-600"></i>
+                                        <h3 class="font-bold text-lg" data-ar="2. الاختبارات المتاحة من المنصة"
+                                            data-en="2. Available Exams from Platform">2. الاختبارات المتاحة من المنصة
+                                        </h3>
+                                    </div>
+                                    <div id="step2Validation" class="flex items-center gap-2 text-sm hidden">
+                                        <i data-feather="check-circle" class="w-5 h-5 text-green-600"></i>
+                                        <span class="text-green-600 font-semibold" data-ar="✓ تم التحقق"
+                                            data-en="✓ Verified">✓ تم التحقق</span>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div id="examsLoadingState" class="text-center py-8 hidden">
+                                        <div
+                                            class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-3">
+                                        </div>
+                                        <p class="text-muted" data-ar="جاري تحميل الاختبارات..."
+                                            data-en="Loading exams...">جاري تحميل الاختبارات...</p>
+                                    </div>
+                                    <div id="examsEmptyState" class="text-center py-8 hidden">
+                                        <i data-feather="inbox" class="w-12 h-12 text-gray-400 mx-auto mb-3"></i>
+                                        <p class="text-muted"
+                                            data-ar="لا توجد اختبارات متاحة. يرجى اختيار منصة الاختبار من الأعلى."
+                                            data-en="No exams available. Please select an exam platform from above.">لا
+                                            توجد اختبارات متاحة. يرجى اختيار منصة الاختبار من الأعلى.</p>
+                                    </div>
+                                    <div id="examsListContainer">
+                                        <div class="mb-4">
+                                            <label
+                                                class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300"
+                                                data-ar="اختر الاختبار" data-en="Select Exam">اختر الاختبار</label>
+                                            <div class="border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-white dark:bg-gray-800 max-h-[300px] overflow-y-auto"
+                                                id="examsList">
+                                                <div class="text-center text-muted p-4"
+                                                    data-ar="اختر منصة الاختبار من البطاقة السابقة لعرض الاختبارات المتاحة"
+                                                    data-en="Select exam platform from the previous card to view available exams">
+                                                    اختر منصة الاختبار من البطاقة السابقة لعرض الاختبارات المتاحة</div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 flex items-start gap-3">
+                                            <i data-feather="info"
+                                                class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"></i>
+                                            <div>
+                                                <p class="text-sm text-blue-800 dark:text-blue-200 mb-0"
+                                                    data-ar="تم جلب الاختبارات من المنصة المختارة. اختر الاختبار الذي تريد جدولته."
+                                                    data-en="Exams have been fetched from the selected platform. Select the exam you want to schedule.">
+                                                    تم جلب الاختبارات من المنصة المختارة. اختر الاختبار الذي تريد
+                                                    جدولته.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: تحديد الطلاب -->
+                            <div class="wizard-step card-bg rounded-xl shadow-lg border border-custom mb-6 hidden"
+                                data-step="3">
+                                <div class="px-6 py-4 border-b border-custom flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <i data-feather="users" class="w-5 h-5 text-yellow-600"></i>
+                                        <h3 class="font-bold text-lg" data-ar="3. الفئة المستهدفة (الطلاب والشعب)"
+                                            data-en="3. Target Category (Students and Sections)">3. الفئة المستهدفة
+                                            (الطلاب والشعب)</h3>
+                                    </div>
+                                    <div id="step3Validation" class="flex items-center gap-2 text-sm hidden">
+                                        <i data-feather="check-circle" class="w-5 h-5 text-green-600"></i>
+                                        <span class="text-green-600 font-semibold" data-ar="✓ تم التحقق"
+                                            data-en="✓ Verified">✓ تم التحقق</span>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="mb-6 flex gap-4">
+                                        <div class="flex items-center">
+                                            <input class="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                                                type="radio" name="targetMode" id="modeSections" checked
+                                                onclick="toggleTargetMode('sections')">
+                                            <label
+                                                class="ms-2 font-semibold text-gray-700 dark:text-gray-300 cursor-pointer"
+                                                for="modeSections" data-ar="اختيار شعب دراسية"
+                                                data-en="Select Study Sections">اختيار شعب دراسية</label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input class="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                                                type="radio" name="targetMode" id="modeIDs"
+                                                onclick="toggleTargetMode('ids')">
+                                            <label
+                                                class="ms-2 font-semibold text-gray-700 dark:text-gray-300 cursor-pointer"
+                                                for="modeIDs" data-ar="اختيار طلاب محددين"
+                                                data-en="Select Specific Students">اختيار طلاب محددين</label>
+                                        </div>
+                                    </div>
+
+                                    <!-- وضع الشعب -->
+                                    <div id="sectionsContainer">
+                                        <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg py-3 px-4 text-sm text-muted flex items-center gap-2"
+                                            id="courseHint">
+                                            <i data-feather="info" class="w-4 h-4"></i>
+                                            <span data-ar="اختر المقرر من الأعلى لعرض الشعب المتاحة هنا."
+                                                data-en="Select a course from above to display available sections here.">اختر
+                                                المقرر من الأعلى لعرض الشعب المتاحة هنا.</span>
+                                        </div>
+                                        <div id="sectionsList" class="hidden mt-4">
+                                            <div class="flex justify-between items-center mb-3">
+                                                <label
+                                                    class="block text-sm font-semibold text-gray-700 dark:text-gray-300"
+                                                    data-ar="الشعب المتاحة:" data-en="Available Sections:">الشعب
+                                                    المتاحة:</label>
+                                                <div class="flex items-center">
+                                                    <input
+                                                        class="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                                                        type="checkbox" id="selectAllSections"
+                                                        onchange="toggleAllSections()">
+                                                    <label class="ms-2 text-sm text-muted cursor-pointer"
+                                                        for="selectAllSections" data-ar="تحديد الكل"
+                                                        data-en="Select All">تحديد الكل</label>
+                                                </div>
+                                            </div>
+                                            <div class="border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 max-h-[200px] overflow-y-auto"
+                                                id="sectionsDynamicList"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- وضع الطلاب المحدد (الجديد الذكي مع Datalist) -->
+                                    <div id="idsContainer" class="hidden">
+                                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                                            <div class="md:col-span-8">
+                                                <label
+                                                    class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300"
+                                                    data-ar="بحث برقم الطالب أو الاسم"
+                                                    data-en="Search by Student ID or Name">بحث برقم الطالب أو
+                                                    الاسم</label>
+                                                <div class="flex gap-2">
+                                                    <div class="flex-1 flex">
+                                                        <input type="text"
+                                                            class="flex-1 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                            id="studentIdInput"
+                                                            placeholder="أدخل الرقم الجامعي (مثال: 2137118)..."
+                                                            list="studentsList" oninput="checkStudentId()">
+                                                        <datalist id="studentsList">
+                                                            <!-- سيتم تعبئتها من البيانات الوهمية -->
+                                                        </datalist>
+                                                        <button
+                                                            class="px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors"
+                                                            type="button" onclick="checkStudentId()">
+                                                            <i data-feather="search" class="w-4 h-4"></i>
+                                                        </button>
+                                                    </div>
+                                                    <button
+                                                        class="px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors whitespace-nowrap flex items-center gap-2"
+                                                        type="button" onclick="addStudentToList()">
+                                                        <i data-feather="plus" class="w-4 h-4"></i>
+                                                        <span data-ar="إضافة للقائمة" data-en="Add to List">إضافة
+                                                            للقائمة</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- بطاقة الطالب الموجود (تظهر عند العثور عليه) -->
+                                        <div id="studentFoundCard"
+                                            class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mt-4 hidden">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <h6
+                                                        class="font-bold text-green-700 dark:text-green-300 mb-2 flex items-center gap-2">
+                                                        <i data-feather="user-check" class="w-4 h-4"></i>
+                                                        <span data-ar="تم تحديد الطالب:" data-en="Student Found:">تم
+                                                            تحديد الطالب:</span>
+                                                    </h6>
+                                                    <div class="text-sm text-gray-600 dark:text-gray-400"
+                                                        id="foundStudentDetails">
+                                                        <!-- تفاصيل الطالب ستظهر هنا -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- جدول الطلاب المضافين -->
+                                        <div
+                                            class="border border-gray-300 dark:border-gray-600 rounded-lg mt-4 max-h-[200px] overflow-y-auto bg-white dark:bg-gray-800">
+                                            <table class="w-full text-sm">
+                                                <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0">
+                                                    <tr>
+                                                        <th class="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300"
+                                                            data-ar="الرقم الجامعي" data-en="Student ID">الرقم الجامعي
+                                                        </th>
+                                                        <th class="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300"
+                                                            data-ar="الاسم" data-en="Name">الاسم</th>
+                                                        <th class="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300"
+                                                            data-ar="المادة" data-en="Course">المادة</th>
+                                                        <th class="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300"
+                                                            data-ar="الشعبة" data-en="Section">الشعبة</th>
+                                                        <th class="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300"
+                                                            data-ar="رقم الهوية" data-en="ID Number">رقم الهوية</th>
+                                                        <th class="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300"
+                                                            data-ar="الجوال" data-en="Mobile">الجوال</th>
+                                                        <th class="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300"
+                                                            data-ar="البريد الإلكتروني" data-en="Email">البريد
+                                                            الإلكتروني</th>
+                                                        <th class="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300"
+                                                            data-ar="إجراء" data-en="Action">إجراء</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="addedStudentsTableBody"
+                                                    class="divide-y divide-gray-200 dark:divide-gray-700"></tbody>
+                                            </table>
+                                            <div id="noStudentsMsg" class="text-center p-4 text-muted text-sm"
+                                                data-ar="لم يتم إضافة أي طالب بعد." data-en="No students added yet.">لم
+                                                يتم إضافة أي طالب بعد.</div>
+                                        </div>
+
+                                        <div class="mt-4 text-end">
+                                            <button type="button"
+                                                class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors flex items-center gap-2 ms-auto"
+                                                onclick="completeStudentSelection()">
+                                                <i data-feather="check-circle" class="w-4 h-4"></i>
+                                                <span data-ar="اكتمال إضافة الطلاب"
+                                                    data-en="Complete Student Addition">اكتمال إضافة الطلاب</span>
+                                            </button>
+                                        </div>
+
+                                    </div>
+
+                                    <!-- عداد الإجمالي -->
+                                    <div
+                                        class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 flex justify-between items-center mt-4">
+                                        <h6
+                                            class="mb-0 font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                                            <i data-feather="calculator" class="w-5 h-5"></i>
+                                            <span data-ar="إجمالي الطلاب المستهدفين:"
+                                                data-en="Total Target Students:">إجمالي الطلاب المستهدفين:</span>
+                                        </h6>
+                                        <div class="flex items-center gap-2">
+                                            <input type="text" id="totalStudentCount"
+                                                class="w-24 px-3 py-2 text-center font-bold text-green-600 border-2 border-green-600 rounded-lg bg-white dark:bg-gray-700"
+                                                value="0" readonly>
+                                            <span class="font-bold text-muted" data-ar="طالب"
+                                                data-en="students">طالب</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 4: إعدادات الموعد -->
+                            <div class="wizard-step card-bg rounded-xl shadow-lg border border-custom mb-6 hidden"
+                                data-step="4" id="locationCard">
+                                <div class="px-6 py-4 border-b border-custom flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <i data-feather="calendar" class="w-5 h-5 text-green-600"></i>
+                                        <h3 class="font-bold text-lg" data-ar="4. إعدادات الموعد"
+                                            data-en="4. Appointment Settings">4. إعدادات الموعد</h3>
+                                    </div>
+                                    <div id="step4Validation" class="flex items-center gap-2 text-sm hidden">
+                                        <i data-feather="check-circle" class="w-5 h-5 text-green-600"></i>
+                                        <span class="text-green-600 font-semibold" data-ar="✓ تم التحقق"
+                                            data-en="✓ Verified">✓ تم التحقق</span>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300"
+                                                data-ar="تاريخ الاختبار" data-en="Exam Date">
+                                                <span data-ar="تاريخ الاختبار" data-en="Exam Date">تاريخ الاختبار</span>
+                                                <span class="text-red-500 mr-1">*</span>
+                                            </label>
+                                            <input type="date"
+                                                class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                id="examDate" onchange="updateSummary()">
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300"
+                                                data-ar="وقت البدء" data-en="Start Time">
+                                                <span data-ar="وقت البدء" data-en="Start Time">وقت البدء</span>
+                                                <span class="text-red-500 mr-1">*</span>
+                                            </label>
+                                            <input type="time"
+                                                class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                id="startTime" value="08:00" onchange="updateSummary()">
+                                        </div>
+                                    </div>
+
+                                    <!-- عرض مدة الاختبار المختار -->
+                                    <div id="selectedExamDurationDisplay"
+                                        class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6 hidden">
+                                        <div class="flex items-center gap-3">
+                                            <i data-feather="clock" class="w-5 h-5 text-blue-600 flex-shrink-0"></i>
+                                            <div>
+                                                <strong class="text-blue-800 dark:text-blue-200"
+                                                    data-ar="مدة الاختبار المختار:"
+                                                    data-en="Selected Exam Duration:">مدة الاختبار المختار:</strong>
+                                                <span id="examDurationValue"
+                                                    class="ms-2 font-bold text-blue-900 dark:text-blue-100">-</span>
+                                                <span class="text-blue-800 dark:text-blue-200" data-ar="دقيقة"
+                                                    data-en="minutes">دقيقة</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- قسم توزيع الفترات -->
+                                    <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6">
+                                        <h6 class="font-bold mb-4 flex items-center gap-2 text-gray-900 dark:text-gray-100"
+                                            data-ar="توزيع الفترات" data-en="Period Distribution">
+                                            <i data-feather="calendar" class="w-5 h-5 text-primary"></i>
+                                            <span data-ar="توزيع الفترات" data-en="Period Distribution">توزيع
+                                                الفترات</span>
+                                        </h6>
+
+                                        <div class="mb-4">
+                                            <label
+                                                class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300"
+                                                data-ar="هل ترغب بتوزيع فترات؟"
+                                                data-en="Do you want to distribute periods?">
+                                                <span data-ar="هل ترغب بتوزيع فترات؟"
+                                                    data-en="Do you want to distribute periods?">هل ترغب بتوزيع
+                                                    فترات؟</span>
+                                                <span class="text-red-500 mr-1">*</span>
+                                            </label>
+                                            <div class="flex gap-4 mt-2">
+                                                <div class="flex items-center">
+                                                    <input
+                                                        class="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                                                        type="radio" name="distributePeriods" id="distributePeriodsYes"
+                                                        value="yes" onchange="togglePeriodDistribution(true)">
+                                                    <label
+                                                        class="ms-2 font-semibold text-gray-700 dark:text-gray-300 cursor-pointer"
+                                                        for="distributePeriodsYes" data-ar="نعم"
+                                                        data-en="Yes">نعم</label>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <input
+                                                        class="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                                                        type="radio" name="distributePeriods" id="distributePeriodsNo"
+                                                        value="no" checked onchange="togglePeriodDistribution(false)">
+                                                    <label
+                                                        class="ms-2 font-semibold text-gray-700 dark:text-gray-300 cursor-pointer"
+                                                        for="distributePeriodsNo" data-ar="لا" data-en="No">لا</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- حقول توزيع الفترات (تظهر فقط عند اختيار نعم) -->
+                                        <div id="periodDistributionFields" class="hidden">
+                                            <div class="grid grid-cols-1 md:grid-cols-6 gap-4 mb-6">
+                                                <div class="md:col-span-3">
+                                                    <label
+                                                        class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300"
+                                                        data-ar="عدد الفترات المطلوبة"
+                                                        data-en="Number of Periods Required">
+                                                        <span data-ar="عدد الفترات المطلوبة"
+                                                            data-en="Number of Periods Required">عدد الفترات
+                                                            المطلوبة</span>
+                                                        <span class="text-red-500 mr-1">*</span>
+                                                    </label>
+                                                    <input type="number"
+                                                        class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                        id="numberOfPeriods" min="2" max="10" value="2"
+                                                        onchange="updatePeriodDistribution(); updateSummary();">
+                                                    <div class="text-xs text-muted mt-1"
+                                                        data-ar="أدخل عدد الفترات (من 2 إلى 10)"
+                                                        data-en="Enter number of periods (2 to 10)">أدخل عدد الفترات (من
+                                                        2 إلى 10)</div>
+                                                </div>
+                                            </div>
+
+                                            <!-- قائمة الشعب المختارة -->
+                                            <div class="mb-6">
+                                                <label
+                                                    class="block text-sm font-bold mb-2 text-gray-700 dark:text-gray-300"
+                                                    data-ar="الشعب المختارة من البطاقة السابقة:"
+                                                    data-en="Selected Sections from Previous Card:">الشعب المختارة من
+                                                    البطاقة السابقة:</label>
+                                                <div id="selectedSectionsList"
+                                                    class="border border-gray-300 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-800 max-h-[150px] overflow-y-auto">
+                                                    <p class="text-muted text-sm mb-0"
+                                                        data-ar="لم يتم اختيار أي شعب بعد. يرجى اختيار الشعب من بطاقة 'الفئة المستهدفة' أولاً."
+                                                        data-en="No sections selected yet. Please select sections from 'Target Category' card first.">
+                                                        لم يتم اختيار أي شعب بعد. يرجى اختيار الشعب من بطاقة 'الفئة
+                                                        المستهدفة' أولاً.</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- توزيع الشعب على الفترات - تصميم محسّن -->
+                                            <div id="periodsDistributionContainer" class="hidden">
+                                                <div class="mb-4 flex items-center justify-between">
+                                                    <label
+                                                        class="block text-sm font-bold text-gray-700 dark:text-gray-300"
+                                                        data-ar="توزيع الشعب على الفترات:"
+                                                        data-en="Distribute Sections Across Periods:">توزيع الشعب على
+                                                        الفترات:</label>
+                                                    <div id="periodDistributionStatus"
+                                                        class="flex items-center gap-2 text-sm">
+                                                        <span class="text-muted" data-ar="الحالة:"
+                                                            data-en="Status:">الحالة:</span>
+                                                        <span id="periodDistributionStatusText"
+                                                            class="font-semibold text-yellow-600" data-ar="قيد التوزيع"
+                                                            data-en="In Progress">قيد التوزيع</span>
+                                                    </div>
+                                                </div>
+
+                                                <!-- عرض الشعب غير الموزعة -->
+                                                <div class="mb-4">
+                                                    <label
+                                                        class="block text-xs font-semibold mb-2 text-gray-600 dark:text-gray-400"
+                                                        data-ar="الشعب المتاحة للتوزيع:"
+                                                        data-en="Available Sections for Distribution:">الشعب المتاحة
+                                                        للتوزيع:</label>
+                                                    <div id="unassignedSections"
+                                                        class="flex flex-wrap gap-2 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg min-h-[60px]">
+                                                        <!-- سيتم تعبئتها ديناميكياً -->
+                                                    </div>
+                                                </div>
+
+                                                <!-- قائمة الفترات -->
+                                                <div id="periodsList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <!-- سيتم إنشاء الفترات هنا ديناميكياً -->
+                                                </div>
+
+                                                <!-- رسالة التحقق -->
+                                                <div id="periodDistributionValidation" class="hidden mt-4">
+                                                    <div
+                                                        class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 flex items-start gap-2">
+                                                        <i data-feather="alert-circle"
+                                                            class="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5"></i>
+                                                        <small class="text-red-800 dark:text-red-200"
+                                                            id="periodDistributionValidationMsg"></small>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 mt-4 flex items-start gap-2">
+                                                    <i data-feather="info"
+                                                        class="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5"></i>
+                                                    <small class="text-blue-800 dark:text-blue-200"
+                                                        data-ar="💡 نصيحة: انقر على الشعبة لسحبها وإفلاتها في الفترة المطلوبة، أو استخدم الأزرار السريعة."
+                                                        data-en="💡 Tip: Click on a section to drag and drop it into the desired period, or use the quick buttons.">💡
+                                                        نصيحة: انقر على الشعبة لسحبها وإفلاتها في الفترة المطلوبة، أو
+                                                        استخدم الأزرار السريعة.</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- قسم الترصيد التلقائي -->
+                                    <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6">
+                                        <h6 class="font-bold mb-4 flex items-center gap-2 text-gray-900 dark:text-gray-100"
+                                            data-ar="الترصيد التلقائي" data-en="Auto Grading">
+                                            <i data-feather="calculator" class="w-5 h-5 text-primary"></i>
+                                            <span data-ar="الترصيد التلقائي" data-en="Auto Grading">الترصيد
+                                                التلقائي</span>
+                                        </h6>
+
+                                        <div class="mb-4">
+                                            <label
+                                                class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300"
+                                                data-ar="هل ترغب بتفعيل الترصيد التلقائي؟"
+                                                data-en="Do you want to enable auto grading?">
+                                                <span data-ar="هل ترغب بتفعيل الترصيد التلقائي؟"
+                                                    data-en="Do you want to enable auto grading?">هل ترغب بتفعيل الترصيد
+                                                    التلقائي؟</span>
+                                                <span class="text-red-500 mr-1">*</span>
+                                            </label>
+                                            <div class="flex gap-4 mt-2">
+                                                <div class="flex items-center">
+                                                    <input
+                                                        class="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                                                        type="radio" name="autoGrading" id="autoGradingYes" value="yes"
+                                                        onchange="toggleAutoGradingFields(true)">
+                                                    <label
+                                                        class="ms-2 font-semibold text-gray-700 dark:text-gray-300 cursor-pointer"
+                                                        for="autoGradingYes" data-ar="نعم" data-en="Yes">نعم</label>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <input
+                                                        class="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                                                        type="radio" name="autoGrading" id="autoGradingNo" value="no"
+                                                        checked onchange="toggleAutoGradingFields(false)">
+                                                    <label
+                                                        class="ms-2 font-semibold text-gray-700 dark:text-gray-300 cursor-pointer"
+                                                        for="autoGradingNo" data-ar="لا" data-en="No">لا</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- حقول الترصيد التلقائي (تظهر فقط عند اختيار نعم) -->
+                                        <div id="autoGradingFields" class="hidden">
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label
+                                                        class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300"
+                                                        data-ar="تصنيف الاختبار" data-en="Exam Classification">
+                                                        <span data-ar="تصنيف الاختبار"
+                                                            data-en="Exam Classification">تصنيف الاختبار</span>
+                                                        <span class="text-red-500 mr-1">*</span>
+                                                    </label>
+                                                    <select
+                                                        class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                        id="examClassSelect"
+                                                        onchange="checkExamClass(); updateSummary();">
+                                                        <option selected disabled value="" data-ar="اختر..."
+                                                            data-en="Select...">اختر...</option>
+                                                        <option value="midterm1" data-ar="اختبار دوري أول"
+                                                            data-en="First Midterm">اختبار دوري أول</option>
+                                                        <option value="midterm2" data-ar="اختبار دوري ثاني"
+                                                            data-en="Second Midterm">اختبار دوري ثاني</option>
+                                                        <option value="final" data-ar="اختبار نهائي"
+                                                            data-en="Final Exam">اختبار نهائي</option>
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <label
+                                                        class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300"
+                                                        data-ar="الدرجة المطلوبة للترصيد"
+                                                        data-en="Required Grade for Auto Grading">
+                                                        <span data-ar="الدرجة المطلوبة للترصيد"
+                                                            data-en="Required Grade for Auto Grading">الدرجة المطلوبة
+                                                            للترصيد</span>
+                                                        <span class="text-red-500 mr-1">*</span>
+                                                    </label>
+                                                    <input type="number"
+                                                        class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                        id="requiredGrade" min="0" max="100" placeholder="مثال: 60"
+                                                        data-ar="مثال: 60" data-en="Example: 60"
+                                                        onchange="updateSummary()">
+                                                    <div class="text-xs text-muted mt-1"
+                                                        data-ar="أدخل الدرجة المطلوبة (من 0 إلى 100)"
+                                                        data-en="Enter required grade (0 to 100)">أدخل الدرجة المطلوبة
+                                                        (من 0 إلى 100)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 5: حجز المعامل -->
+                            <div class="wizard-step card-bg rounded-xl shadow-lg border border-custom mb-6 hidden"
+                                data-step="5" id="labsBookingCard">
+                                <div class="px-6 py-4 border-b border-custom flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <i data-feather="building" class="w-5 h-5 text-blue-600"></i>
+                                        <h3 class="font-bold text-lg" data-ar="5. حجز المباني والمعامل"
+                                            data-en="5. Building & Lab Booking">5. حجز المباني والمعامل</h3>
+                                    </div>
+                                    <div id="step5Validation" class="flex items-center gap-2 text-sm hidden">
+                                        <i data-feather="check-circle" class="w-5 h-5 text-green-600"></i>
+                                        <span class="text-green-600 font-semibold" data-ar="✓ تم التحقق"
+                                            data-en="✓ Verified">✓ تم التحقق</span>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <div
+                                        class="alert bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6 flex items-start gap-3">
+                                        <i data-feather="info" class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0"></i>
+                                        <div>
+                                            <h6 class="font-bold text-blue-800 dark:text-blue-200 mb-1"
+                                                data-ar="آلية الحجز" data-en="Booking Mechanism">آلية الحجز</h6>
+                                            <p class="text-sm text-blue-700 dark:text-blue-300 mb-0"
+                                                data-ar="قم باختيار المبنى المناسب، وسيتم حجز المعامل المتوفرة فيه تلقائياً بناءً على الطاقة الاستيعابية."
+                                                data-en="Select the appropriate building, and available labs will be booked automatically based on capacity.">
+                                                قم باختيار المبنى المناسب، وسيتم حجز المعامل المتوفرة فيه تلقائياً بناءً
+                                                على الطاقة الاستيعابية.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-6">
+                                        <h6 class="font-bold mb-4 text-gray-700 dark:text-gray-300"
+                                            data-ar="المباني المتاحة للحجز" data-en="Available Buildings for Booking">
+                                            المباني المتاحة للحجز</h6>
+
+                                        <div
+                                            class="overflow-x-auto border border-gray-300 dark:border-gray-600 rounded-lg">
+                                            <table class="w-full text-sm text-right">
+                                                <thead
+                                                    class="bg-gray-50 dark:bg-gray-800 border-b border-gray-300 dark:border-gray-600">
+                                                    <tr>
+                                                        <th class="px-6 py-3 font-semibold text-gray-700 dark:text-gray-300 w-16"
+                                                            data-ar="تحديد" data-en="Select">تحديد</th>
+                                                        <th class="px-6 py-3 font-semibold text-gray-700 dark:text-gray-300"
+                                                            data-ar="اسم المبنى" data-en="Building Name">اسم المبنى</th>
+                                                        <th class="px-6 py-3 font-semibold text-gray-700 dark:text-gray-300"
+                                                            data-ar="الطاقة الاستيعابية" data-en="Capacity">الطاقة
+                                                            الاستيعابية</th>
+                                                        <th class="px-6 py-3 font-semibold text-gray-700 dark:text-gray-300"
+                                                            data-ar="عدد المعامل" data-en="Labs Count">عدد المعامل</th>
+                                                        <th class="px-6 py-3 font-semibold text-gray-700 dark:text-gray-300"
+                                                            data-ar="الحالة" data-en="Status">الحالة</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="buildingsTableBody"
+                                                    class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+                                                    <!-- سيتم تعبئة البيانات بواسطة JavaScript -->
+                                                    <!-- G Building -->
+                                                    <tr
+                                                        class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                                        <td class="px-6 py-4">
+                                                            <input type="checkbox"
+                                                                class="w-5 h-5 text-primary border-gray-300 focus:ring-primary building-row-checkbox"
+                                                                value="G"
+                                                                onchange="checkStepValidation(5); updateSummary();">
+                                                        </td>
+                                                        <td class="px-6 py-4 font-medium text-gray-900 dark:text-gray-100"
+                                                            data-ar="مبنى كلية الحاسبات (G)"
+                                                            data-en="Computer Science Building (G)">مبنى كلية الحاسبات
+                                                            (G)</td>
+                                                        <td class="px-6 py-4 text-gray-700 dark:text-gray-300">450 <span
+                                                                class="text-xs text-muted" data-ar="طالب"
+                                                                data-en="students">طالب</span></td>
+                                                        <td class="px-6 py-4 text-gray-700 dark:text-gray-300">8 <span
+                                                                class="text-xs text-muted" data-ar="معامل"
+                                                                data-en="labs">معامل</span></td>
+                                                        <td class="px-6 py-4">
+                                                            <span
+                                                                class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200"
+                                                                data-ar="متاح" data-en="Available">متاح</span>
+                                                        </td>
+                                                    </tr>
+                                                    <!-- ELI Building -->
+                                                    <tr
+                                                        class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                                        <td class="px-6 py-4">
+                                                            <input type="checkbox"
+                                                                class="w-5 h-5 text-primary border-gray-300 focus:ring-primary building-row-checkbox"
+                                                                value="ELI"
+                                                                onchange="checkStepValidation(5); updateSummary();">
+                                                        </td>
+                                                        <td class="px-6 py-4 font-medium text-gray-900 dark:text-gray-100"
+                                                            data-ar="مبنى اللغة الإنجليزية (ELI)"
+                                                            data-en="English Language Building (ELI)">مبنى اللغة
+                                                            الإنجليزية (ELI)</td>
+                                                        <td class="px-6 py-4 text-gray-700 dark:text-gray-300">180 <span
+                                                                class="text-xs text-muted" data-ar="طالب"
+                                                                data-en="students">طالب</span></td>
+                                                        <td class="px-6 py-4 text-gray-700 dark:text-gray-300">3 <span
+                                                                class="text-xs text-muted" data-ar="معامل"
+                                                                data-en="labs">معامل</span></td>
+                                                        <td class="px-6 py-4">
+                                                            <span
+                                                                class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200"
+                                                                data-ar="متاح" data-en="Available">متاح</span>
+                                                        </td>
+                                                    </tr>
+                                                    <!-- Tests Building -->
+                                                    <tr
+                                                        class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                                        <td class="px-6 py-4">
+                                                            <input type="checkbox"
+                                                                class="w-5 h-5 text-primary border-gray-300 focus:ring-primary building-row-checkbox"
+                                                                value="Tests"
+                                                                onchange="checkStepValidation(5); updateSummary();">
+                                                        </td>
+                                                        <td class="px-6 py-4 font-medium text-gray-900 dark:text-gray-100"
+                                                            data-ar="مبنى الاختبارات الإلكترونية (Tests)"
+                                                            data-en="Electronic Tests Building (Tests)">مبنى الاختبارات
+                                                            الإلكترونية (Tests)</td>
+                                                        <td class="px-6 py-4 text-gray-700 dark:text-gray-300">300 <span
+                                                                class="text-xs text-muted" data-ar="طالب"
+                                                                data-en="students">طالب</span></td>
+                                                        <td class="px-6 py-4 text-gray-700 dark:text-gray-300">5 <span
+                                                                class="text-xs text-muted" data-ar="معامل"
+                                                                data-en="labs">معامل</span></td>
+                                                        <td class="px-6 py-4">
+                                                            <span
+                                                                class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200"
+                                                                data-ar="مزدحم جزئياً" data-en="Partially Busy">مزدحم
+                                                                جزئياً</span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 border-dashed">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                                            <div>
+                                                <h6 class="font-bold mb-3 text-gray-700 dark:text-gray-300"
+                                                    data-ar="ملخص الطاقة الاستيعابية" data-en="Capacity Summary">ملخص
+                                                    الطاقة الاستيعابية</h6>
+                                                <div class="space-y-2">
+                                                    <div class="flex justify-between items-center text-sm">
+                                                        <span class="text-muted" data-ar="الاحتياج الفعلي:"
+                                                            data-en="Required Capacity:">الاحتياج الفعلي:</span>
+                                                        <span class="font-bold text-gray-900 dark:text-gray-100"
+                                                            id="requiredCapacityDisplay">0</span>
+                                                    </div>
+                                                    <div class="flex justify-between items-center text-sm">
+                                                        <span class="text-muted" data-ar="الطاقة المختارة:"
+                                                            data-en="Selected Capacity:">الطاقة المختارة:</span>
+                                                        <span class="font-bold text-primary"
+                                                            id="selectedCapacityDisplay">0</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="text-center">
+                                                <h6 class="font-bold mb-2 text-gray-700 dark:text-gray-300"
+                                                    data-ar="مؤشر التغطية" data-en="Coverage Indicator">مؤشر التغطية
+                                                </h6>
+                                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 mb-2">
+                                                    <div class="bg-red-500 h-4 rounded-full transition-all duration-300"
+                                                        id="progressBar" style="width: 0%"></div>
+                                                </div>
+                                                <small id="capacityStatus"
+                                                    class="font-bold text-red-600 dark:text-red-400"
+                                                    data-ar="الرجاء اختيار مبنى"
+                                                    data-en="Please select a building">الرجاء اختيار مبنى</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- قسم توزيع المعامل المقترح (للاستدلال فقط) -->
+                                    <div id="assignedLabsSection"
+                                        class="hidden mt-6 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-xl p-6">
+                                        <h6
+                                            class="font-bold mb-4 text-green-800 dark:text-green-300 flex items-center gap-2">
+                                            <i data-feather="map-pin" class="w-5 h-5"></i>
+                                            <span data-ar="توزيع المعامل المقترح (للاستدلال)"
+                                                data-en="Suggested Lab Distribution (For Guidance)">توزيع المعامل
+                                                المقترح (للاستدلال)</span>
+                                        </h6>
+                                        <div id="assignedLabsList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <!-- سيتم تعبئتها بواسطة JS -->
+                                        </div>
+                                        <div
+                                            class="mt-4 p-3 bg-white/50 dark:bg-black/20 rounded-lg text-xs text-green-700 dark:text-green-400 flex items-start gap-2">
+                                            <i data-feather="info" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
+                                            <p data-ar="هذا التوزيع استرشادي فقط بناءً على عدد الطلاب والسعة المتاحة في المباني المختارة."
+                                                data-en="This distribution is for guidance only based on student numbers and available capacity in selected buildings.">
+                                                هذا التوزيع استرشادي فقط بناءً على عدد الطلاب والسعة المتاحة في المباني
+                                                المختارة.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!-- Wizard Navigation Buttons -->
+                            <div class="flex justify-between items-center mt-6 pt-6 border-t border-custom">
+                                <button type="button"
+                                    class="px-6 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2 hidden"
+                                    id="prevBtn" onclick="previousStep()">
+                                    <i data-feather="arrow-right" class="w-4 h-4"></i>
+                                    <span data-ar="السابق" data-en="Previous">السابق</span>
+                                </button>
+                                <div class="ms-auto"></div>
+                                <button type="button"
+                                    class="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-semibold transition-colors flex items-center gap-2"
+                                    id="nextBtn" onclick="nextStep()">
+                                    <span data-ar="التالي" data-en="Next">التالي</span>
+                                    <i data-feather="arrow-left" class="w-4 h-4"></i>
+                                </button>
+                                <button type="button"
+                                    class="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors flex items-center gap-2 hidden"
+                                    id="finishBtn" onclick="checkConflicts()">
+                                    <i data-feather="check-circle" class="w-4 h-4"></i>
+                                    <span data-ar="التحقق والاعتماد" data-en="Verify & Approve">التحقق والاعتماد</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Summary Sidebar (Right Column) -->
+                    <div class="lg:col-span-1">
+                        <div class="card-bg rounded-xl shadow-lg border border-custom sticky top-6">
+                            <div class="px-6 py-4 border-b border-custom">
+                                <h4 class="font-bold text-lg flex items-center gap-2">
+                                    <i data-feather="info" class="w-5 h-5 text-primary"></i>
+                                    <span data-ar="ملخص المعلومات" data-en="Summary">ملخص المعلومات</span>
+                                </h4>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                <!-- Step 1 Summary -->
+                                <div class="summary-item" data-summary-step="1">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <i data-feather="check-circle" class="w-4 h-4 text-green-600"></i>
+                                        <h6 class="font-semibold text-sm" data-ar="بيانات المقرر" data-en="Course Data">
+                                            بيانات المقرر</h6>
+                                    </div>
+                                    <div class="text-xs text-muted space-y-1" id="summaryStep1">
+                                        <p data-ar="لم يتم اختيار المقرر بعد" data-en="No course selected yet">لم يتم
+                                            اختيار المقرر بعد</p>
+                                    </div>
+                                </div>
+
+                                <!-- Step 2 Summary -->
+                                <div class="summary-item hidden" data-summary-step="2">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <i data-feather="check-circle" class="w-4 h-4 text-green-600"></i>
+                                        <h6 class="font-semibold text-sm" data-ar="الاختبار المختار"
+                                            data-en="Selected Exam">الاختبار المختار</h6>
+                                    </div>
+                                    <div class="text-xs text-muted space-y-1" id="summaryStep2">
+                                        <p data-ar="لم يتم اختيار اختبار بعد" data-en="No exam selected yet">لم يتم
+                                            اختيار اختبار بعد</p>
+                                    </div>
+                                </div>
+
+                                <!-- Step 3 Summary -->
+                                <div class="summary-item hidden" data-summary-step="3">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <i data-feather="check-circle" class="w-4 h-4 text-green-600"></i>
+                                        <h6 class="font-semibold text-sm" data-ar="الفئة المستهدفة"
+                                            data-en="Target Category">الفئة المستهدفة</h6>
+                                    </div>
+                                    <div class="text-xs text-muted space-y-1" id="summaryStep3">
+                                        <p data-ar="لم يتم تحديد الفئة المستهدفة بعد"
+                                            data-en="No target category selected yet">لم يتم تحديد الفئة المستهدفة بعد
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Step 4 Summary -->
+                                <div class="summary-item hidden" data-summary-step="4">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <i data-feather="check-circle" class="w-4 h-4 text-green-600"></i>
+                                        <h6 class="font-semibold text-sm" data-ar="إعدادات الموعد"
+                                            data-en="Appointment Settings">إعدادات الموعد</h6>
+                                    </div>
+                                    <div class="text-xs text-muted space-y-1" id="summaryStep4">
+                                        <p data-ar="لم يتم تحديد الموعد بعد" data-en="No appointment set yet">لم يتم
+                                            تحديد الموعد بعد</p>
+                                    </div>
+                                </div>
+
+                                <!-- Step 5 Summary -->
+                                <div class="summary-item hidden" data-summary-step="5">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <i data-feather="check-circle" class="w-4 h-4 text-green-600"></i>
+                                        <h6 class="font-semibold text-sm" data-ar="حجز المعامل" data-en="Lab Booking">
+                                            حجز المعامل</h6>
+                                    </div>
+                                    <div class="text-xs text-muted space-y-1" id="summaryStep5">
+                                        <p data-ar="لم يتم حجز المعامل بعد" data-en="No labs booked yet">لم يتم حجز
+                                            المعامل بعد</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="p-4 border-t border-custom text-center text-muted text-sm card-bg flex-shrink-0">
+            <div id="liveDateTime" class="font-bold text-primary mb-1 font-english" style="direction: ltr;"></div>
+            <div data-ar="جميع الحقوق محفوظة © 2026 م. أحمد فلمبان | رقم الإصدار: 2.0"
+                data-en="All rights reserved © 2026 Eng. Ahmed Filban | Version: 2.0">جميع الحقوق محفوظة © 2026 م. أحمد
+                فلمبان | رقم الإصدار: 2.0</div>
+        </footer>
+    </div>
+
+
+    <script>
+        // === Wizard Navigation ===
+        let currentStep = 1;
+        const totalSteps = 5;
+
+        function showStep(step) {
+            // Hide all wizard step cards (only cards, not circles)
+            document.querySelectorAll('.wizard-step.card-bg[data-step]').forEach(s => {
+                s.classList.add('hidden');
+            });
+
+            // Show current step
+            const stepElement = document.querySelector(`.wizard-step.card-bg[data-step="${step}"]`);
+            if (stepElement) {
+                stepElement.classList.remove('hidden');
+            } else {
+                console.error(`Step ${step} element not found`);
+            }
+
+            // Update progress
+            updateProgress(step);
+
+            // Update navigation buttons
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const finishBtn = document.getElementById('finishBtn');
+
+            if (step === 1) {
+                prevBtn.classList.add('hidden');
+            } else {
+                prevBtn.classList.remove('hidden');
+            }
+
+            if (step === totalSteps) {
+                nextBtn.classList.add('hidden');
+                finishBtn.classList.remove('hidden');
+            } else {
+                nextBtn.classList.remove('hidden');
+                finishBtn.classList.add('hidden');
+            }
+
+            // Update summary visibility
+            updateSummaryVisibility();
+
+            // التحقق الفوري من الخطوة الحالية
+            checkStepValidation(step);
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // التحقق الفوري من صحة الخطوة
+        function checkStepValidation(step) {
+            const validationDiv = document.getElementById(`step${step}Validation`);
+            if (!validationDiv) return;
+
+            let isValid = false;
+            switch (step) {
+                case 1:
+                    const course = document.getElementById('courseSelect').value;
+                    const platform = document.getElementById('platformSelect').value;
+                    isValid = !!(course && platform);
+                    break;
+                case 2:
+                    isValid = !!selectedExamId;
+                    break;
+                case 3:
+                    const totalStudents = parseInt(document.getElementById('totalStudentCount').value) || 0;
+                    isValid = totalStudents > 0;
+                    break;
+                case 4:
+                    const examDate = document.getElementById('examDate').value;
+                    const startTime = document.getElementById('startTime').value;
+                    isValid = !!(examDate && startTime);
+                    if (isValid) {
+                        const distributePeriodsYes = document.getElementById('distributePeriodsYes');
+                        if (distributePeriodsYes && distributePeriodsYes.checked) {
+                            const allAssigned = selectedSections.every(section => {
+                                return Object.values(periodDistribution).some(periodSections =>
+                                    periodSections.includes(section.id)
+                                );
+                            });
+                            const numberOfPeriods = parseInt(document.getElementById('numberOfPeriods').value) || 2;
+                            let allPeriodsHaveSections = true;
+                            for (let i = 1; i <= numberOfPeriods; i++) {
+                                const periodId = `period${i}`;
+                                if (!periodDistribution[periodId] || periodDistribution[periodId].length === 0) {
+                                    allPeriodsHaveSections = false;
+                                    break;
+                                }
+                            }
+                            isValid = allAssigned && allPeriodsHaveSections;
+                        }
+                    }
+                    break;
+                case 5:
+                    const selectedLabs = document.querySelectorAll('.hall-checkbox:checked').length;
+                    const required = getRequiredCapacity();
+                    let selectedCapacity = 0;
+                    document.querySelectorAll('.hall-checkbox:checked').forEach(cb => selectedCapacity += parseInt(cb.value));
+                    isValid = selectedLabs > 0 && selectedCapacity >= required;
+                    break;
+            }
+
+            if (isValid) {
+                validationDiv.classList.remove('hidden');
+            } else {
+                validationDiv.classList.add('hidden');
+            }
+        }
+
+        // إضافة مستمعين للتحقق الفوري
+        document.addEventListener('DOMContentLoaded', function () {
+            // Step 1
+            document.getElementById('courseSelect')?.addEventListener('change', () => checkStepValidation(1));
+            document.getElementById('platformSelect')?.addEventListener('change', () => checkStepValidation(1));
+
+            // Step 3
+            document.getElementById('totalStudentCount')?.addEventListener('input', () => checkStepValidation(3));
+
+            // Step 4
+            document.getElementById('examDate')?.addEventListener('change', () => checkStepValidation(4));
+            document.getElementById('startTime')?.addEventListener('change', () => checkStepValidation(4));
+            document.getElementById('distributePeriodsYes')?.addEventListener('change', () => {
+                setTimeout(() => checkStepValidation(4), 100);
+            });
+            document.getElementById('numberOfPeriods')?.addEventListener('change', () => {
+                setTimeout(() => checkStepValidation(4), 100);
+            });
+
+            // Step 5
+            document.addEventListener('change', function (e) {
+                if (e.target.classList.contains('hall-checkbox')) {
+                    setTimeout(() => checkStepValidation(5), 100);
+                }
+                if (e.target.classList.contains('building-row-checkbox')) {
+                    updateCapacityBar();
+                    setTimeout(() => checkStepValidation(5), 100);
+                }
+            });
+        });
+
+        function nextStep() {
+            if (validateStep(currentStep)) {
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    showStep(currentStep);
+                    updateSummary();
+                }
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        }
+
+        function validateStep(step) {
+            const isArabic = document.documentElement.lang === 'ar';
+            let isValid = false;
+
+            switch (step) {
+                case 1:
+                    const course = document.getElementById('courseSelect').value;
+                    const platform = document.getElementById('platformSelect').value;
+                    if (!course || !platform) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: isArabic ? 'تنبيه' : 'Warning',
+                            text: isArabic ? 'الرجاء اختيار المقرر والمنصة' : 'Please select course and platform',
+                            confirmButtonColor: '#005941'
+                        });
+                        isValid = false;
+                    } else {
+                        isValid = true;
+                        document.getElementById('step1Validation').classList.remove('hidden');
+                    }
+                    updateSummary();
+                    return isValid;
+
+                case 2:
+                    if (!selectedExamId) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: isArabic ? 'تنبيه' : 'Warning',
+                            text: isArabic ? 'الرجاء اختيار اختبار من القائمة' : 'Please select an exam from the list',
+                            confirmButtonColor: '#005941'
+                        });
+                        isValid = false;
+                    } else {
+                        isValid = true;
+                        document.getElementById('step2Validation').classList.remove('hidden');
+                    }
+                    updateSummary();
+                    return isValid;
+
+                case 3:
+                    const totalStudents = parseInt(document.getElementById('totalStudentCount').value) || 0;
+                    if (totalStudents === 0) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: isArabic ? 'تنبيه' : 'Warning',
+                            text: isArabic ? 'الرجاء تحديد الفئة المستهدفة (الطلاب أو الشعب)' : 'Please select target category (students or sections)',
+                            confirmButtonColor: '#005941'
+                        });
+                        isValid = false;
+                    } else {
+                        isValid = true;
+                        document.getElementById('step3Validation').classList.remove('hidden');
+                    }
+                    updateSummary();
+                    return isValid;
+
+                case 4:
+                    const examDate = document.getElementById('examDate').value;
+                    const startTime = document.getElementById('startTime').value;
+                    if (!examDate || !startTime) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: isArabic ? 'تنبيه' : 'Warning',
+                            text: isArabic ? 'الرجاء تحديد تاريخ ووقت الاختبار' : 'Please select exam date and start time',
+                            confirmButtonColor: '#005941'
+                        });
+                        return false;
+                    }
+
+                    // التحقق من توزيع الفترات إذا كان مفعّلاً
+                    const distributePeriodsYes = document.getElementById('distributePeriodsYes');
+                    if (distributePeriodsYes && distributePeriodsYes.checked) {
+                        const allAssigned = selectedSections.every(section => {
+                            return Object.values(periodDistribution).some(periodSections =>
+                                periodSections.includes(section.id)
+                            );
+                        });
+
+                        const numberOfPeriods = parseInt(document.getElementById('numberOfPeriods').value) || 2;
+                        let allPeriodsHaveSections = true;
+                        for (let i = 1; i <= numberOfPeriods; i++) {
+                            const periodId = `period${i}`;
+                            if (!periodDistribution[periodId] || periodDistribution[periodId].length === 0) {
+                                allPeriodsHaveSections = false;
+                                break;
+                            }
+                        }
+
+                        if (!allAssigned || !allPeriodsHaveSections) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: isArabic ? 'تنبيه' : 'Warning',
+                                text: isArabic ? 'الرجاء توزيع جميع الشعب على الفترات. يجب أن تحتوي كل فترة على شعبة واحدة على الأقل.' : 'Please distribute all sections across periods. Each period must contain at least one section.',
+                                confirmButtonColor: '#005941'
+                            });
+                            return false;
+                        }
+                    }
+
+                    isValid = true;
+                    document.getElementById('step4Validation').classList.remove('hidden');
+                    updateSummary();
+                    return isValid;
+
+                case 5:
+                    const result = calculateBuildingSelection();
+                    if (!result.isSufficient) {
+                        const message = isArabic ?
+                            `الطاقة الاستيعابية غير كافية. المطلوب: ${result.required}، المتوفر: ${result.totalCapacity}` :
+                            `Insufficient capacity. Required: ${result.required}, Available: ${result.totalCapacity}`;
+
+                        Swal.fire({
+                            icon: 'warning',
+                            title: isArabic ? 'تنبيه' : 'Warning',
+                            text: message,
+                            confirmButtonColor: '#005941'
+                        });
+                        return false;
+                    }
+
+                    if (result.selected.length === 0) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: isArabic ? 'تنبيه' : 'Warning',
+                            text: isArabic ? 'الرجاء اختيار مبنى واحد على الأقل' : 'Please select at least one building',
+                            confirmButtonColor: '#005941'
+                        });
+                        return false;
+                    }
+
+                    isValid = true;
+                    document.getElementById('step5Validation').classList.remove('hidden');
+                    updateSummary();
+                    return isValid;
+
+                default:
+                    return true;
+            }
+        }
+
+        function updateProgress(step) {
+            // Update step circles
+            for (let i = 1; i <= totalSteps; i++) {
+                const stepCircle = document.querySelector(`[data-step="${i}"]`);
+                const circleElement = document.getElementById(`stepCircle${i}`);
+                const progressCircle = circleElement?.querySelector('.step-progress-circle');
+
+                if (stepCircle && circleElement) {
+                    // Remove all states
+                    stepCircle.classList.remove('active', 'completed');
+
+                    if (i < step) {
+                        // Completed steps
+                        stepCircle.classList.add('completed');
+                        if (progressCircle) {
+                            progressCircle.style.strokeDashoffset = '0';
+                        }
+                    } else if (i === step) {
+                        // Current step
+                        stepCircle.classList.add('active');
+                        if (progressCircle) {
+                            progressCircle.style.strokeDashoffset = '0';
+                        }
+                    } else {
+                        // Future steps
+                        if (progressCircle) {
+                            progressCircle.style.strokeDashoffset = '175.9';
+                        }
+                    }
+                }
+            }
+        }
+
+        function goToStep(step) {
+            // Only allow going to completed steps or next step
+            if (step <= currentStep || (step === currentStep + 1 && validateStep(currentStep))) {
+                currentStep = step;
+                showStep(currentStep);
+            } else if (step < currentStep) {
+                // Allow going back to previous steps
+                currentStep = step;
+                showStep(currentStep);
+            } else {
+                const isArabic = document.documentElement.lang === 'ar';
+                Swal.fire({
+                    icon: 'info',
+                    title: isArabic ? 'تنبيه' : 'Notice',
+                    text: isArabic ? 'الرجاء إكمال الخطوة الحالية أولاً' : 'Please complete the current step first',
+                    confirmButtonColor: '#005941'
+                });
+            }
+        }
+
+        function updateSummary() {
+            const isArabic = document.documentElement.lang === 'ar';
+
+            // Step 1 Summary
+            const course = document.getElementById('courseSelect').value;
+            const platform = document.getElementById('platformSelect').value;
+            if (course && platform) {
+                const courseText = document.getElementById('courseSelect').options[document.getElementById('courseSelect').selectedIndex].text;
+                const platformText = document.getElementById('platformSelect').options[document.getElementById('platformSelect').selectedIndex].text;
+                document.getElementById('summaryStep1').innerHTML = `
+                <p><strong>${isArabic ? 'المقرر:' : 'Course:'}</strong> ${courseText}</p>
+                <p><strong>${isArabic ? 'المنصة:' : 'Platform:'}</strong> ${platformText}</p>
+            `;
+                showSummaryItem(1);
+            }
+
+            // Step 2 Summary
+            if (selectedExamId) {
+                const exam = availableExams.find(e => e.id === selectedExamId);
+                if (exam) {
+                    document.getElementById('summaryStep2').innerHTML = `
+                    <p><strong>${exam.title}</strong></p>
+                    <p>${isArabic ? 'المقرر:' : 'Course:'} ${exam.course}</p>
+                    <p>${isArabic ? 'المدة:' : 'Duration:'} ${exam.duration} ${isArabic ? 'دقيقة' : 'min'}</p>
+                    <p>${isArabic ? 'عدد الأسئلة:' : 'Questions:'} ${exam.questions}</p>
+                `;
+                    showSummaryItem(2);
+                }
+            }
+
+            // Step 3 Summary
+            const totalStudents = parseInt(document.getElementById('totalStudentCount').value) || 0;
+            if (totalStudents > 0) {
+                const mode = document.getElementById('modeSections').checked ? (isArabic ? 'شعب دراسية' : 'Study Sections') : (isArabic ? 'طلاب محددين' : 'Specific Students');
+                const selectedSections = document.querySelectorAll('.section-checkbox:checked');
+                let summaryText = `<p><strong>${isArabic ? 'العدد الإجمالي:' : 'Total:'}</strong> ${totalStudents} ${isArabic ? 'طالب' : 'students'}</p>`;
+                summaryText += `<p><strong>${isArabic ? 'النمط:' : 'Mode:'}</strong> ${mode}</p>`;
+                if (selectedSections.length > 0) {
+                    summaryText += `<p><strong>${isArabic ? 'الشعب المختارة:' : 'Selected Sections:'}</strong> ${selectedSections.length}</p>`;
+                }
+                document.getElementById('summaryStep3').innerHTML = summaryText;
+                showSummaryItem(3);
+            }
+
+            // Step 4 Summary
+            const examDate = document.getElementById('examDate').value;
+            const startTime = document.getElementById('startTime').value;
+            if (examDate && startTime) {
+                const dateObj = new Date(examDate);
+                const dateStr = dateObj.toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
+
+                let summaryHTML = `
+                <p><strong>${isArabic ? 'التاريخ:' : 'Date:'}</strong> ${dateStr}</p>
+                <p><strong>${isArabic ? 'وقت البدء:' : 'Start Time:'}</strong> ${startTime}</p>
+                ${selectedExamId ? `<p><strong>${isArabic ? 'المدة:' : 'Duration:'}</strong> ${availableExams.find(e => e.id === selectedExamId)?.duration || '-'} ${isArabic ? 'دقيقة' : 'min'}</p>` : ''}
+            `;
+
+                // معلومات توزيع الفترات
+                const distributePeriodsYes = document.getElementById('distributePeriodsYes');
+                const distributePeriodsNo = document.getElementById('distributePeriodsNo');
+                if (distributePeriodsYes && distributePeriodsYes.checked) {
+                    const numberOfPeriods = parseInt(document.getElementById('numberOfPeriods').value) || 2;
+                    summaryHTML += `<p class="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700"><strong>${isArabic ? 'توزيع الفترات:' : 'Period Distribution:'}</strong> ${isArabic ? 'مفعّل' : 'Enabled'}</p>`;
+                    summaryHTML += `<p><strong>${isArabic ? 'عدد الفترات:' : 'Number of Periods:'}</strong> ${numberOfPeriods}</p>`;
+
+                    // عرض تفاصيل كل فترة
+                    let periodsDetails = '';
+                    for (let i = 1; i <= numberOfPeriods; i++) {
+                        const periodId = `period${i}`;
+                        const countBadge = document.getElementById(`${periodId}Count`);
+                        if (countBadge) {
+                            const countText = countBadge.textContent.trim();
+                            const count = countText.split(' ')[0] || '0';
+                            periodsDetails += `<p class="text-xs ms-4">${isArabic ? 'الفترة' : 'Period'} ${i}: <strong>${count}</strong> ${isArabic ? 'طالب' : 'students'}</p>`;
+                        }
+                    }
+                    if (periodsDetails) {
+                        summaryHTML += `<div class="mt-1">${periodsDetails}</div>`;
+                    }
+                } else if (distributePeriodsNo && distributePeriodsNo.checked) {
+                    summaryHTML += `<p class="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700"><strong>${isArabic ? 'توزيع الفترات:' : 'Period Distribution:'}</strong> ${isArabic ? 'غير مفعّل' : 'Disabled'}</p>`;
+                }
+
+                // معلومات الترصيد التلقائي
+                const autoGradingYes = document.getElementById('autoGradingYes');
+                const autoGradingNo = document.getElementById('autoGradingNo');
+                if (autoGradingYes && autoGradingYes.checked) {
+                    const examClass = document.getElementById('examClassSelect').value;
+                    const requiredGrade = document.getElementById('requiredGrade').value;
+                    const examClassText = examClass ? document.getElementById('examClassSelect').options[document.getElementById('examClassSelect').selectedIndex].text : '-';
+
+                    summaryHTML += `<p class="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700"><strong>${isArabic ? 'الترصيد التلقائي:' : 'Auto Grading:'}</strong> <span class="text-green-600">${isArabic ? 'مفعّل' : 'Enabled'}</span></p>`;
+                    if (examClass) {
+                        summaryHTML += `<p><strong>${isArabic ? 'تصنيف الاختبار:' : 'Exam Classification:'}</strong> ${examClassText}</p>`;
+                    }
+                    if (requiredGrade) {
+                        summaryHTML += `<p><strong>${isArabic ? 'الدرجة المطلوبة:' : 'Required Grade:'}</strong> ${requiredGrade}</p>`;
+                    }
+                } else if (autoGradingNo && autoGradingNo.checked) {
+                    summaryHTML += `<p class="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700"><strong>${isArabic ? 'الترصيد التلقائي:' : 'Auto Grading:'}</strong> <span class="text-gray-500">${isArabic ? 'غير مفعّل' : 'Disabled'}</span></p>`;
+                }
+
+                document.getElementById('summaryStep4').innerHTML = summaryHTML;
+                showSummaryItem(4);
+            }
+
+            // Step 5 Summary
+            const result = calculateBuildingSelection();
+            if (result.selected.length > 0) {
+                const distributePeriods = document.getElementById('distributePeriodsYes') && document.getElementById('distributePeriodsYes').checked;
+
+                let summaryHTML = `
+                <p><strong>${isArabic ? 'المباني المختارة:' : 'Selected Buildings:'}</strong></p>
+                <ul class="list-disc list-inside mb-1">
+                    ${result.selected.map(b => `<li>${isArabic ? b.name : b.nameEn}</li>`).join('')}
+                </ul>
+                <p><strong>${isArabic ? 'السعة الإجمالية:' : 'Total Capacity:'}</strong> ${result.totalCapacity}</p>
+                <p><strong>${isArabic ? 'المطلوب:' : 'Required:'}</strong> ${result.required}`;
+
+                if (distributePeriods) {
+                    summaryHTML += ` ${isArabic ? '(بناءً على أعلى فترة)' : '(based on highest period)'}`;
+                }
+                summaryHTML += `</p>
+                <p class="${result.isSufficient ? 'text-green-600' : 'text-red-600'}">
+                    <strong>${result.isSufficient ? (isArabic ? '✓ السعة كافية' : '✓ Capacity Sufficient') : (isArabic ? '✗ السعة غير كافية' : '✗ Insufficient Capacity')}</strong>
+                </p>
+                `;
+
+                document.getElementById('summaryStep5').innerHTML = summaryHTML;
+                showSummaryItem(5);
+            }
+
+            feather.replace();
+        }
+
+        function showSummaryItem(step) {
+            const summaryItem = document.querySelector(`[data-summary-step="${step}"]`);
+            if (summaryItem) {
+                summaryItem.classList.remove('hidden');
+            }
+        }
+
+        function updateSummaryVisibility() {
+            for (let i = 1; i <= currentStep; i++) {
+                showSummaryItem(i);
+            }
+        }
+
+        // Initialize wizard - ensure step 1 is visible
+        document.addEventListener('DOMContentLoaded', function () {
+            // Make sure step 1 is visible on load
+            const step1Element = document.querySelector('.wizard-step.card-bg[data-step="1"]');
+            if (step1Element) {
+                step1Element.classList.remove('hidden');
+            }
+            showStep(1);
+        });
+
+        // Also call immediately in case DOM is already loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function () {
+                showStep(1);
+            });
+        } else {
+            showStep(1);
+        }
+
+        // Update summary when form changes
+        document.getElementById('courseSelect').addEventListener('change', () => {
+            updateSummary();
+            if (currentStep === 1) {
+                // Auto-load exams if platform is selected
+                const platform = document.getElementById('platformSelect').value;
+                if (platform) {
+                    loadExamsFromPlatform(platform);
+                }
+            }
+        });
+
+        document.getElementById('platformSelect').addEventListener('change', () => {
+            updateSummary();
+        });
+
+        // Initialize Feather Icons
+        feather.replace();
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        const themeIcon = themeToggle?.querySelector('i');
+
+        // Check for saved theme preference
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'dark') {
+            html.classList.add('dark');
+            if (themeIcon) themeIcon.setAttribute('data-feather', 'sun');
+        }
+
+        themeToggle?.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            if (themeIcon) themeIcon.setAttribute('data-feather', isDark ? 'sun' : 'moon');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            feather.replace();
+        });
+
+        // Language Toggle
+        let isArabic = true;
+        const langToggle = document.getElementById('langToggle');
+        langToggle?.addEventListener('click', () => {
+            isArabic = !isArabic;
+            document.documentElement.lang = isArabic ? 'ar' : 'en';
+            document.documentElement.dir = isArabic ? 'rtl' : 'ltr';
+
+            // Update all text elements
+            document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+                el.textContent = isArabic ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+            });
+            feather.replace();
+        });
+
+        // Sidebar Toggle (Mobile)
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        sidebarToggle?.addEventListener('click', () => {
+            sidebar.classList.toggle('hidden');
+        });
+        // === 1. منطق الترصيد التلقائي ===
+        function toggleAutoGradingFields(enable) {
+            const fields = document.getElementById('autoGradingFields');
+            const examClassSelect = document.getElementById('examClassSelect');
+            const requiredGrade = document.getElementById('requiredGrade');
+
+            if (enable) {
+                fields.classList.remove('hidden');
+                examClassSelect.setAttribute('required', 'required');
+                requiredGrade.setAttribute('required', 'required');
+            } else {
+                fields.classList.add('hidden');
+                examClassSelect.removeAttribute('required');
+                requiredGrade.removeAttribute('required');
+                examClassSelect.value = '';
+                requiredGrade.value = '';
+            }
+
+            // تحديث الملخص
+            updateSummary();
+        }
+
+        // === 1.6. منطق توزيع الفترات ===
+        let selectedSections = [];
+        let periodDistribution = {}; // { period1: [section1, section2], period2: [section3] }
+
+        function togglePeriodDistribution(enable) {
+            const fields = document.getElementById('periodDistributionFields');
+            const numberOfPeriods = document.getElementById('numberOfPeriods');
+
+            if (enable) {
+                fields.classList.remove('hidden');
+                numberOfPeriods.setAttribute('required', 'required');
+                updateSelectedSectionsList();
+                updatePeriodDistribution();
+            } else {
+                fields.classList.add('hidden');
+                numberOfPeriods.removeAttribute('required');
+                numberOfPeriods.value = '2';
+                document.getElementById('periodsDistributionContainer').classList.add('hidden');
+                periodDistribution = {};
+            }
+
+            // تحديث الملخص
+            updateSummary();
+        }
+
+        function updateSelectedSectionsList() {
+            const sectionsList = document.getElementById('selectedSectionsList');
+            const selectedCheckboxes = document.querySelectorAll('.section-checkbox:checked');
+
+            // حفظ التوزيع الحالي باستخدام اسم الشعبة كمعرف فريد (أكثر استقراراً)
+            const currentDistributionBySectionName = {};
+            Object.keys(periodDistribution).forEach(periodId => {
+                currentDistributionBySectionName[periodId] = [];
+                periodDistribution[periodId].forEach(sectionId => {
+                    // البحث عن اسم الشعبة من الـ ID
+                    const section = selectedSections.find(s => s.id === sectionId);
+                    if (section) {
+                        currentDistributionBySectionName[periodId].push(section.name);
+                    }
+                });
+            });
+
+            // إعادة بناء selectedSections
+            selectedSections = [];
+            selectedCheckboxes.forEach(cb => {
+                const sectionId = cb.dataset.sectionId || cb.id || `section-${selectedSections.length}`;
+                const sectionName = cb.dataset.sectionName || cb.nextElementSibling.textContent.trim();
+                const sectionCount = parseInt(cb.value);
+
+                selectedSections.push({
+                    id: sectionId,
+                    name: sectionName,
+                    count: sectionCount
+                });
+            });
+
+            // استعادة التوزيع المحفوظ باستخدام اسم الشعبة كمعرف فريد
+            const newDistribution = {};
+            Object.keys(currentDistributionBySectionName).forEach(periodId => {
+                newDistribution[periodId] = [];
+                currentDistributionBySectionName[periodId].forEach(sectionName => {
+                    // البحث عن الشعبة في selectedSections الجديدة باستخدام الاسم
+                    const foundSection = selectedSections.find(s => s.name === sectionName);
+                    if (foundSection) {
+                        newDistribution[periodId].push(foundSection.id);
+                    }
+                });
+            });
+            periodDistribution = newDistribution;
+
+            if (selectedSections.length === 0) {
+                sectionsList.innerHTML = '<p class="text-muted text-sm mb-0" data-ar="لم يتم اختيار أي شعب بعد. يرجى اختيار الشعب من بطاقة \'الفئة المستهدفة\' أولاً." data-en="No sections selected yet. Please select sections from \'Target Category\' card first.">لم يتم اختيار أي شعب بعد. يرجى اختيار الشعب من بطاقة \'الفئة المستهدفة\' أولاً.</p>';
+                document.getElementById('periodsDistributionContainer').classList.add('hidden');
+            } else {
+                let html = '<div class="d-flex flex-wrap gap-2">';
+                selectedSections.forEach(section => {
+                    html += `<span class="badge bg-primary p-2 text-white">${section.name} (${section.count} طالب)</span>`;
+                });
+                html += '</div>';
+                sectionsList.innerHTML = html;
+
+                // تحديث التوزيع إذا كان مفعلاً
+                if (document.getElementById('distributePeriodsYes').checked) {
+                    updatePeriodDistribution();
+                }
+            }
+        }
+
+        function updatePeriodDistribution() {
+            const numberOfPeriods = parseInt(document.getElementById('numberOfPeriods').value) || 2;
+            const container = document.getElementById('periodsDistributionContainer');
+            const periodsList = document.getElementById('periodsList');
+            const unassignedContainer = document.getElementById('unassignedSections');
+
+            if (selectedSections.length === 0) {
+                container.classList.add('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+            periodsList.innerHTML = '';
+            unassignedContainer.innerHTML = '';
+
+            // حفظ التوزيع الحالي قبل إعادة البناء (نسخة عميقة جداً)
+            // نحفظ باستخدام اسم الشعبة كمعرف فريد لضمان الاستقرار
+            const savedDistributionBySectionName = {};
+            Object.keys(periodDistribution).forEach(key => {
+                savedDistributionBySectionName[key] = [];
+                if (Array.isArray(periodDistribution[key])) {
+                    periodDistribution[key].forEach(sectionId => {
+                        const section = selectedSections.find(s => s.id === sectionId);
+                        if (section) {
+                            // نحفظ اسم الشعبة كمعرف فريد
+                            savedDistributionBySectionName[key].push({
+                                id: sectionId,
+                                name: section.name
+                            });
+                        }
+                    });
+                }
+            });
+
+            // إزالة الفترات التي لم تعد موجودة
+            Object.keys(periodDistribution).forEach(key => {
+                const periodNum = parseInt(key.replace('period', ''));
+                if (periodNum > numberOfPeriods) {
+                    delete periodDistribution[key];
+                }
+            });
+
+            // إضافة الفترات الجديدة وتهيئتها
+            for (let i = 1; i <= numberOfPeriods; i++) {
+                const periodKey = `period${i}`;
+                if (!periodDistribution[periodKey]) {
+                    periodDistribution[periodKey] = [];
+                }
+            }
+
+            // استعادة التوزيع المحفوظ للفترات الموجودة باستخدام اسم الشعبة
+            Object.keys(savedDistributionBySectionName).forEach(key => {
+                const periodNum = parseInt(key.replace('period', ''));
+                if (periodNum <= numberOfPeriods && savedDistributionBySectionName[key].length > 0) {
+                    periodDistribution[key] = [];
+                    savedDistributionBySectionName[key].forEach(sectionInfo => {
+                        // البحث عن الشعبة في selectedSections باستخدام الاسم (الأكثر استقراراً)
+                        const section = selectedSections.find(s => s.name === sectionInfo.name);
+                        if (section) {
+                            periodDistribution[key].push(section.id);
+                        }
+                    });
+                }
+            });
+
+            // تحديد الشعب الموزعة وغير الموزعة
+            const assignedSectionIds = new Set();
+            Object.values(periodDistribution).forEach(periodSections => {
+                periodSections.forEach(sectionId => assignedSectionIds.add(sectionId));
+            });
+
+            const unassignedSections = selectedSections.filter(s => !assignedSectionIds.has(s.id));
+            const isArabic = document.documentElement.lang === 'ar';
+
+            // عرض الشعب غير الموزعة
+            if (unassignedSections.length > 0) {
+                unassignedSections.forEach(section => {
+                    const sectionBadge = document.createElement('div');
+                    sectionBadge.className = 'inline-flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-700 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-move hover:border-primary transition-colors';
+                    sectionBadge.draggable = true;
+                    sectionBadge.dataset.sectionId = section.id;
+                    sectionBadge.dataset.sectionCount = section.count;
+                    sectionBadge.innerHTML = `
+                    <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">${section.name}</span>
+                    <span class="text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300 rounded">${section.count} ${isArabic ? 'طالب' : 'students'}</span>
+                `;
+                    unassignedContainer.appendChild(sectionBadge);
+                });
+            } else {
+                unassignedContainer.innerHTML = `<p class="text-xs text-muted text-center w-full" data-ar="✓ تم توزيع جميع الشعب" data-en="✓ All sections distributed">✓ ${isArabic ? 'تم توزيع جميع الشعب' : 'All sections distributed'}</p>`;
+            }
+
+            // إنشاء واجهة محسّنة لكل فترة
+            for (let i = 1; i <= numberOfPeriods; i++) {
+                const periodId = `period${i}`;
+                // الحصول على IDs الشعب الموزعة على هذه الفترة
+                const periodSectionIds = periodDistribution[periodId] || [];
+                // البحث عن الشعب في selectedSections باستخدام الـ IDs
+                const periodSections = selectedSections.filter(s =>
+                    periodSectionIds.includes(s.id)
+                );
+
+                const periodDiv = document.createElement('div');
+                periodDiv.className = 'card-bg rounded-lg border-2 border-gray-200 dark:border-gray-700 overflow-hidden';
+                periodDiv.dataset.periodId = `period${i}`;
+                periodDiv.innerHTML = `
+                <div class="px-4 py-3 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center justify-between">
+                        <h6 class="mb-0 font-bold flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                            <i data-feather="clock" class="w-4 h-4 text-blue-600"></i>
+                            <span data-ar="الفترة ${i}" data-en="Period ${i}">${isArabic ? 'الفترة' : 'Period'} ${i}</span>
+                        </h6>
+                        <div class="flex items-center gap-2">
+                            <span class="badge px-3 py-1 rounded-full text-xs font-bold" id="period${i}Count">0 ${isArabic ? 'طالب' : 'students'}</span>
+                            <button type="button" class="p-1 text-gray-400 hover:text-red-600 transition-colors" onclick="clearPeriod(${i})" title="${isArabic ? 'مسح الفترة' : 'Clear Period'}">
+                                <i data-feather="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 min-h-[150px] drop-zone" 
+                     ondrop="dropSection(event, 'period${i}')" 
+                     ondragover="allowDrop(event)"
+                     ondragenter="dragEnter(event)"
+                     ondragleave="dragLeave(event)">
+                    <div id="period${i}Sections" class="space-y-2">
+                        ${periodSections.length > 0 ? periodSections.map(section => `
+                            <div class="flex items-center justify-between p-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg hover:shadow-md transition-shadow">
+                                <div class="flex items-center gap-2 flex-1">
+                                    <i data-feather="users" class="w-4 h-4 text-primary"></i>
+                                    <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">${section.name}</span>
+                                    <span class="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded">${section.count} ${isArabic ? 'طالب' : 'students'}</span>
+                                </div>
+                                <button type="button" class="p-1 text-gray-400 hover:text-red-600 transition-colors" onclick="removeSectionFromPeriod('${section.id}', 'period${i}')" title="${isArabic ? 'إزالة' : 'Remove'}">
+                                    <i data-feather="x" class="w-3 h-3"></i>
+                                </button>
+                            </div>
+                        `).join('') : `
+                            <div class="text-center py-8 text-muted text-sm border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
+                                <i data-feather="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+                                <p data-ar="اسحب الشعب هنا أو استخدم الأزرار السريعة" data-en="Drag sections here or use quick buttons">${isArabic ? 'اسحب الشعب هنا أو استخدم الأزرار السريعة' : 'Drag sections here or use quick buttons'}</p>
+                            </div>
+                        `}
+                    </div>
+                    
+                    <!-- أزرار سريعة لإضافة الشعب -->
+                    ${unassignedSections.length > 0 ? `
+                        <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                            <p class="text-xs text-muted mb-2" data-ar="إضافة سريعة:" data-en="Quick Add:">${isArabic ? 'إضافة سريعة:' : 'Quick Add:'}</p>
+                            <div class="flex flex-wrap gap-1">
+                                ${unassignedSections.map(section => `
+                                    <button type="button" class="px-2 py-1 text-xs bg-primary/10 hover:bg-primary/20 text-primary rounded transition-colors" onclick="addSectionToPeriod('${section.id}', 'period${i}')">
+                                        + ${section.name}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+                periodsList.appendChild(periodDiv);
+                updatePeriodCount(`period${i}`);
+            }
+
+            // التحقق من التوزيع
+            validatePeriodDistribution();
+            feather.replace();
+        }
+
+        // دوال Drag & Drop
+        function allowDrop(ev) {
+            ev.preventDefault();
+            ev.currentTarget.classList.add('border-primary', 'bg-blue-50', 'dark:bg-blue-900/20');
+        }
+
+        function dragEnter(ev) {
+            ev.preventDefault();
+        }
+
+        function dragLeave(ev) {
+            ev.currentTarget.classList.remove('border-primary', 'bg-blue-50', 'dark:bg-blue-900/20');
+        }
+
+        function dropSection(ev, periodId) {
+            ev.preventDefault();
+            ev.currentTarget.classList.remove('border-primary', 'bg-blue-50', 'dark:bg-blue-900/20');
+
+            const sectionId = ev.dataTransfer.getData('text/plain');
+            addSectionToPeriod(sectionId, periodId);
+        }
+
+        // جعل الشعب قابلة للسحب
+        document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('dragstart', function (ev) {
+                if (ev.target.dataset.sectionId) {
+                    ev.dataTransfer.setData('text/plain', ev.target.dataset.sectionId);
+                    ev.target.style.opacity = '0.5';
+                }
+            });
+
+            document.addEventListener('dragend', function (ev) {
+                if (ev.target.dataset.sectionId) {
+                    ev.target.style.opacity = '1';
+                }
+            });
+        });
+
+        function addSectionToPeriod(sectionId, periodId) {
+            // التأكد من أن periodDistribution موجودة
+            if (!periodDistribution[periodId]) {
+                periodDistribution[periodId] = [];
+            }
+
+            // إزالة الشعبة من جميع الفترات الأخرى أولاً (لكن نحافظ على باقي الشعب)
+            Object.keys(periodDistribution).forEach(pId => {
+                if (pId !== periodId) {
+                    periodDistribution[pId] = periodDistribution[pId].filter(id => id !== sectionId);
+                }
+            });
+
+            // إضافة الشعبة للفترة المحددة فقط إذا لم تكن موجودة
+            if (!periodDistribution[periodId].includes(sectionId)) {
+                periodDistribution[periodId].push(sectionId);
+            }
+
+            // تحديث الواجهة مباشرة بدون إعادة بناء كاملة
+            updatePeriodDistributionUI();
+        }
+
+        // دالة لتحديث الواجهة فقط بدون إعادة بناء كاملة
+        function updatePeriodDistributionUI() {
+            const numberOfPeriods = parseInt(document.getElementById('numberOfPeriods').value) || 2;
+            const unassignedContainer = document.getElementById('unassignedSections');
+            const isArabic = document.documentElement.lang === 'ar';
+
+            // تحديد الشعب الموزعة وغير الموزعة
+            const assignedSectionIds = new Set();
+            Object.values(periodDistribution).forEach(periodSections => {
+                periodSections.forEach(sectionId => assignedSectionIds.add(sectionId));
+            });
+
+            const unassignedSections = selectedSections.filter(s => !assignedSectionIds.has(s.id));
+
+            // تحديث الشعب غير الموزعة
+            unassignedContainer.innerHTML = '';
+            if (unassignedSections.length > 0) {
+                unassignedSections.forEach(section => {
+                    const sectionBadge = document.createElement('div');
+                    sectionBadge.className = 'inline-flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-700 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-move hover:border-primary transition-colors';
+                    sectionBadge.draggable = true;
+                    sectionBadge.dataset.sectionId = section.id;
+                    sectionBadge.dataset.sectionCount = section.count;
+                    sectionBadge.innerHTML = `
+                    <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">${section.name}</span>
+                    <span class="text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300 rounded">${section.count} ${isArabic ? 'طالب' : 'students'}</span>
+                `;
+                    unassignedContainer.appendChild(sectionBadge);
+                });
+            } else {
+                unassignedContainer.innerHTML = `<p class="text-xs text-muted text-center w-full" data-ar="✓ تم توزيع جميع الشعب" data-en="✓ All sections distributed">✓ ${isArabic ? 'تم توزيع جميع الشعب' : 'All sections distributed'}</p>`;
+            }
+
+            // تحديث كل فترة
+            for (let i = 1; i <= numberOfPeriods; i++) {
+                const periodId = `period${i}`;
+                const periodSectionIds = periodDistribution[periodId] || [];
+                const periodSections = selectedSections.filter(s => periodSectionIds.includes(s.id));
+                const periodSectionsContainer = document.getElementById(`${periodId}Sections`);
+
+                if (periodSectionsContainer) {
+                    if (periodSections.length > 0) {
+                        periodSectionsContainer.innerHTML = periodSections.map(section => `
+                        <div class="flex items-center justify-between p-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg hover:shadow-md transition-shadow">
+                            <div class="flex items-center gap-2 flex-1">
+                                <i data-feather="users" class="w-4 h-4 text-primary"></i>
+                                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">${section.name}</span>
+                                <span class="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded">${section.count} ${isArabic ? 'طالب' : 'students'}</span>
+                            </div>
+                            <button type="button" class="p-1 text-gray-400 hover:text-red-600 transition-colors" onclick="removeSectionFromPeriod('${section.id}', 'period${i}')" title="${isArabic ? 'إزالة' : 'Remove'}">
+                                <i data-feather="x" class="w-3 h-3"></i>
+                            </button>
+                        </div>
+                    `).join('');
+                    } else {
+                        periodSectionsContainer.innerHTML = `
+                        <div class="text-center py-8 text-muted text-sm border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
+                            <i data-feather="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+                            <p data-ar="اسحب الشعب هنا أو استخدم الأزرار السريعة" data-en="Drag sections here or use quick buttons">${isArabic ? 'اسحب الشعب هنا أو استخدم الأزرار السريعة' : 'Drag sections here or use quick buttons'}</p>
+                        </div>
+                    `;
+                    }
+
+                    // تحديث أزرار الإضافة السريعة
+                    const quickAddContainer = periodSectionsContainer.nextElementSibling;
+                    if (quickAddContainer && quickAddContainer.classList.contains('mt-3')) {
+                        if (unassignedSections.length > 0) {
+                            quickAddContainer.innerHTML = `
+                            <p class="text-xs text-muted mb-2" data-ar="إضافة سريعة:" data-en="Quick Add:">${isArabic ? 'إضافة سريعة:' : 'Quick Add:'}</p>
+                            <div class="flex flex-wrap gap-1">
+                                ${unassignedSections.map(section => `
+                                    <button type="button" class="px-2 py-1 text-xs bg-primary/10 hover:bg-primary/20 text-primary rounded transition-colors" onclick="addSectionToPeriod('${section.id}', 'period${i}')">
+                                        + ${section.name}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        `;
+                        } else {
+                            quickAddContainer.innerHTML = '';
+                        }
+                    }
+                }
+
+                updatePeriodCount(periodId);
+            }
+
+            validatePeriodDistribution();
+            feather.replace();
+        }
+
+        function removeSectionFromPeriod(sectionId, periodId) {
+            if (periodDistribution[periodId]) {
+                periodDistribution[periodId] = periodDistribution[periodId].filter(id => id !== sectionId);
+            }
+            updatePeriodDistribution();
+        }
+
+        function clearPeriod(periodNumber) {
+            const periodId = `period${periodNumber}`;
+            periodDistribution[periodId] = [];
+            updatePeriodDistribution();
+        }
+
+        function validatePeriodDistribution() {
+            const validationDiv = document.getElementById('periodDistributionValidation');
+            const statusText = document.getElementById('periodDistributionStatusText');
+            const isArabic = document.documentElement.lang === 'ar';
+
+            // التحقق من أن جميع الشعب موزعة
+            const allAssigned = selectedSections.every(section => {
+                return Object.values(periodDistribution).some(periodSections =>
+                    periodSections.includes(section.id)
+                );
+            });
+
+            // التحقق من أن كل فترة تحتوي على شعبة واحدة على الأقل
+            const numberOfPeriods = parseInt(document.getElementById('numberOfPeriods').value) || 2;
+            let allPeriodsHaveSections = true;
+            for (let i = 1; i <= numberOfPeriods; i++) {
+                const periodId = `period${i}`;
+                if (!periodDistribution[periodId] || periodDistribution[periodId].length === 0) {
+                    allPeriodsHaveSections = false;
+                    break;
+                }
+            }
+
+            if (allAssigned && allPeriodsHaveSections) {
+                validationDiv.classList.add('hidden');
+                statusText.textContent = isArabic ? '✓ مكتمل' : '✓ Complete';
+                statusText.className = 'font-semibold text-green-600';
+            } else {
+                validationDiv.classList.remove('hidden');
+                let msg = '';
+                if (!allAssigned) {
+                    msg = isArabic ? '⚠ يجب توزيع جميع الشعب على الفترات' : '⚠ All sections must be distributed across periods';
+                } else if (!allPeriodsHaveSections) {
+                    msg = isArabic ? '⚠ يجب أن تحتوي كل فترة على شعبة واحدة على الأقل' : '⚠ Each period must contain at least one section';
+                }
+                document.getElementById('periodDistributionValidationMsg').textContent = msg;
+                statusText.textContent = isArabic ? 'قيد التوزيع' : 'In Progress';
+                statusText.className = 'font-semibold text-yellow-600';
+            }
+        }
+
+        function updatePeriodCount(periodId) {
+            // حساب عدد الطلاب من periodDistribution مباشرة
+            let totalCount = 0;
+            const periodSectionIds = periodDistribution[periodId] || [];
+
+            periodSectionIds.forEach(sectionId => {
+                const section = selectedSections.find(s => s.id === sectionId);
+                if (section) {
+                    totalCount += section.count;
+                }
+            });
+
+            const countBadge = document.getElementById(`${periodId}Count`);
+            if (countBadge) {
+                const isArabic = document.documentElement.lang === 'ar';
+                countBadge.textContent = `${totalCount} ${isArabic ? 'طالب' : 'students'}`;
+
+                // تحديث لون البادج حسب العدد
+                if (totalCount === 0) {
+                    countBadge.className = 'badge px-3 py-1 rounded-full text-xs font-bold bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200';
+                } else if (totalCount < 20) {
+                    countBadge.className = 'badge px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200';
+                } else {
+                    countBadge.className = 'badge px-3 py-1 rounded-full text-xs font-bold bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200';
+                }
+            }
+
+            // تحديث الطاقة الاستيعابية المطلوبة عند تغيير توزيع الفترات
+            if (document.getElementById('distributePeriodsYes') && document.getElementById('distributePeriodsYes').checked) {
+                updateCapacityBar();
+            }
+
+            // تحديث الملخص
+            updateSummary();
+        }
+
+        // منع إضافة نفس الشعبة إلى أكثر من فترة واحدة
+        function handleSectionSelection(checkbox, currentPeriodId) {
+            // هذه الدالة لم تعد مستخدمة في التصميم الجديد
+            // ولكن نتركها للتوافق مع الكود القديم
+            const sectionId = checkbox.getAttribute('data-section-id');
+            if (checkbox.checked) {
+                addSectionToPeriod(sectionId, currentPeriodId);
+            } else {
+                removeSectionFromPeriod(sectionId, currentPeriodId);
+            }
+        }
+
+        // مراقبة تغيير الشعب المختارة
+        function recalculateTotal() {
+            let total = 0;
+            document.querySelectorAll('.section-checkbox:checked').forEach(cb => total += parseInt(cb.value));
+            document.getElementById('totalStudentCount').value = total;
+            updateCapacityBar();
+
+            // تحديث قائمة الشعب المختارة لتوزيع الفترات
+            if (document.getElementById('distributePeriodsYes') && document.getElementById('distributePeriodsYes').checked) {
+                updateSelectedSectionsList();
+            }
+        }
+
+        // === 1.1. منطق تصنيف الاختبار (إضافة "أخرى") ===
+        function checkExamClass() {
+            const select = document.getElementById('examClassSelect');
+            if (select.value === 'other_class') {
+                const isArabic = document.documentElement.lang === 'ar';
+                Swal.fire({
+                    title: isArabic ? 'إضافة تصنيف اختبار جديد' : 'Add New Exam Classification',
+                    input: 'text',
+                    inputPlaceholder: isArabic ? 'مثال: اختبار قصير، اختبار مستوى...' : 'Example: Short test, Level test...',
+                    showCancelButton: true,
+                    confirmButtonText: isArabic ? 'حفظ وإضافة' : 'Save & Add',
+                    cancelButtonText: isArabic ? 'إلغاء' : 'Cancel',
+                    confirmButtonColor: '#005941',
+                    cancelButtonColor: '#6c757d',
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return isArabic ? 'الرجاء إدخال اسم التصنيف' : 'Please enter classification name';
+                        }
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed && result.value) {
+                        const option = document.createElement('option');
+                        option.text = result.value;
+                        option.value = result.value;
+                        select.add(option, select.options[select.length - 1]);
+                        select.value = result.value;
+                    } else {
+                        select.selectedIndex = 0;
+                    }
+                });
+            }
+        }
+
+        // === 1.5. منطق جلب الاختبارات من المنصة ===
+        let selectedPlatform = '';
+        let availableExams = [];
+        let selectedExamId = null;
+
+        // بيانات وهمية للاختبارات
+        const mockBlackboardExams = [
+            { id: 'bb-001', title: 'اختبار البرمجة المتقدمة - الفصل الأول', course: 'CPCS-202', duration: 90, questions: 25, type: 'Multiple Choice' },
+            { id: 'bb-002', title: 'اختبار قواعد البيانات - النهائي', course: 'CPCS-203', duration: 120, questions: 30, type: 'Mixed' },
+            { id: 'bb-003', title: 'اختبار الشبكات - دوري أول', course: 'CPCS-301', duration: 60, questions: 20, type: 'True/False' }
+        ];
+
+        const mockQuestionMarkExams = [
+            { id: 'qm-001', title: 'Advanced Programming Exam - Midterm', course: 'CPCS-202', duration: 90, questions: 25, type: 'Multiple Choice' },
+            { id: 'qm-002', title: 'Database Systems Final Exam', course: 'CPCS-203', duration: 120, questions: 35, type: 'Mixed' },
+            { id: 'qm-003', title: 'Networks Quiz 1', course: 'CPCS-301', duration: 45, questions: 15, type: 'Short Answer' }
+        ];
+
+        function loadExamsFromPlatform(platform) {
+            const examsCard = document.getElementById('availableExamsCard');
+            const loadingState = document.getElementById('examsLoadingState');
+            const emptyState = document.getElementById('examsEmptyState');
+            const examsList = document.getElementById('examsListContainer');
+            const examsListInner = document.getElementById('examsList');
+
+            if (!platform || platform === '') {
+                if (emptyState) emptyState.classList.remove('hidden');
+                if (loadingState) loadingState.classList.add('hidden');
+                if (examsList) examsList.classList.add('hidden');
+                if (examsListInner) {
+                    examsListInner.innerHTML = '<div class="text-center text-muted p-4" data-ar="اختر منصة الاختبار من البطاقة السابقة لعرض الاختبارات المتاحة" data-en="Select exam platform from the previous card to view available exams">اختر منصة الاختبار من البطاقة السابقة لعرض الاختبارات المتاحة</div>';
+                }
+                return;
+            }
+
+            selectedPlatform = platform;
+
+            if (!examsCard || !loadingState || !emptyState || !examsList || !examsListInner) {
+                console.error('Exam card elements not found');
+                return;
+            }
+
+            loadingState.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            examsList.classList.add('hidden');
+
+            // محاكاة جلب البيانات من API
+            setTimeout(() => {
+                loadingState.classList.add('hidden');
+
+                const exams = platform === 'Questionmark'
+                    ? mockQuestionMarkExams
+                    : mockBlackboardExams;
+
+                availableExams = exams;
+                examsListInner.innerHTML = '';
+
+                if (exams.length === 0) {
+                    emptyState.classList.remove('hidden');
+                } else {
+                    examsList.classList.remove('hidden');
+                    exams.forEach(exam => {
+                        const examItem = document.createElement('div');
+                        examItem.className = 'p-3 border-bottom exam-item';
+                        examItem.dataset.examId = exam.id;
+                        examItem.style.cursor = 'pointer';
+                        examItem.onclick = () => selectExam(exam.id);
+                        examItem.onmouseover = function () { this.style.backgroundColor = '#f8f9fa'; };
+                        examItem.onmouseout = function () {
+                            if (!this.classList.contains('selected')) {
+                                this.style.backgroundColor = 'transparent';
+                            }
+                        };
+
+                        examItem.innerHTML = `
+                        <div class="flex items-start gap-3">
+                            <div class="flex items-center mt-1">
+                                <input class="w-4 h-4 text-primary border-gray-300 focus:ring-primary" type="radio" name="selectedExam" value="${exam.id}" id="exam-${exam.id}">
+                        </div>
+                            <div class="flex-1">
+                                <h6 class="font-bold mb-2 text-gray-900 dark:text-gray-100">${exam.title}</h6>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-muted">
+                                    <div class="flex items-center gap-1">
+                                        <i data-feather="book" class="w-4 h-4"></i> ${exam.course}
+                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <i data-feather="clock" class="w-4 h-4"></i> ${exam.duration} ${document.documentElement.lang === 'ar' ? 'دقيقة' : 'min'}
+                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <i data-feather="file-text" class="w-4 h-4"></i> ${exam.questions} ${document.documentElement.lang === 'ar' ? 'سؤال' : 'questions'}
+                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <i data-feather="tag" class="w-4 h-4"></i> ${exam.type}
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                `;
+                        setTimeout(() => feather.replace(), 50);
+                        examsListInner.appendChild(examItem);
+                    });
+                }
+            }, 1000);
+        }
+
+        function selectExam(examId) {
+            selectedExamId = examId;
+            document.querySelectorAll('.exam-item').forEach(item => {
+                item.classList.remove('selected');
+                item.style.backgroundColor = 'transparent';
+                item.style.borderLeft = 'none';
+            });
+            const selectedItem = document.querySelector(`[data-exam-id="${examId}"]`);
+            if (selectedItem) {
+                selectedItem.classList.add('selected');
+                selectedItem.style.backgroundColor = '#e8f5e9';
+                selectedItem.style.borderLeft = '4px solid #198754';
+                const radio = selectedItem.querySelector('input[type="radio"]');
+                if (radio) radio.checked = true;
+            }
+
+            // عرض مدة الاختبار المختار
+            const selectedExam = availableExams.find(exam => exam.id === examId);
+            if (selectedExam) {
+                const durationDisplay = document.getElementById('selectedExamDurationDisplay');
+                const durationValue = document.getElementById('examDurationValue');
+                if (durationDisplay && durationValue) {
+                    durationValue.textContent = selectedExam.duration;
+                    durationDisplay.classList.remove('hidden');
+                }
+            }
+
+            // Update summary
+            updateSummary();
+        }
+
+
+        // === 2. بيانات الطلاب المزيفة (حسب طلبك) ===
+        const mockStudentsDB = {
+            '2137118': { name: 'أحمد عبدالرحمن العمودي', section: 'CA', mobile: '0505123456', natId: '1100123456', email: '2137118@skau.edu.sa', course: 'CPCS-202' },
+            '2148220': { name: 'خالد محمد الحربي', section: 'CB', mobile: '0555987654', natId: '1100654321', email: '2148220@skau.edu.sa', course: 'CPCS-202' },
+            '2159331': { name: 'فيصل سعيد الزهراني', section: 'CC', mobile: '0566554433', natId: '1100112233', email: '2159331@skau.edu.sa', course: 'CPCS-202' },
+            '2160442': { name: 'عمر فهد العتيبي', section: 'AA', mobile: '0576677889', natId: '1100998877', email: '2160442@skau.edu.sa', course: 'CPCS-203' },
+            '2171553': { name: 'سلطان عبدالله الغامدي', section: 'AB', mobile: '0581122334', natId: '1100776655', email: '2171553@skau.edu.sa', course: 'CPCS-203' },
+            '2182664': { name: 'ماجد صالح الدوسري', section: 'AC', mobile: '0592233445', natId: '1100554433', email: '2182664@skau.edu.sa', course: 'CPCS-202' },
+            '2193775': { name: 'نواف علي المطيري', section: 'AD', mobile: '0503344556', natId: '1100332211', email: '2193775@skau.edu.sa', course: 'CPCS-202' },
+            '2104886': { name: 'تركي سامي القحطاني', section: 'AE', mobile: '0554455667', natId: '1100009988', email: '2104886@skau.edu.sa', course: 'CPCS-203' },
+            '2115997': { name: 'ياسر وليد الشمري', section: 'AF', mobile: '0567788990', natId: '1100123987', email: '2115997@skau.edu.sa', course: 'CPCS-202' },
+            '2126008': { name: 'بدر ناصر السبيعي', section: 'AG', mobile: '0570099887', natId: '1100456123', email: '2126008@skau.edu.sa', course: 'CPCS-203' }
+        };
+
+        let addedStudents = [];
+        let currentFoundStudent = null;
+
+        // تعبئة القائمة المقترحة
+        document.addEventListener('DOMContentLoaded', function () {
+            const dataList = document.getElementById('studentsList');
+            for (const [id, data] of Object.entries(mockStudentsDB)) {
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = data.name;
+                dataList.appendChild(option);
+            }
+            updateLiveTime();
+        });
+
+        function checkStudentId() {
+            const id = document.getElementById('studentIdInput').value;
+            const foundCard = document.getElementById('studentFoundCard');
+            const detailsDiv = document.getElementById('foundStudentDetails');
+
+            if (mockStudentsDB[id]) {
+                currentFoundStudent = { id: id, ...mockStudentsDB[id] };
+                const isArabic = document.documentElement.lang === 'ar';
+                detailsDiv.innerHTML = `
+                <strong class="text-gray-900 dark:text-gray-100">${currentFoundStudent.name}</strong> (${currentFoundStudent.id})<br>
+                <span class="inline-block px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded text-xs ms-1">${isArabic ? 'المادة:' : 'Course:'} ${currentFoundStudent.course}</span>
+                <span class="inline-block px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded text-xs">${isArabic ? 'شعبة:' : 'Section:'} ${currentFoundStudent.section}</span>
+                <div class="text-xs text-muted mt-2 flex items-center gap-1">
+                    <i data-feather="mail" class="w-3 h-3"></i> ${currentFoundStudent.email}
+                </div>
+            `;
+                foundCard.classList.remove('hidden');
+                setTimeout(() => feather.replace(), 50);
+            } else {
+                currentFoundStudent = null;
+                foundCard.classList.add('hidden');
+            }
+        }
+
+        function addStudentToList() {
+            if (!currentFoundStudent) { checkStudentId(); if (!currentFoundStudent) return; }
+
+            if (addedStudents.some(s => s.id === currentFoundStudent.id)) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: document.documentElement.lang === 'ar' ? 'تحذير' : 'Warning',
+                    text: document.documentElement.lang === 'ar' ? 'هذا الطالب مضاف مسبقاً' : 'This student is already added',
+                    confirmButtonText: document.documentElement.lang === 'ar' ? 'حسناً' : 'OK',
+                    confirmButtonColor: '#005941'
+                });
+                document.getElementById('studentIdInput').value = '';
+                document.getElementById('studentFoundCard').classList.add('hidden');
+                return;
+            }
+
+            // إضافة الطالب (المادة موجودة الآن في بيانات الطالب)
+            addedStudents.push(currentFoundStudent);
+            renderStudentsTable();
+
+            document.getElementById('studentIdInput').value = '';
+            document.getElementById('studentFoundCard').classList.add('hidden');
+            currentFoundStudent = null;
+            document.getElementById('studentIdInput').focus();
+        }
+
+        function renderStudentsTable() {
+            const tbody = document.getElementById('addedStudentsTableBody');
+            const noDataMsg = document.getElementById('noStudentsMsg');
+
+            tbody.innerHTML = '';
+            if (addedStudents.length > 0) {
+                noDataMsg.classList.add('hidden');
+                addedStudents.forEach((s, index) => {
+                    const isArabic = document.documentElement.lang === 'ar';
+                    const tr = `<tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">${s.id}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">${s.name}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">${s.course}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">${s.section}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">${s.natId}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">${s.mobile}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">${s.email}</td>
+                    <td class="px-4 py-3">
+                        <button class="p-1 text-red-600 hover:text-red-700 transition-colors" title="${isArabic ? 'حذف' : 'Delete'}" onclick="removeStudent(${index})">
+                            <i data-feather="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                </tr>`;
+                    tbody.innerHTML += tr;
+                });
+                setTimeout(() => feather.replace(), 50);
+            } else {
+                noDataMsg.classList.remove('hidden');
+            }
+        }
+
+        function removeStudent(index) {
+            addedStudents.splice(index, 1);
+            renderStudentsTable();
+        }
+
+        function completeStudentSelection() {
+            if (addedStudents.length === 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: document.documentElement.lang === 'ar' ? 'خطأ' : 'Error',
+                    text: document.documentElement.lang === 'ar' ? 'الرجاء إضافة طالب واحد على الأقل' : 'Please add at least one student',
+                    confirmButtonText: document.documentElement.lang === 'ar' ? 'حسناً' : 'OK',
+                    confirmButtonColor: '#005941'
+                });
+                return;
+            }
+            document.getElementById('totalStudentCount').value = addedStudents.length;
+            updateSummary();
+            const isArabic = document.documentElement.lang === 'ar';
+            Swal.fire({
+                icon: 'success',
+                title: isArabic ? 'تمت إضافة الطلاب بنجاح' : 'Students Added Successfully',
+                html: `
+                <p class="text-gray-600 dark:text-gray-400">${isArabic ? 'العدد الإجمالي:' : 'Total Count:'} <strong class="text-gray-900 dark:text-gray-100">${addedStudents.length}</strong> ${isArabic ? 'طالب' : 'students'}.</p>
+            `,
+                confirmButtonText: isArabic ? 'حسناً' : 'OK',
+                confirmButtonColor: '#198754'
+            });
+        }
+
+        // === بقية الدوال (المباني والمعامل) ===
+        const courseSections = {
+            'CPCS-202': [{ id: 'CA', name: 'شعبة CA (طلاب)', count: 25 }, { id: 'CB', name: 'شعبة CB (طلاب)', count: 30 }, { id: 'ZA', name: 'شعبة ZA (طالبات)', count: 35 }],
+            'CPCS-203': [{ id: 'AA', name: 'شعبة AA (طلاب)', count: 40 }]
+        };
+
+        const buildingsData = {
+            'G': {
+                name: 'مبنى كلية الحاسبات',
+                nameEn: 'Computer Science Building',
+                code: 'G',
+                totalCapacity: 450,
+                labsCount: 8,
+                labs: [
+                    { id: 'G-101', capacity: 60, floor: 'الأرضي' },
+                    { id: 'G-102', capacity: 60, floor: 'الأرضي' },
+                    { id: 'G-103', capacity: 50, floor: 'الأرضي' },
+                    { id: 'G-104', capacity: 50, floor: 'الأرضي' },
+                    { id: 'G-105', capacity: 60, floor: 'الأول' },
+                    { id: 'G-106', capacity: 60, floor: 'الأول' },
+                    { id: 'G-107', capacity: 55, floor: 'الأول' },
+                    { id: 'G-108', capacity: 55, floor: 'الأول' }
+                ]
+            },
+            'ELI': {
+                name: 'مبنى اللغة الإنجليزية',
+                nameEn: 'English Language Building',
+                code: 'ELI',
+                totalCapacity: 180,
+                labsCount: 3,
+                labs: [
+                    { id: 'ELI-201', capacity: 60, floor: 'الثاني' },
+                    { id: 'ELI-202', capacity: 60, floor: 'الثاني' },
+                    { id: 'ELI-203', capacity: 60, floor: 'الثاني' }
+                ]
+            },
+            'Tests': {
+                name: 'مبنى الاختبارات الإلكترونية',
+                nameEn: 'Electronic Tests Building',
+                code: 'Tests',
+                totalCapacity: 300,
+                labsCount: 5,
+                labs: [
+                    { id: 'Tests-A1', capacity: 60, floor: 'الأرضي' },
+                    { id: 'Tests-A2', capacity: 60, floor: 'الأرضي' },
+                    { id: 'Tests-B1', capacity: 60, floor: 'الأول' },
+                    { id: 'Tests-B2', capacity: 60, floor: 'الأول' },
+                    { id: 'Tests-C1', capacity: 60, floor: 'الثاني' }
+                ]
+            }
+        };
+
+        function loadSections() {
+            const course = document.getElementById('courseSelect').value;
+            const listContainer = document.getElementById('sectionsDynamicList');
+            const hint = document.getElementById('courseHint');
+            const list = document.getElementById('sectionsList');
+            listContainer.innerHTML = '';
+            if (course && courseSections[course]) {
+                hint.classList.add('hidden');
+                list.classList.remove('hidden');
+                courseSections[course].forEach(sec => {
+                    const sectionId = `${course}-${sec.id}`; // معرف ثابت: course-sectionId
+                    listContainer.innerHTML += `<div class="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <div class="flex items-center flex-1">
+                        <input class="w-4 h-4 text-primary border-gray-300 focus:ring-primary section-checkbox" type="checkbox" id="section-${sectionId}" value="${sec.count}" data-section-id="${sectionId}" data-section-name="${sec.name}" onchange="recalculateTotal()">
+                        <label class="ms-3 font-semibold text-sm text-gray-700 dark:text-gray-300 cursor-pointer flex-1" for="section-${sectionId}">${sec.name}</label>
+                    </div>
+                    <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded text-xs font-bold">${sec.count}</span>
+                </div>`;
+                });
+            }
+            recalculateTotal();
+        }
+
+        function toggleAllSections() {
+            const checked = document.getElementById('selectAllSections').checked;
+            document.querySelectorAll('.section-checkbox').forEach(cb => cb.checked = checked);
+            recalculateTotal();
+        }
+
+        function toggleTargetMode(mode) {
+            if (mode === 'sections') {
+                document.getElementById('sectionsContainer').classList.remove('hidden');
+                document.getElementById('idsContainer').classList.add('hidden');
+                recalculateTotal();
+            } else {
+                document.getElementById('sectionsContainer').classList.add('hidden');
+                document.getElementById('idsContainer').classList.remove('hidden');
+                // تصفير العداد لأنه يعتمد على زر "اكتمال" الآن
+                document.getElementById('totalStudentCount').value = addedStudents.length;
+                updateCapacityBar();
+            }
+        }
+
+        // Old functions removed (toggleBuildingDropdown, updateAvailableLabs)
+
+        // حساب الطاقة الاستيعابية المطلوبة بناءً على الفترات
+        function getRequiredCapacity() {
+            // التحقق من وجود توزيع فترات
+            const distributePeriodsYes = document.getElementById('distributePeriodsYes');
+            if (distributePeriodsYes && distributePeriodsYes.checked) {
+                // حساب عدد الطلاب لكل فترة
+                let maxPeriodCount = 0;
+                const numberOfPeriods = parseInt(document.getElementById('numberOfPeriods').value) || 2;
+
+                for (let i = 1; i <= numberOfPeriods; i++) {
+                    const periodId = `period${i}`;
+                    const countBadge = document.getElementById(`${periodId}Count`);
+                    if (countBadge) {
+                        const countText = countBadge.textContent.trim();
+                        const count = parseInt(countText.split(' ')[0]) || 0;
+                        if (count > maxPeriodCount) {
+                            maxPeriodCount = count;
+                        }
+                    }
+                }
+
+                // إذا كانت هناك فترات، نستخدم أعلى فترة
+                if (maxPeriodCount > 0) {
+                    return maxPeriodCount;
+                }
+            }
+
+            // إذا لم يكن هناك توزيع فترات، نستخدم العدد الإجمالي
+            return parseInt(document.getElementById('totalStudentCount').value) || 0;
+        }
+
+        function showLabMap(labId) {
+            const isArabic = document.documentElement.lang === 'ar';
+
+            // محاكاة بيانات الأجهزة للمعمل
+            const devices = [];
+            for (let i = 1; i <= 20; i++) {
+                devices.push({
+                    id: `PC-${i.toString().padStart(2, '0')}`,
+                    status: Math.random() > 0.15 ? 'healthy' : 'faulty' // 15% احتمال وجود عطل
+                });
+            }
+
+            const devicesHtml = devices.map(pc => `
+                <div class="flex flex-col items-center gap-1 p-2 border rounded-lg ${pc.status === 'healthy' ? 'border-green-500 bg-green-50/50' : 'border-red-500 bg-red-50/50 shadow-[0_0_8px_rgba(239,68,68,0.2)]'}">
+                    <i data-feather="monitor" class="w-6 h-6 ${pc.status === 'healthy' ? 'text-green-600' : 'text-red-600 animated pulse'}"></i>
+                    <span class="text-[10px] font-bold ${pc.status === 'healthy' ? 'text-green-700' : 'text-red-700'}">${pc.id}</span>
+                </div>
+            `).join('');
+
+            Swal.fire({
+                title: `<div class="flex items-center gap-2 justify-center text-gray-800 dark:text-white">
+                            <i data-feather="map" class="w-5 h-5"></i>
+                            <span>${isArabic ? 'مخطط المعمل:' : 'Lab Layout:'} ${labId}</span>
+                        </div>`,
+                html: `
+                    <div class="text-right mt-4">
+                        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-lg p-3 mb-4 flex items-start gap-3">
+                            <i data-feather="info" class="w-5 h-5 text-blue-600 mt-0.5"></i>
+                            <div class="text-xs text-blue-800 dark:text-blue-300 leading-relaxed">
+                                <strong>${isArabic ? 'تعليمات:' : 'Instructions:'}</strong>
+                                ${isArabic ? 'الأجهزة باللون <span class="text-red-600 font-bold">الأحمر</span> بها أعطال تقنية. يفضل تفادي توزيع الطلاب عليها.' : 'Devices in <span class="text-red-600 font-bold">Red</span> have malfunctions. Avoid assigning students to them.'}
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 max-h-[400px] overflow-y-auto">
+                            ${devicesHtml}
+                        </div>
+                        
+                        <div class="mt-4 flex justify-center gap-4 text-xs font-bold text-gray-500">
+                             <div class="flex items-center gap-1">
+                                <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                                <span>${isArabic ? 'جاهز' : 'Ready'}</span>
+                             </div>
+                             <div class="flex items-center gap-1">
+                                <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+                                <span>${isArabic ? 'عطل فني' : 'Technical Fault'}</span>
+                             </div>
+                        </div>
+                    </div>
+                `,
+                width: '600px',
+                confirmButtonText: isArabic ? 'إغلاق' : 'Close',
+                confirmButtonColor: '#005941',
+                didOpen: () => {
+                    feather.replace();
+                }
+            });
+        }
+
+        function calculateBuildingSelection() {
+            const requiredCapacity = getRequiredCapacity();
+            const selectedBuildings = [];
+            let totalSelectedCapacity = 0;
+
+            // الحصول على المباني المختارة
+            document.querySelectorAll('.building-row-checkbox:checked').forEach(cb => {
+                const buildingCode = cb.value;
+                const building = buildingsData[buildingCode];
+                if (building) {
+                    selectedBuildings.push(building);
+                    totalSelectedCapacity += building.totalCapacity;
+                }
+            });
+
+            const isSufficient = requiredCapacity > 0 ? totalSelectedCapacity >= requiredCapacity : selectedBuildings.length > 0;
+
+            return {
+                selected: selectedBuildings,
+                totalCapacity: totalSelectedCapacity,
+                required: requiredCapacity,
+                isSufficient: isSufficient
+            };
+        }
+
+        function updateAssignedLabsInfo(result) {
+            const section = document.getElementById('assignedLabsSection');
+            const list = document.getElementById('assignedLabsList');
+            const isArabic = document.documentElement.lang === 'ar';
+
+            if (!result.isSufficient || result.selected.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+
+            section.classList.remove('hidden');
+            list.innerHTML = '';
+
+            let remainingRequired = result.required;
+
+            result.selected.forEach(building => {
+                if (remainingRequired <= 0) return;
+
+                building.labs.forEach(lab => {
+                    if (remainingRequired <= 0) return;
+
+                    const allocatedForThisLab = Math.min(lab.capacity, remainingRequired);
+                    remainingRequired -= allocatedForThisLab;
+
+                    const card = `
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg border border-green-200 dark:border-green-800 shadow-sm transition-all hover:shadow-md">
+                            <div class="flex items-center justify-between mb-3">
+                                <div>
+                                    <div class="font-bold text-gray-900 dark:text-gray-100 text-base">${lab.id}</div>
+                                    <div class="text-xs text-muted flex items-center gap-1">
+                                        <i data-feather="layers" class="w-3 h-3"></i>
+                                        ${isArabic ? 'الدور:' : 'Floor:'} ${lab.floor}
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded-full text-xs font-bold ring-1 ring-green-200 dark:ring-green-800">
+                                    ${allocatedForThisLab} ${isArabic ? 'طالب' : 'students'}
+                                </span>
+                            </div>
+                            <button type="button" 
+                                onclick="showLabMap('${lab.id}')"
+                                class="w-full py-2 px-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-primary hover:text-white dark:hover:bg-primary border border-gray-200 dark:border-gray-600 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2">
+                                <i data-feather="monitor" class="w-3.5 h-3.5"></i>
+                                <span>${isArabic ? 'عرض مخطط الأجهزة' : 'View Devices Map'}</span>
+                            </button>
+                        </div>
+                    `;
+                    list.insertAdjacentHTML('beforeend', card);
+                });
+            });
+
+            setTimeout(() => feather.replace(), 50);
+        }
+
+        function updateCapacityBar() {
+            const result = calculateBuildingSelection();
+            const required = result.required;
+            const selected = result.totalCapacity;
+            const isSufficient = result.isSufficient;
+
+            // تحديث النصوص
+            document.getElementById('requiredCapacityDisplay').innerText = required + (document.documentElement.lang === 'ar' ? ' طالب' : ' students');
+            document.getElementById('selectedCapacityDisplay').innerText = selected + (document.documentElement.lang === 'ar' ? ' طالب' : ' students');
+
+            const bar = document.getElementById('progressBar');
+            const status = document.getElementById('capacityStatus');
+
+            let pct = required > 0 ? (selected / required) * 100 : 0;
+            if (required === 0 && selected > 0) pct = 100;
+
+            bar.style.width = Math.min(pct, 100) + "%";
+
+            const isArabic = document.documentElement.lang === 'ar';
+            const allCheckboxes = document.querySelectorAll('.building-row-checkbox');
+
+            if (isSufficient && selected > 0) {
+                bar.className = "bg-green-500 h-4 rounded-full transition-all duration-300";
+                status.innerHTML = `<i data-feather="check" class="w-4 h-4 inline"></i> ${isArabic ? 'السعة كافية' : 'Capacity Sufficient'}`;
+                status.className = "text-green-600 dark:text-green-400 font-bold";
+
+                // منع اختيار مباني إضافية عند تغطية الطاقة الاستيعابية
+                allCheckboxes.forEach(cb => {
+                    if (!cb.checked) {
+                        cb.disabled = true;
+                        cb.closest('tr').style.opacity = '0.5';
+                        cb.closest('tr').style.cursor = 'not-allowed';
+                    }
+                });
+            } else {
+                if (selected > 0) {
+                    bar.className = "bg-red-500 h-4 rounded-full transition-all duration-300";
+                    status.innerHTML = `<i data-feather="alert-circle" class="w-4 h-4 inline"></i> ${isArabic ? 'السعة غير كافية' : 'Insufficient Capacity'}`;
+                    status.className = "text-red-600 dark:text-red-400 font-bold";
+                } else {
+                    bar.className = "bg-red-500 h-4 rounded-full transition-all duration-300";
+                    status.innerHTML = isArabic ? 'الرجاء اختيار مبنى' : 'Please select a building';
+                    status.className = "text-red-600 dark:text-red-400 font-bold";
+                }
+
+                // تفعيل جميع الخيارات عند عدم كفاية السعة
+                allCheckboxes.forEach(cb => {
+                    cb.disabled = false;
+                    cb.closest('tr').style.opacity = '1';
+                    cb.closest('tr').style.cursor = 'default';
+                });
+            }
+
+            // تحديث معلومات المعامل الاستدلالية
+            updateAssignedLabsInfo(result);
+
+            setTimeout(() => feather.replace(), 50);
+
+            // Update summary
+            updateSummary();
+        }
+
+        function checkConflicts() {
+            const required = parseInt(document.getElementById('totalStudentCount').value) || 0;
+            let selected = 0;
+            document.querySelectorAll('.hall-checkbox:checked').forEach(cb => selected += parseInt(cb.value));
+            const modal = new bootstrap.Modal(document.getElementById('conflictModal'));
+            const success = document.getElementById('successState');
+            const error = document.getElementById('errorState');
+            const header = document.getElementById('modalHeader');
+            const btn = document.getElementById('confirmBtn');
+
+            if (selected < required) {
+                success.classList.add('d-none'); error.classList.remove('d-none'); header.className = "modal-header bg-danger text-white"; btn.disabled = true;
+            } else {
+                success.classList.remove('d-none'); error.classList.add('d-none'); header.className = "modal-header bg-success text-white"; btn.disabled = false;
+            }
+            modal.show();
+        }
+
+        function updateLiveTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const liveDateTimeEl = document.getElementById('liveDateTime');
+            if (liveDateTimeEl) {
+                liveDateTimeEl.innerText = now.toLocaleDateString('ar-SA', options);
+            }
+        }
+        setInterval(updateLiveTime, 1000);
+        updateLiveTime();
+
+        // Re-initialize Feather Icons after dynamic content updates
+        setTimeout(() => feather.replace(), 100);
+    </script>
+
+</body>
+
+</html>
