@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-ar="إدارة فريق الدعم التقني" data-en="Technical Support Management">إدارة فريق الدعم التقني - KAU
+    </title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Cairo & Inter) -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="assets/styles.css">
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#005941',
+                        accent: '#C89933',
+                    },
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                        english: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Specific Styles for Support Page */
+        .staff-item {
+            transition: all 0.2s ease;
+        }
+
+        .staff-item:hover {
+            background-color: rgba(0, 89, 65, 0.05);
+        }
+
+        .dark .staff-item:hover {
+            background-color: rgba(107, 191, 94, 0.1);
+        }
+
+        .pulse-red {
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+    </style>
+</head>
+
+<body class="h-full flex overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar w-64 flex-col hidden lg:flex h-full fixed lg:relative z-30">
+        <div class="h-20 flex items-center justify-center border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary font-bold border-2 border-accent">
+                    KAU</div>
+                <h1 class="text-white font-bold text-lg" data-ar="بوابة الأنظمة" data-en="KAU Portal">بوابة الأنظمة</h1>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+            <!-- Dashboard -->
+            <a href="index.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="grid" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</span>
+            </a>
+
+            <!-- Buildings & Labs -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="إدارة المباني والمعامل" data-en="Buildings & Labs">إدارة المباني والمعامل</div>
+            <a href="buildings.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="home" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المباني" data-en="Buildings">إدارة المباني</span>
+            </a>
+            <a href="labs.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="monitor" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المعامل" data-en="Labs">إدارة المعامل</span>
+            </a>
+
+            <!-- Exams -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="إدارة الاختبارات" data-en="Exams">إدارة الاختبارات</div>
+            <a href="create-exam.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="file-text" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="جدولة اختبار" data-en="Schedule Exam">جدولة اختبار</span>
+            </a>
+            <a href="mnagment_support_team.html"
+                class="sidebar-link active flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="users" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="فريق الدعم الفني" data-en="Support Team">فريق الدعم الفني</span>
+            </a>
+
+            <!-- Academic Calendar -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="التقويم الأكاديمي" data-en="Academic Calendar">التقويم الأكاديمي</div>
+            <a href="Calender-Mnagment.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="settings" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إعدادات الفصول الدراسية" data-en="Term Configurations">إعدادات الفصول
+                    الدراسية</span>
+            </a>
+            <a href="AcadmicCalnder.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="calendar" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="عرض التقويم" data-en="View Calendar">عرض التقويم</span>
+            </a>
+
+            <!-- Settings -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="الإعدادات"
+                data-en="Settings">الإعدادات</div>
+            <a href="setting.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="settings" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الإعدادات العامة" data-en="General Settings">الإعدادات العامة</span>
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-white/10">
+            <a href="Login.html"
+                class="w-full flex items-center justify-center gap-2 text-red-300 hover:text-red-100 transition-colors">
+                <i data-feather="log-out" class="w-4 h-4"></i>
+                <span class="text-sm font-bold" data-ar="تسجيل خروج" data-en="Logout">تسجيل خروج</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <!-- Header -->
+        <header class="sticky top-0 z-20 card-bg border-b border-custom shadow-sm">
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="flex items-center gap-4">
+                    <button id="sidebarToggle"
+                        class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i data-feather="menu" class="w-5 h-5"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-xl font-bold" data-ar="توزيع فريق الدعم الفني" data-en="Support Team Dispatch">
+                            توزيع فريق الدعم الفني</h2>
+                        <p class="text-sm text-muted" data-ar="مراقبة المباني وتكليف موظفي الدعم"
+                            data-en="Monitor buildings and dispatch support technicians">مراقبة المباني وتكليف موظفي
+                            الدعم</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button class="header-icon-hover p-2 rounded-lg transition-colors" id="themeToggle">
+                        <i data-feather="moon" class="w-5 h-5"></i>
+                    </button>
+                    <button class="header-icon-hover p-2 rounded-lg transition-colors" id="langToggle">
+                        <i data-feather="globe" class="w-5 h-5"></i>
+                    </button>
+                    <div class="flex items-center gap-2 ps-4 border-s border-custom">
+                        <div class="text-end">
+                            <div class="font-semibold" data-ar="م. حسين القرني" data-en="Eng. Hussein Al-Qarni">م. حسين
+                                القرني</div>
+                            <small class="text-muted text-xs" data-ar="مدير نظام" data-en="System Admin">مدير
+                                نظام</small>
+                        </div>
+                        <div
+                            class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">
+                            AH</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto main-content-full-width">
+            <div class="w-full">
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="stat-card blue">
+                        <div class="flex-1">
+                            <p class="text-sm text-muted font-bold mb-1" data-ar="إجمالي الفريق" data-en="Total Team">
+                                إجمالي الفريق</p>
+                            <h3 class="text-2xl font-black">24</h3>
+                        </div>
+                        <div class="stat-icon bg-light-blue">
+                            <i data-feather="users"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="flex-1">
+                            <p class="text-sm text-muted font-bold mb-1" data-ar="المتاحون حالياً"
+                                data-en="Available Techs">المتاحون حالياً</p>
+                            <h3 class="text-2xl font-black">8</h3>
+                        </div>
+                        <div class="stat-icon bg-light-green">
+                            <i data-feather="check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card orange">
+                        <div class="flex-1">
+                            <p class="text-sm text-muted font-bold mb-1" data-ar="المباني النشطة"
+                                data-en="Active Buildings">المباني النشطة</p>
+                            <h3 class="text-2xl font-black">6</h3>
+                        </div>
+                        <div class="stat-icon bg-light-orange">
+                            <i data-feather="home"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card red">
+                        <div class="flex-1">
+                            <p class="text-sm text-muted font-bold mb-1" data-ar="بلاغات معلقة"
+                                data-en="Pending Issues">بلاغات معلقة</p>
+                            <h3 class="text-2xl font-black pulse-red">3</h3>
+                        </div>
+                        <div class="stat-icon bg-light-red">
+                            <i data-feather="alert-triangle"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                    <!-- Buildings Monitoring -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold flex items-center gap-2">
+                                <i data-feather="activity" class="text-primary"></i>
+                                <span data-ar="حالة المباني المباشرة" data-en="Live Buildings Status">حالة المباني
+                                    المباشرة</span>
+                            </h3>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="buildingsGrid">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Staff List -->
+                    <div class="space-y-6">
+                        <div class="card-bg rounded-xl border border-custom shadow-sm flex flex-col h-[600px]">
+                            <div class="p-4 border-b border-custom">
+                                <h3 class="font-bold flex items-center gap-2 mb-4">
+                                    <i data-feather="user-check" class="text-primary"></i>
+                                    <span data-ar="تتبع فنيي الدعم" data-en="Support Tech Tracking">تتبع فنيي
+                                        الدعم</span>
+                                </h3>
+                                <div class="relative">
+                                    <i data-feather="search" class="absolute right-3 top-3 w-4 h-4 text-muted"></i>
+                                    <input type="text" id="staffSearch"
+                                        class="w-full pr-10 pl-4 py-2 bg-gray-50 dark:bg-gray-800 border border-custom rounded-lg text-sm focus:ring-1 focus:ring-primary outline-none"
+                                        placeholder="بحث عن فني..." data-ar="بحث عن فني..." data-en="Search tech...">
+                                </div>
+                            </div>
+                            <div class="flex-1 overflow-y-auto p-4 space-y-2" id="staffList">
+                                <!-- Injected by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Data and Logic
+        const staffData = [
+            { id: 1, name: "إبراهيم الخالدي", status: "available", specs: "أنظمة Microsoft", avatar: "IH" },
+            { id: 2, name: "سامي الذبياني", status: "busy", assignedTo: "B44", specs: "صيانة أجهزة", avatar: "SD" },
+            { id: 3, name: "ياسر الهذلي", status: "available", specs: "إدارة شبكات", avatar: "YH" },
+            { id: 4, name: "عبدالله القرني", status: "busy", assignedTo: "B66", specs: "برمجيات", avatar: "AQ" },
+            { id: 5, name: "عمر السالم", status: "available", specs: "أمن سيبراني", avatar: "OS" },
+            { id: 6, name: "خالد المحمادي", status: "absent", specs: "صيانة عامة", avatar: "KM" }
+        ];
+
+        const buildingsData = [
+            { id: "B44", name: "مبنى 44 - السنة التحضيرية", activeLabs: 8, currentStudents: 320, staff: ["سامي الذبياني"], status: "warning", issue: "عطل شبكة Lab-03" },
+            { id: "B66", name: "مبنى 66 - كلية الهندسة", activeLabs: 12, currentStudents: 450, staff: ["عبدالله القرني"], status: "stable" },
+            { id: "B29", name: "مبنى 29 - الحاسبات", activeLabs: 15, currentStudents: 600, staff: [], status: "critical", issue: "انقطاع تيار جزئي" },
+            { id: "B12", name: "مبنى 12 - العلوم", activeLabs: 5, currentStudents: 180, staff: [], status: "stable" }
+        ];
+
+        function init() {
+            renderStaff();
+            renderBuildings();
+            feather.replace();
+        }
+
+        function renderStaff() {
+            const list = document.getElementById('staffList');
+            list.innerHTML = staffData.map(s => `
+                <div class="staff-item p-3 border border-custom rounded-lg flex items-center justify-between cursor-pointer group">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                            ${s.avatar}
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-gray-800 dark:text-gray-100">${s.name}</p>
+                            <p class="text-[10px] text-muted">${s.specs}</p>
+                        </div>
+                    </div>
+                    <span class="w-3 h-3 rounded-full ${s.status === 'available' ? 'bg-green-500' : s.status === 'busy' ? 'bg-orange-400' : 'bg-red-500'}"></span>
+                </div>
+            `).join('');
+        }
+
+        function renderBuildings() {
+            const grid = document.getElementById('buildingsGrid');
+            const isArabic = document.documentElement.lang === 'ar';
+
+            grid.innerHTML = buildingsData.map(b => {
+                let statusHeader = "border-custom";
+                if (b.status === 'warning') statusHeader = "border-orange-400 bg-orange-50/30";
+                if (b.status === 'critical') statusHeader = "border-red-400 bg-red-50/30";
+
+                return `
+                    <div class="card-bg rounded-xl border-2 ${statusHeader} shadow-sm overflow-hidden flex flex-col group">
+                        <div class="p-4 border-b border-custom bg-gray-50/50 dark:bg-gray-800/50">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${b.status === 'stable' ? 'bg-green-100 text-green-700' : b.status === 'warning' ? 'bg-orange-100 text-orange-700' : 'bg-red-100 text-red-700'}">
+                                    ${b.status === 'stable' ? (isArabic ? 'مستقر' : 'Stable') : b.status === 'warning' ? (isArabic ? 'بلاغ' : 'Issue') : (isArabic ? 'حرج' : 'Critical')}
+                                </span>
+                                <span class="text-[10px] text-muted font-bold">#${b.id}</span>
+                            </div>
+                            <h4 class="font-bold text-gray-800 dark:text-white">${b.name}</h4>
+                        </div>
+                        <div class="p-4 flex-1 space-y-4">
+                            <div class="flex justify-between text-center">
+                                <div>
+                                    <p class="text-[10px] text-muted" data-ar="المعامل" data-en="Labs">المعامل</p>
+                                    <p class="font-bold">${b.activeLabs}</p>
+                                </div>
+                                <div class="border-x border-custom px-4">
+                                    <p class="text-[10px] text-muted" data-ar="الطلاب" data-en="Students">الطلاب</p>
+                                    <p class="font-bold">${b.currentStudents}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] text-muted" data-ar="الدعم" data-en="Support">الدعم</p>
+                                    <p class="font-bold">${b.staff.length}</p>
+                                </div>
+                            </div>
+                            ${b.issue ? `<div class="p-2 bg-red-50 dark:bg-red-900/10 text-red-700 text-[10px] font-bold rounded border border-red-200">⚠ ${b.issue}</div>` : ''}
+                        </div>
+                        <div class="p-4 pt-0">
+                            <button onclick="dispatchModal('${b.id}', '${b.name}')" class="w-full py-2 bg-primary hover:bg-primary/90 text-white text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2">
+                                <i data-feather="plus" class="w-3 h-3"></i>
+                                <span data-ar="تكليف دعم" data-en="Assign Support">تكليف دعم</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            feather.replace();
+        }
+
+        async function dispatchModal(bid, bname) {
+            const available = staffData.filter(s => s.status === 'available');
+            if (available.length === 0) {
+                Swal.fire({ icon: 'warning', title: 'عذراً', text: 'لا يوجد فنيين متاحين حالياً', confirmButtonColor: '#005941' });
+                return;
+            }
+
+            const options = available.reduce((acc, s) => { acc[s.id] = s.name; return acc; }, {});
+
+            const { value: sid } = await Swal.fire({
+                title: 'تكليف فني دعم',
+                text: `اختيار فني لـ ${bname}`,
+                input: 'select',
+                inputOptions: options,
+                showCancelButton: true,
+                confirmButtonText: 'تأكيد التكليف',
+                cancelButtonText: 'إلغاء',
+                confirmButtonColor: '#005941',
+                reverseButtons: true
+            });
+
+            if (sid) {
+                const s = staffData.find(x => x.id == sid);
+                s.status = 'busy';
+                buildingsData.find(x => x.id == bid).staff.push(s.name);
+                Swal.fire({ icon: 'success', title: 'تمت العملية', timer: 1500, showConfirmButton: false });
+                init();
+            }
+        }
+
+        // Theme Toggle
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            feather.replace();
+        });
+
+        // Lang Toggle
+        document.getElementById('langToggle').addEventListener('click', () => {
+            const isAr = document.documentElement.lang === 'ar';
+            document.documentElement.lang = isAr ? 'en' : 'ar';
+            document.documentElement.dir = isAr ? 'ltr' : 'rtl';
+            document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+                el.innerText = isAr ? el.getAttribute('data-en') : el.getAttribute('data-ar');
+            });
+            init();
+        });
+
+        // Mobile Toggle
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('hidden');
+        });
+
+        window.onload = init;
+    </script>
+</body>
+
+</html>

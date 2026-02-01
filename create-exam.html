@@ -215,6 +215,15 @@
                 <span class="font-medium" data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</span>
             </a>
 
+            <!-- Integrations -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="إدارة الربط"
+                data-en="Integrations">إدارة الربط</div>
+            <a href="questionmark-admin.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="questionmark-admin">
+                <i data-feather="link" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="ربط كويسشن مارك" data-en="Questionmark Sync">ربط كويسشن مارك</span>
+            </a>
+
             <!-- Buildings & Labs -->
             <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
                 data-ar="إدارة المباني والمعامل" data-en="Buildings & Labs">إدارة المباني والمعامل</div>
@@ -898,6 +907,54 @@
                                                         data-en="Enter number of periods (2 to 10)">أدخل عدد الفترات (من
                                                         2 إلى 10)</div>
                                                 </div>
+
+                                                <!-- نمط دخول الاختبار -->
+                                                <div class="md:col-span-3">
+                                                    <label
+                                                        class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300"
+                                                        data-ar="نمط دخول الاختبار" data-en="Exam Access Mode">
+                                                        <span data-ar="نمط دخول الاختبار" data-en="Exam Access Mode">نمط
+                                                            دخول الاختبار</span>
+                                                        <span class="text-red-500 mr-1">*</span>
+                                                    </label>
+                                                    <div
+                                                        class="flex flex-col gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                                                        <div class="flex items-center">
+                                                            <input
+                                                                class="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                                                                type="radio" name="accessMode" id="accessModeFlexible"
+                                                                value="flexible" checked onchange="updateSummary()">
+                                                            <label
+                                                                class="ms-2 text-xs font-semibold text-gray-700 dark:text-gray-300 cursor-pointer"
+                                                                for="accessModeFlexible">
+                                                                <span data-ar="دخول حر (أي فترة)"
+                                                                    data-en="Flexible (Any Period)">دخول حر (أي
+                                                                    فترة)</span>
+                                                                <p class="text-[10px] text-muted font-normal"
+                                                                    data-ar="يمكن للطالب الاختبار في أي وقت داخل الفترات"
+                                                                    data-en="Students can take the exam at any time within the periods.">
+                                                                    يمكن للطالب الاختبار في أي وقت داخل الفترات</p>
+                                                            </label>
+                                                        </div>
+                                                        <div class="flex items-center">
+                                                            <input
+                                                                class="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+                                                                type="radio" name="accessMode" id="accessModeRestricted"
+                                                                value="restricted" onchange="updateSummary()">
+                                                            <label
+                                                                class="ms-2 text-xs font-semibold text-gray-700 dark:text-gray-300 cursor-pointer"
+                                                                for="accessModeRestricted">
+                                                                <span data-ar="دخول مقيد (فترة الشعبة فقط)"
+                                                                    data-en="Restricted (Assigned Period Only)">دخول
+                                                                    مقيد (فترة الشعبة فقط)</span>
+                                                                <p class="text-[10px] text-muted font-normal"
+                                                                    data-ar="يلزم الطالب بالاختبار في فترة شعبته المحددة فقط"
+                                                                    data-en="Students must take the exam only during their assigned section period.">
+                                                                    يلزم الطالب بالاختبار في فترة شعبته المحددة فقط</p>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
 
                                             <!-- قائمة الشعب المختارة -->
@@ -1210,6 +1267,14 @@
 
                                     <div
                                         class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 border-dashed">
+                                        <div class="mb-4 bg-blue-50 dark:bg-blue-900/10 p-3 rounded-lg border border-blue-100 dark:border-blue-800 flex items-start gap-2 hidden"
+                                            id="periodCapacityHint">
+                                            <i data-feather="info" class="w-4 h-4 text-blue-600 mt-0.5"></i>
+                                            <small class="text-blue-800 dark:text-blue-300"
+                                                data-ar="💡 ملاحظة: تم حساب الاحتياج بناءً على 'أكبر فترة' في توزيع الفترات."
+                                                data-en="💡 Note: Capacity required is calculated based on the 'largest period' in the distribution.">💡
+                                                ملاحظة: تم حساب الاحتياج بناءً على 'أكبر فترة' في توزيع الفترات.</small>
+                                        </div>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                                             <div>
                                                 <h6 class="font-bold mb-3 text-gray-700 dark:text-gray-300"
@@ -1805,6 +1870,10 @@
                     const numberOfPeriods = parseInt(document.getElementById('numberOfPeriods').value) || 2;
                     summaryHTML += `<p class="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700"><strong>${isArabic ? 'توزيع الفترات:' : 'Period Distribution:'}</strong> ${isArabic ? 'مفعّل' : 'Enabled'}</p>`;
                     summaryHTML += `<p><strong>${isArabic ? 'عدد الفترات:' : 'Number of Periods:'}</strong> ${numberOfPeriods}</p>`;
+
+                    // إضافة نمط الدخول للملخص
+                    const isFlexible = document.getElementById('accessModeFlexible')?.checked;
+                    summaryHTML += `<p><strong>${isArabic ? 'نمط الدخول:' : 'Access Mode:'}</strong> <span class="text-primary">${isFlexible ? (isArabic ? 'دخول حر' : 'Flexible') : (isArabic ? 'مقيد بالشعبة' : 'Restricted')}</span></p>`;
 
                     // عرض تفاصيل كل فترة
                     let periodsDetails = '';
@@ -3105,6 +3174,17 @@
 
             bar.style.width = Math.min(pct, 100) + "%";
 
+            // إظهار/إخفاء ملاحظة الفترات
+            const periodHint = document.getElementById('periodCapacityHint');
+            const distributePeriodsYes = document.getElementById('distributePeriodsYes');
+            if (periodHint) {
+                if (distributePeriodsYes && distributePeriodsYes.checked) {
+                    periodHint.classList.remove('hidden');
+                } else {
+                    periodHint.classList.add('hidden');
+                }
+            }
+
             const isArabic = document.documentElement.lang === 'ar';
             const allCheckboxes = document.querySelectorAll('.building-row-checkbox');
 
@@ -3150,21 +3230,46 @@
         }
 
         function checkConflicts() {
-            const required = parseInt(document.getElementById('totalStudentCount').value) || 0;
-            let selected = 0;
-            document.querySelectorAll('.hall-checkbox:checked').forEach(cb => selected += parseInt(cb.value));
-            const modal = new bootstrap.Modal(document.getElementById('conflictModal'));
-            const success = document.getElementById('successState');
-            const error = document.getElementById('errorState');
-            const header = document.getElementById('modalHeader');
-            const btn = document.getElementById('confirmBtn');
+            const isArabic = document.documentElement.lang === 'ar';
+            const result = calculateBuildingSelection();
 
-            if (selected < required) {
-                success.classList.add('d-none'); error.classList.remove('d-none'); header.className = "modal-header bg-danger text-white"; btn.disabled = true;
-            } else {
-                success.classList.remove('d-none'); error.classList.add('d-none'); header.className = "modal-header bg-success text-white"; btn.disabled = false;
+            if (!result.isSufficient) {
+                Swal.fire({
+                    icon: 'error',
+                    title: isArabic ? 'عذراً!' : 'Oops!',
+                    text: isArabic ? 'الطاقة الاستيعابية للمباني المختارة غير كافية لتغطية عدد الطلاب.' : 'The capacity of selected buildings is insufficient to cover all students.',
+                    confirmButtonColor: '#005941',
+                    confirmButtonText: isArabic ? 'موافق' : 'OK'
+                });
+                return;
             }
-            modal.show();
+
+            Swal.fire({
+                title: isArabic ? 'تأكيد الاعتماد' : 'Confirm Approval',
+                text: isArabic ? 'هل أنت متأكد من رغبتك في اعتماد هذا الاختبار وحجز القاعات المحددة؟' : 'Are you sure you want to approve this exam and book the selected halls?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#005941',
+                cancelButtonColor: '#d33',
+                confirmButtonText: isArabic ? 'نعم، اعتماد' : 'Yes, Approve',
+                cancelButtonText: isArabic ? 'إلغاء' : 'Cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: isArabic ? 'تم بنجاح!' : 'Success!',
+                        text: isArabic ? 'تم إنشاء الاختبار واعتماده بنجاح.' : 'The exam has been created and approved successfully.',
+                        icon: 'success',
+                        confirmButtonColor: '#005941',
+                        timer: 2000,
+                        timerProgressBar: true
+                    }).then(() => {
+                        // محاكاة حفظ البيانات والانتقال لصفحة أخرى
+                        console.log("Exam Created Successfully");
+                        // window.location.href = 'exams-list.html'; 
+                    });
+                }
+            });
         }
 
         function updateLiveTime() {

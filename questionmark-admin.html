@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-ar="إعدادات كويسشن مارك" data-en="Questionmark Settings">إعدادات كويسشن مارك - بوابة الأنظمة المتكاملة
+    </title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Cairo & Inter) -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="assets/styles.css">
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#005941',
+                        accent: '#C89933',
+                    },
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                        english: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="h-full flex overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar w-64 flex-col hidden lg:flex h-full fixed lg:relative z-30">
+        <div class="h-20 flex items-center justify-center border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary font-bold border-2 border-accent">
+                    KAU</div>
+                <h1 class="text-white font-bold text-lg" data-ar="بوابة الأنظمة" data-en="KAU Portal">بوابة الأنظمة</h1>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+            <!-- Dashboard -->
+            <a href="index.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="grid" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</span>
+            </a>
+
+            <!-- Integrations -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="إدارة الربط"
+                data-en="Integrations">إدارة الربط</div>
+            <a href="questionmark-admin.html" class="sidebar-link active flex items-center px-4 py-3 rounded-lg group"
+                data-page="questionmark-admin">
+                <i data-feather="link" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="ربط كويسشن مارك" data-en="Questionmark Sync">ربط كويسشن مارك</span>
+            </a>
+
+            <!-- Buildings & Labs -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="إدارة المباني والمعامل" data-en="Buildings & Labs">إدارة المباني والمعامل</div>
+            <a href="buildings.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="home" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المباني" data-en="Buildings">إدارة المباني</span>
+            </a>
+            <a href="labs.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="monitor" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المعامل" data-en="Labs">إدارة المعامل</span>
+            </a>
+
+            <!-- Exams -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="إدارة الاختبارات" data-en="Exams">إدارة الاختبارات</div>
+            <a href="create-exam.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="create-exam">
+                <i data-feather="file-text" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="جدولة اختبار" data-en="Schedule Exam">جدولة اختبار</span>
+            </a>
+
+            <!-- Academic Calendar -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="التقويم الأكاديمي" data-en="Academic Calendar">التقويم الأكاديمي</div>
+            <a href="Calender-Mnagment.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="Calender-Mnagment">
+                <i data-feather="settings" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إعدادات الفصول الدراسية" data-en="Term Configurations">إعدادات الفصول
+                    الدراسية</span>
+            </a>
+            <a href="AcadmicCalnder.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="AcadmicCalnder">
+                <i data-feather="calendar" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="عرض التقويم" data-en="View Calendar">عرض التقويم</span>
+            </a>
+            <a href="view-archive-calendar.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="view-archive-calendar">
+                <i data-feather="archive" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الأرشيف" data-en="Archive">الأرشيف</span>
+            </a>
+
+            <!-- Users -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="إدارة المستخدمين" data-en="Users">إدارة المستخدمين</div>
+            <a href="users.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="users" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المستخدمين" data-en="User Management">إدارة المستخدمين</span>
+            </a>
+
+            <!-- Finance -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="الإدارة المالية" data-en="Finance">الإدارة المالية</div>
+            <a href="finance-sittings.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="dollar-sign" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الإعدادات المالية" data-en="Finance Settings">الإعدادات
+                    المالية</span>
+            </a>
+            <a href="contracts-management.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="file-text" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة العقود" data-en="Contracts">إدارة العقود</span>
+            </a>
+
+            <!-- Settings -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="الإعدادات"
+                data-en="Settings">الإعدادات</div>
+            <a href="setting.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="settings" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الإعدادات العامة" data-en="General Settings">الإعدادات العامة</span>
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-white/10">
+            <a href="Login.html"
+                class="w-full flex items-center justify-center gap-2 text-red-300 hover:text-red-100 transition-colors">
+                <i data-feather="log-out" class="w-4 h-4"></i>
+                <span class="text-sm font-bold" data-ar="تسجيل خروج" data-en="Logout">تسجيل خروج</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <!-- Header -->
+        <header class="sticky top-0 z-20 card-bg border-b border-custom shadow-sm">
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="flex items-center gap-4">
+                    <button id="sidebarToggle"
+                        class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i data-feather="menu" class="w-5 h-5"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-xl font-bold" data-ar="إدارة نظام كويسشن مارك" data-en="Questionmark Admin">
+                            إدارة نظام كويسشن مارك</h2>
+                        <p class="text-sm text-muted" data-ar="إعدادات الربط وإدارة صلاحيات الوصول للاختبارات"
+                            data-en="Sync settings and exam access permissions Management">إعدادات الربط وإدارة صلاحيات
+                            الوصول للاختبارات</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button class="header-icon-hover p-2 rounded-lg transition-colors" id="themeToggle">
+                        <i data-feather="moon" class="w-5 h-5"></i>
+                    </button>
+                    <button class="header-icon-hover p-2 rounded-lg transition-colors" id="langToggle">
+                        <i data-feather="globe" class="w-5 h-5"></i>
+                    </button>
+                    <div class="flex items-center gap-2 ps-4 border-s border-custom">
+                        <div class="text-end">
+                            <div class="font-semibold" data-ar="م. حسين القرني" data-en="Eng. Hussein Al-Qarni">م. حسين
+                                القرني</div>
+                            <small class="text-muted text-xs" data-ar="مدير نظام" data-en="System Admin">مدير
+                                نظام</small>
+                        </div>
+                        <div
+                            class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">
+                            AH</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto main-content-full-width">
+            <div class="w-full p-6">
+
+                <!-- Sync Status Summary -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="stat-card teal">
+                        <div>
+                            <h6 class="text-muted mb-1 text-sm" data-ar="حالة الاتصال" data-en="Connection Status">حالة
+                                الاتصال</h6>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></span>
+                                <h3 class="text-lg font-bold mb-0" data-ar="متصل نـــاجح" data-en="Connected">متصل
+                                    نـــاجح</h3>
+                            </div>
+                        </div>
+                        <div class="stat-icon bg-light-teal scale-90">
+                            <i data-feather="zap"></i>
+                        </div>
+                    </div>
+
+                    <div class="stat-card blue">
+                        <div>
+                            <h6 class="text-muted mb-1 text-sm" data-ar="آخر مزامنة" data-en="Last Sync">آخر مزامنة</h6>
+                            <h3 class="text-lg font-bold mb-0">اليوم، 09:15 ص</h3>
+                        </div>
+                        <div class="stat-icon bg-light-blue scale-90">
+                            <i data-feather="refresh-cw"></i>
+                        </div>
+                    </div>
+
+                    <div class="stat-card orange">
+                        <div>
+                            <h6 class="text-muted mb-1 text-sm" data-ar="الاختبارات المتوفرة" data-en="Available Exams">
+                                الاختبارات المتوفرة</h6>
+                            <h3 class="text-lg font-bold mb-0">124 <span class="text-sm text-muted font-normal"
+                                    data-ar="اختبار" data-en="exams">اختبار</span></h3>
+                        </div>
+                        <div class="stat-icon bg-light-orange scale-90">
+                            <i data-feather="database"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Right Column: Settings -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <!-- Connection Config -->
+                        <div class="card-bg rounded-xl shadow-lg border border-custom overflow-hidden">
+                            <div class="px-6 py-4 border-b border-custom bg-gray-50 dark:bg-gray-800/50">
+                                <h3 class="font-bold flex items-center gap-2">
+                                    <i data-feather="settings" class="w-5 h-5 text-primary"></i>
+                                    <span data-ar="إعدادات الربط التقني" data-en="API Configuration">إعدادات الربط
+                                        التقني</span>
+                                </h3>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                <div>
+                                    <label class="form-label text-sm" data-ar="عنوان الـ API الأساسي"
+                                        data-en="API Base URL">عنوان الـ API الأساسي</label>
+                                    <input type="text" class="form-control font-english"
+                                        value="https://kau.questionmark.com/delivery/api/v1" dir="ltr">
+                                </div>
+                                <div>
+                                    <label class="form-label text-sm" data-ar="مفتاح العميل (Client ID)"
+                                        data-en="Client ID">مفتاح العميل (Client ID)</label>
+                                    <input type="text" class="form-control font-english"
+                                        value="kau_portal_integration_992" dir="ltr">
+                                </div>
+                                <div>
+                                    <label class="form-label text-sm" data-ar="الرمز السري (Secret Key)"
+                                        data-en="Secret Key">الرمز السري (Secret Key)</label>
+                                    <div class="relative">
+                                        <input type="password" class="form-control font-english"
+                                            value="••••••••••••••••" dir="ltr">
+                                        <button
+                                            class="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400 hover:text-primary">
+                                            <i data-feather="eye" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="pt-4 border-t border-custom">
+                                    <button onclick="testConnection()"
+                                        class="w-full btn-primary flex items-center justify-center gap-2">
+                                        <i data-feather="check-circle" class="w-4 h-4"></i>
+                                        <span data-ar="اختبار الاتصال وحفظ" data-en="Test & Save">اختبار الاتصال
+                                            وحفظ</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- General Notifications/Tips -->
+                        <div
+                            class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6">
+                            <h4 class="font-bold text-blue-800 dark:text-blue-300 mb-2 flex items-center gap-2">
+                                <i data-feather="info" class="w-5 h-5"></i>
+                                <span data-ar="تعليمات هامة" data-en="Important Note">تعليمات هامة</span>
+                            </h4>
+                            <p class="text-sm text-blue-700 dark:text-blue-200 leading-relaxed"
+                                data-ar="عند تفعيل صلاحية منسق المادة، سيتمكن من سحب بيانات الاختبارات مباشرة من نظام كويسشن مارك عند إنشاء جدول اختبار جديد."
+                                data-en="When permitting a Course Coordinator, they can fetch exam data directly from Questionmark when creating a new exam schedule.">
+                                عند تفعيل صلاحية منسق المادة، سيتمكن من سحب بيانات الاختبارات مباشرة من نظام كويسشن مارك
+                                عند إنشاء جدول اختبار جديد.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Left Column: Permissions Management -->
+                    <div class="lg:col-span-2">
+                        <div
+                            class="card-bg rounded-xl shadow-lg border border-custom overflow-hidden h-[600px] flex flex-col">
+                            <div class="px-6 py-4 border-b border-custom flex items-center justify-between">
+                                <h3 class="font-bold flex items-center gap-2">
+                                    <i data-feather="users" class="w-5 h-5 text-accent"></i>
+                                    <span data-ar="إدارة صلاحيات منسقي المواد" data-en="Coordinator Permissions">إدارة
+                                        صلاحيات منسقي المواد</span>
+                                </h3>
+                                <div class="flex items-center gap-2">
+                                    <div class="relative">
+                                        <input type="text" class="form-control py-1.5 pe-10 text-sm"
+                                            placeholder="ابحث عن منسق..." data-ar="ابحث عن منسق..."
+                                            data-en="Search coordinator...">
+                                        <div class="absolute inset-y-0 right-3 flex items-center text-gray-400">
+                                            <i data-feather="search" class="w-4 h-4"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex-1 overflow-y-auto overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead
+                                        class="bg-gray-50 dark:bg-gray-800/50 border-b border-custom sticky top-0 z-10">
+                                        <tr>
+                                            <th class="px-6 py-4 text-right font-bold" data-ar="المنسق"
+                                                data-en="Coordinator">المنسق</th>
+                                            <th class="px-6 py-4 text-right font-bold" data-ar="القسم / الكلية"
+                                                data-en="Dept/College">القسم / الكلية</th>
+                                            <th class="px-6 py-4 text-center font-bold" data-ar="الاختبارات"
+                                                data-en="Exams">الاختبارات</th>
+                                            <th class="px-6 py-4 text-center font-bold" data-ar="منح الصلاحية"
+                                                data-en="Grant Access">منح الصلاحية</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="coordinatorsTableBody" class="divide-y divide-custom">
+                                        <!-- Row 1 -->
+                                        <tr class="hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs">
+                                                        أ</div>
+                                                    <div>
+                                                        <div class="font-bold">د. أحمد الزهراني</div>
+                                                        <div class="text-[10px] text-muted font-english">
+                                                            ahmed@kau.edu.sa</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="text-xs">علوم الحاسبات</div>
+                                                <div class="text-[10px] text-muted font-english">FCIT</div>
+                                            </td>
+                                            <td class="px-6 py-4 text-center">
+                                                <span
+                                                    class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-[10px] font-bold">12
+                                                    اختبار</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex justify-center">
+                                                    <label class="relative inline-flex items-center cursor-pointer">
+                                                        <input type="checkbox" class="sr-only peer" checked>
+                                                        <div
+                                                            class="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:-translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary">
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <!-- Row 2 -->
+                                        <tr class="hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xs">
+                                                        س</div>
+                                                    <div>
+                                                        <div class="font-bold">د. سارة الغامدي</div>
+                                                        <div class="text-[10px] text-muted font-english">sara@kau.edu.sa
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="text-xs">هندسة الحاسبات</div>
+                                                <div class="text-[10px] text-muted font-english">CE</div>
+                                            </td>
+                                            <td class="px-6 py-4 text-center">
+                                                <span
+                                                    class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-[10px] font-bold">8
+                                                    اختبارات</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex justify-center">
+                                                    <label class="relative inline-flex items-center cursor-pointer">
+                                                        <input type="checkbox" class="sr-only peer">
+                                                        <div
+                                                            class="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:-translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary">
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <!-- Row 3 -->
+                                        <tr class="hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center font-bold text-xs">
+                                                        خ</div>
+                                                    <div>
+                                                        <div class="font-bold">د. خالد المطيري</div>
+                                                        <div class="text-[10px] text-muted font-english">km@kau.edu.sa
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="text-xs">نظم المعلومات</div>
+                                                <div class="text-[10px] text-muted font-english">IS</div>
+                                            </td>
+                                            <td class="px-6 py-4 text-center">
+                                                <span
+                                                    class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-[10px] font-bold">5
+                                                    اختبارات</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex justify-center">
+                                                    <label class="relative inline-flex items-center cursor-pointer">
+                                                        <input type="checkbox" class="sr-only peer" checked>
+                                                        <div
+                                                            class="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:-translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary">
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <!-- Row 4 (Mock Extended) -->
+                                        <tr class="hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <div
+                                                        class="w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center font-bold text-xs">
+                                                        م</div>
+                                                    <div>
+                                                        <div class="font-bold">د. منى الحربي</div>
+                                                        <div class="text-[10px] text-muted font-english">mona@kau.edu.sa
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="text-xs">الذكاء الاصطناعي</div>
+                                                <div class="text-[10px] text-muted font-english">AI</div>
+                                            </td>
+                                            <td class="px-6 py-4 text-center">
+                                                <span
+                                                    class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-[10px] font-bold">15
+                                                    اختبار</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex justify-center">
+                                                    <label class="relative inline-flex items-center cursor-pointer">
+                                                        <input type="checkbox" class="sr-only peer">
+                                                        <div
+                                                            class="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:-translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary">
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="px-6 py-4 border-t border-custom bg-gray-50 dark:bg-gray-800/30">
+                                <div class="flex items-center justify-between">
+                                    <p class="text-[10px] text-muted" data-ar="عرض 4 من أصل 45 منسق مادة"
+                                        data-en="Showing 4 of 45 coordinators">عرض 4 من أصل 45 منسق مادة</p>
+                                    <div class="flex gap-1">
+                                        <button
+                                            class="px-2 py-1 border border-custom rounded hover:bg-white transition-colors text-[10px] disabled:opacity-50"
+                                            disabled>السابق</button>
+                                        <button
+                                            class="px-2 py-1 border border-custom rounded hover:bg-white transition-colors text-[10px]">التالي</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Feather Icons
+        document.addEventListener('DOMContentLoaded', () => {
+            feather.replace();
+        });
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            themeToggle.innerHTML = isDark ? '<i data-feather="sun" class="w-5 h-5"></i>' : '<i data-feather="moon" class="w-5 h-5"></i>';
+            feather.replace();
+        });
+
+        // Language Toggle
+        document.getElementById('langToggle').addEventListener('click', () => {
+            const currentLang = document.documentElement.lang;
+            const newLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.documentElement.lang = newLang;
+            document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
+
+            // Toggle text content based on data-ar/data-en
+            document.querySelectorAll('[data-ar]').forEach(el => {
+                el.textContent = newLang === 'ar' ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+            });
+
+            // Update placeholders
+            document.querySelectorAll('[placeholder]').forEach(el => {
+                if (el.hasAttribute('data-ar')) {
+                    el.placeholder = newLang === 'ar' ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+                }
+            });
+            feather.replace();
+        });
+
+        // Sidebar Toggle for Mobile
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('hidden');
+            sidebar.classList.toggle('flex');
+        });
+
+        // Test Connection Function
+        function testConnection() {
+            Swal.fire({
+                title: 'جاري اختبار الاتصال...',
+                text: 'يرجى الانتظار بينما نقوم بالتحقق من مفاتيح الربط',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            setTimeout(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم بنجاح',
+                    text: 'تم التحقق من الاتصال بنظام كويسشن مارك وحفظ الإعدادات بنجاح.',
+                    confirmButtonText: 'ممتاز',
+                    confirmButtonColor: '#005941'
+                });
+            }, 1500);
+        }
+
+        // Toggle Switch Effect
+        document.querySelectorAll('input[type="checkbox"].peer').forEach(toggle => {
+            toggle.addEventListener('change', function () {
+                const coordinatorName = this.closest('tr').querySelector('.font-bold').textContent;
+                const status = this.checked ? 'تفعيل' : 'إلغاء تفعيل';
+
+                // Toast notification
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+
+                Toast.fire({
+                    icon: this.checked ? 'success' : 'info',
+                    title: `تم ${status} الوصول للمنسق: ${coordinatorName}`
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
