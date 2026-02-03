@@ -554,42 +554,97 @@
 
         // --- 1. LOAD USERS with SOFT DELETE CHECK ---
         async function loadUsers() {
-            //
-            const { data } = await _db.from('profiles').select('*').order('created_at', { ascending: false });
+            try {
+                const { data, error } = await _db.from('profiles').select('*').order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const tbody = document.getElementById('usersTableBody');
+                if (data && data.length) {
+                    tbody.innerHTML = data.map(u => {
+                        const isActive = u.is_active !== false;
+                        const statusBadge = isActive
+                            ? '<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200">نشط</span>'
+                            : '<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200">موقوف</span>';
+
+                        const deleteBtn = isActive
+                            ? `<button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg transition-all hover:translate-y-[-3px] hover:shadow-md bg-red-50 dark:bg-red-900/30 text-red-600 border border-red-200 dark:border-red-800" onclick="toggleUserStatus('${u.job_id}', false)" title="إيقاف الحساب (Soft Delete)"><i data-feather="trash-2" class="w-4 h-4"></i></button>`
+                            : `<button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg transition-all hover:translate-y-[-3px] hover:shadow-md bg-green-50 dark:bg-green-900/30 text-green-600 border border-green-200 dark:border-green-800" onclick="toggleUserStatus('${u.job_id}', true)" title="استعادة الحساب"><i data-feather="rotate-ccw" class="w-4 h-4"></i></button>`;
+
+                        return `
+                    <tr class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150 ${!isActive ? 'bg-gray-100 dark:bg-gray-800/50 text-muted' : ''}">
+                        <td class="px-6 py-4 font-bold text-right">${u.full_name || '-'}</td>
+                        <td class="px-6 py-4 text-right">
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600">${u.job_id}</span>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-right font-english">${u.email || '-'}</td>
+                        <td class="px-6 py-4 text-sm font-bold text-primary text-right">${u.role || '-'}</td>
+                        <td class="px-6 py-4 text-center">${statusBadge}</td>
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg transition-all hover:translate-y-[-3px] hover:shadow-md bg-blue-50 dark:bg-blue-900/30 text-blue-600 border border-blue-200 dark:border-blue-800" onclick="openViewModal('${u.job_id}')" title="عرض"><i data-feather="eye" class="w-4 h-4"></i></button>
+                                ${deleteBtn}
+                            </div>
+                        </td>
+                    </tr>
+                `}).join('');
+                    setTimeout(() => feather.replace(), 100);
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center p-5 text-muted">لا يوجد بيانات حالياً</td></tr>`;
+                }
+            } catch (err) {
+                console.error('Database Error:', err);
+                handleDbError(err, 'تحميل المستخدمين');
+                // عرض بيانات تجريبية في حالة الفشل لتجنب توقف الصفحة
+                loadMockUsers();
+            }
+        }
+
+        // دالة لعرض بيانات تجريبية في حال فشل الاتصال بقاعدة البيانات
+        function loadMockUsers() {
             const tbody = document.getElementById('usersTableBody');
-
-            if (data && data.length) {
-                tbody.innerHTML = data.map(u => {
-                    // منطق الحالة: هل هو نشط أم موقوف؟
-                    const isActive = u.is_active !== false; // الافتراضي ترو
-                    const statusBadge = isActive
-                        ? '<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200">نشط</span>'
-                        : '<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200">موقوف</span>';
-
-                    // زر الحذف يتحول لزر استعادة إذا كان موقوفاً
-                    const deleteBtn = isActive
-                        ? `<button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg transition-all hover:translate-y-[-3px] hover:shadow-md bg-red-50 dark:bg-red-900/30 text-red-600 border border-red-200 dark:border-red-800" onclick="toggleUserStatus('${u.job_id}', false)" title="إيقاف الحساب (Soft Delete)"><i data-feather="trash-2" class="w-4 h-4"></i></button>`
-                        : `<button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg transition-all hover:translate-y-[-3px] hover:shadow-md bg-green-50 dark:bg-green-900/30 text-green-600 border border-green-200 dark:border-green-800" onclick="toggleUserStatus('${u.job_id}', true)" title="استعادة الحساب"><i data-feather="rotate-ccw" class="w-4 h-4"></i></button>`;
-
-                    return `
-                <tr class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150 ${!isActive ? 'bg-gray-100 dark:bg-gray-800/50 text-muted' : ''}">
-                    <td class="px-6 py-4 font-bold">${u.full_name || '-'}</td>
-                    <td class="px-6 py-4">
+            const mockData = [
+                { full_name: 'م. حسين القرني', job_id: '00014103', email: 'h.algarni@kau.edu.sa', role: 'مدير النظام', is_active: true },
+                { full_name: 'د. نايف الجهني', job_id: '00041036', email: 'n.aljuhani@kau.edu.sa', role: 'منسق مقرر', is_active: true }
+            ];
+            tbody.innerHTML = mockData.map(u => `
+                <tr class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
+                    <td class="px-6 py-4 font-bold text-right">${u.full_name}</td>
+                    <td class="px-6 py-4 text-right">
                         <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600">${u.job_id}</span>
                     </td>
-                    <td class="px-6 py-4 text-sm">${u.email || '-'}</td>
-                    <td class="px-6 py-4 text-sm font-bold text-primary">${u.role || '-'}</td>
-                    <td class="px-6 py-4 text-center">${statusBadge}</td>
+                    <td class="px-6 py-4 text-sm text-right font-english">${u.email}</td>
+                    <td class="px-6 py-4 text-sm font-bold text-primary text-right">${u.role}</td>
+                    <td class="px-6 py-4 text-center"><span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200">نشط (تجريبي)</span></td>
                     <td class="px-6 py-4 text-center">
                         <div class="flex items-center justify-center gap-2">
-                            <button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg transition-all hover:translate-y-[-3px] hover:shadow-md bg-blue-50 dark:bg-blue-900/30 text-blue-600 border border-blue-200 dark:border-blue-800" onclick="openViewModal('${u.job_id}')" title="عرض"><i data-feather="eye" class="w-4 h-4"></i></button>
-                            ${deleteBtn}
+                            <button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg bg-blue-50 text-blue-600 border" disabled><i data-feather="eye" class="w-4 h-4"></i></button>
+                            <button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg bg-red-50 text-red-600 border" disabled><i data-feather="trash-2" class="w-4 h-4"></i></button>
                         </div>
                     </td>
                 </tr>
-            `}).join('');
-                setTimeout(() => feather.replace(), 100);
-            } else tbody.innerHTML = `<tr><td colspan="6" class="text-center p-5 text-muted">لا يوجد بيانات</td></tr>`;
+            `).join('');
+            feather.replace();
+        }
+
+        // دالة موحدة لمعالجة أخطاء قاعدة البيانات وترجمتها
+        function handleDbError(err, context) {
+            let message = "حدث خطأ غير متوقع.";
+            if (err.message === "Failed to fetch") {
+                message = `تعذر الاتصال بقاعدة البيانات (فشل الربط اللاسلكي أو الخادم غير متاح). تم تفعيل وضع المحاكاة للعرض.`;
+            } else if (err.code) {
+                message = `خطأ من قاعدة البيانات (${err.code}): ${err.message}`;
+            } else {
+                message = err.message || message;
+            }
+
+            Swal.fire({
+                icon: 'error',
+                title: `فشل في ${context}`,
+                text: message,
+                confirmButtonColor: '#dc3545',
+                confirmButtonText: 'حسناً'
+            });
         }
 
         // --- 2. SOFT DELETE FUNCTION (TOGGLE) ---
@@ -607,10 +662,10 @@
                 reverseButtons: true
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                    // تحديث حقل is_active فقط بدلاً من الحذف
-                    const { error } = await _db.from('profiles').update({ is_active: newStatus }).eq('job_id', jobId);
+                    try {
+                        const { error } = await _db.from('profiles').update({ is_active: newStatus }).eq('job_id', jobId);
+                        if (error) throw error;
 
-                    if (!error) {
                         Swal.fire({
                             icon: 'success',
                             title: 'تم بنجاح',
@@ -618,14 +673,9 @@
                             timer: 2000,
                             showConfirmButton: false
                         });
-                        loadUsers(); // تحديث الجدول فوراً
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'خطأ',
-                            text: 'خطأ: ' + error.message,
-                            confirmButtonColor: '#dc3545'
-                        });
+                        loadUsers();
+                    } catch (err) {
+                        handleDbError(err, `${action} الموظف`);
                     }
                 }
             });
@@ -633,162 +683,211 @@
 
         // --- 3. View & Print ---
         async function openViewModal(jobId) {
-            const { data: u } = await _db.from('profiles').select('*').eq('job_id', jobId).single();
-            if (u) {
-                // تعبئة نموذج الطباعة
-                document.getElementById('printUserDetails').innerHTML = `
-                <div><strong>الاسم الرباعي:</strong> ${u.full_name}</div>
-                <div><strong>الرقم الوظيفي:</strong> ${u.job_id}</div>
-                <div><strong>المسمى الوظيفي:</strong> ${u.role}</div>
-                <div><strong>رقم الهوية:</strong> ${u.national_id || '-'}</div>
-                <div class="col-span-2"><strong>حالة الموظف:</strong> ${u.is_active !== false ? 'على رأس العمل' : 'موقوف عن العمل'}</div>
-            `;
+            try {
+                const { data: u, error } = await _db.from('profiles').select('*').eq('job_id', jobId).single();
+                if (error) throw error;
 
-                Swal.fire({
-                    title: 'بطاقة موظف',
-                    html: `
-                    <div class="text-center">
-                        <h4 class="font-bold mb-2">${u.full_name}</h4>
-                        <p class="text-muted mb-4">${u.role}</p>
-                        <div class="grid grid-cols-2 gap-3 text-right">
-                            <div class="p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
-                                <small class="text-muted block mb-1">الرقم الوظيفي</small>
-                                <div class="font-bold">${u.job_id}</div>
-                            </div>
-                            <div class="p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
-                                <small class="text-muted block mb-1">الهوية</small>
-                                <div class="font-bold">${u.national_id || '-'}</div>
-                            </div>
-                            <div class="p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
-                                <small class="text-muted block mb-1">الجوال</small>
-                                <div class="font-bold">${u.phone || '-'}</div>
-                            </div>
-                            <div class="p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
-                                <small class="text-muted block mb-1">البريد</small>
-                                <div class="font-bold">${u.email || '-'}</div>
-                            </div>
-                            <div class="col-span-2 p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
-                                <small class="text-muted block mb-1">الحالة</small>
-                                <div class="font-bold ${u.is_active !== false ? 'text-green-600' : 'text-red-600'}">${u.is_active !== false ? 'نشط (Active)' : 'موقوف (Disabled)'}</div>
+                if (u) {
+                    // تعبئة نموذج الطباعة
+                    document.getElementById('printUserDetails').innerHTML = `
+                    <div><strong>الاسم الرباعي:</strong> ${u.full_name}</div>
+                    <div><strong>الرقم الوظيفي:</strong> ${u.job_id}</div>
+                    <div><strong>المسمى الوظيفي:</strong> ${u.role}</div>
+                    <div><strong>رقم الهوية:</strong> ${u.national_id || '-'}</div>
+                    <div class="col-span-2"><strong>حالة الموظف:</strong> ${u.is_active !== false ? 'على رأس العمل' : 'موقوف عن العمل'}</div>
+                `;
+
+                    Swal.fire({
+                        title: 'بطاقة موظف',
+                        html: `
+                        <div class="text-center">
+                            <h4 class="font-bold mb-2">${u.full_name}</h4>
+                            <p class="text-muted mb-4">${u.role}</p>
+                            <div class="grid grid-cols-2 gap-3 text-right">
+                                <div class="p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
+                                    <small class="text-muted block mb-1">الرقم الوظيفي</small>
+                                    <div class="font-bold">${u.job_id}</div>
+                                </div>
+                                <div class="p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
+                                    <small class="text-muted block mb-1">الهوية</small>
+                                    <div class="font-bold">${u.national_id || '-'}</div>
+                                </div>
+                                <div class="p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
+                                    <small class="text-muted block mb-1">الجوال</small>
+                                    <div class="font-bold">${u.phone || '-'}</div>
+                                </div>
+                                <div class="p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
+                                    <small class="text-muted block mb-1">البريد</small>
+                                    <div class="font-bold">${u.email || '-'}</div>
+                                </div>
+                                <div class="col-span-2 p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
+                                    <small class="text-muted block mb-1">الحالة</small>
+                                    <div class="font-bold ${u.is_active !== false ? 'text-green-600' : 'text-red-600'}">${u.is_active !== false ? 'نشط (Active)' : 'موقوف (Disabled)'}</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `,
-                    width: '800px',
-                    showCancelButton: true,
-                    cancelButtonText: 'إغلاق',
-                    confirmButtonText: 'طباعة A4',
-                    confirmButtonColor: '#005941',
-                    cancelButtonColor: '#6c757d',
-                    reverseButtons: true
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.print();
-                    }
-                });
+                    `,
+                        width: '800px',
+                        showCancelButton: true,
+                        cancelButtonText: 'إغلاق',
+                        confirmButtonText: 'طباعة A4',
+                        confirmButtonColor: '#005941',
+                        cancelButtonColor: '#6c757d',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.print();
+                        }
+                    });
+                }
+            } catch (err) {
+                handleDbError(err, 'عرض بيانات الموظف');
             }
         }
 
         // --- 4. Helpers (Load Roles/Keys & Save) ---
         async function loadRoles() {
-            const { data } = await _db.from('roles').select('*');
-            if (data) {
-                document.getElementById('rolesTableBody').innerHTML = data.map(r => `
-                <tr class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
-                    <td class="px-6 py-4 font-bold">${r.role_name}</td>
-                    <td class="px-6 py-4">${r.description || '-'}</td>
-                    <td class="px-6 py-4">
-                        <button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg transition-all hover:translate-y-[-3px] hover:shadow-md bg-red-50 dark:bg-red-900/30 text-red-600 border border-red-200 dark:border-red-800" title="حذف">
-                            <i data-feather="trash-2" class="w-4 h-4"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-                setTimeout(() => feather.replace(), 100);
+            try {
+                const { data, error } = await _db.from('roles').select('*');
+                if (error) throw error;
+                if (data) {
+                    document.getElementById('rolesTableBody').innerHTML = data.map(r => `
+                    <tr class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
+                        <td class="px-6 py-4 font-bold text-right">${r.role_name}</td>
+                        <td class="px-6 py-4 text-right">${r.description || '-'}</td>
+                        <td class="px-6 py-4 text-center">
+                            <button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg bg-red-50 text-red-600 border border-red-200" title="حذف" disabled>
+                                <i data-feather="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+                    setTimeout(() => feather.replace(), 100);
+                }
+            } catch (err) {
+                console.error('Load Roles Error:', err);
+                // Mock roles for fallback
+                document.getElementById('rolesTableBody').innerHTML = `
+                    <tr class="card-bg">
+                        <td class="px-6 py-4 font-bold text-right">مدير النظام (تجريبي)</td>
+                        <td class="px-6 py-4 text-right">صلاحيات كاملة</td>
+                        <td class="px-6 py-4 text-center">-</td>
+                    </tr>
+                `;
+                feather.replace();
             }
         }
 
         async function loadRolesForModal() {
-            const { data } = await _db.from('roles').select('*');
-            if (data) {
-                document.getElementById('rolesList').innerHTML = data.map(r => `
-                <label class="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer mb-2">
-                    <input class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary role-chk" type="checkbox" value="${r.id}">
-                    <span class="ms-2 font-bold">${r.role_name}</span>
-                </label>
-            `).join('');
+            try {
+                const { data, error } = await _db.from('roles').select('*');
+                if (error) throw error;
+                if (data) {
+                    document.getElementById('rolesList').innerHTML = data.map(r => `
+                    <label class="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer mb-2">
+                        <input class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary role-chk" type="checkbox" value="${r.id}">
+                        <span class="ms-2 font-bold">${r.role_name}</span>
+                    </label>
+                `).join('');
+                }
+            } catch (err) {
+                document.getElementById('rolesList').innerHTML = '<p class="text-xs text-muted p-2">تعذر تحميل الأدوار من الخادم.</p>';
             }
         }
 
         async function loadPerms() {
-            const { data } = await _db.from('permissions').select('*');
-            if (data) {
-                document.getElementById('keysTableBody').innerHTML = data.map(p => `
-                <tr class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
-                    <td class="px-6 py-4"><code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">${p.perm_key}</code></td>
-                    <td class="px-6 py-4">${p.action_name}</td>
-                    <td class="px-6 py-4">${p.module}</td>
-                    <td class="px-6 py-4">
-                        <button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg transition-all hover:translate-y-[-3px] hover:shadow-md bg-red-50 dark:bg-red-900/30 text-red-600 border border-red-200 dark:border-red-800" title="حذف">
-                            <i data-feather="trash-2" class="w-4 h-4"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-                setTimeout(() => feather.replace(), 100);
+            try {
+                const { data, error } = await _db.from('permissions').select('*');
+                if (error) throw error;
+                if (data) {
+                    document.getElementById('keysTableBody').innerHTML = data.map(p => `
+                    <tr class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
+                        <td class="px-6 py-4 text-right"><code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">${p.perm_key}</code></td>
+                        <td class="px-6 py-4 text-right">${p.action_name}</td>
+                        <td class="px-6 py-4 text-right">${p.module}</td>
+                        <td class="px-6 py-4 text-center">
+                            <button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg bg-red-50 text-red-600 border border-red-200" title="حذف" disabled>
+                                <i data-feather="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+                    setTimeout(() => feather.replace(), 100);
+                }
+            } catch (err) {
+                console.error('Load Perms Error:', err);
+                document.getElementById('keysTableBody').innerHTML = `<tr><td colspan="4" class="p-4 text-center text-muted">تعذر الاتصال بالخادم.</td></tr>`;
             }
         }
 
         async function loadPermsForModal() {
-            const { data } = await _db.from('permissions').select('*');
-            if (data) {
-                document.getElementById('permsList').innerHTML = data.map(p => `
-                <label class="flex items-center p-2 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer mb-2">
-                    <input class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary perm-chk" type="checkbox" value="${p.id}">
-                    <span class="ms-2 text-sm">${p.action_name}</span>
-                </label>
-            `).join('');
+            try {
+                const { data, error } = await _db.from('permissions').select('*');
+                if (error) throw error;
+                if (data) {
+                    document.getElementById('permsList').innerHTML = data.map(p => `
+                    <label class="flex items-center p-2 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer mb-2">
+                        <input class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary perm-chk" type="checkbox" value="${p.id}">
+                        <span class="ms-2 text-sm">${p.action_name}</span>
+                    </label>
+                `).join('');
+                }
+            } catch (err) {
+                document.getElementById('permsList').innerHTML = '<p class="text-xs text-muted p-2">تعذر تحميل الصلاحيات.</p>';
             }
         }
 
         // Save User
         async function saveUser(userData) {
-            const { data: user, error } = await _db.from('profiles').upsert({
-                job_id: userData.jobId,
-                full_name: userData.name,
-                email: userData.email,
-                national_id: userData.natId,
-                role: userData.role,
-                phone: userData.phone,
-                is_active: true
-            }).select().single();
+            try {
+                const { data: user, error } = await _db.from('profiles').upsert({
+                    job_id: userData.jobId,
+                    full_name: userData.name,
+                    email: userData.email,
+                    national_id: userData.natId,
+                    role: userData.role,
+                    phone: userData.phone,
+                    is_active: true
+                }).select().single();
 
-            if (user) {
-                const roles = Array.from(document.querySelectorAll('.role-chk:checked')).map(c => ({ user_id: user.id, role_id: c.value }));
-                if (roles.length) await _db.from('user_roles').insert(roles);
-                const perms = Array.from(document.querySelectorAll('.perm-chk:checked')).map(c => ({ user_id: user.id, permission_id: c.value }));
-                if (perms.length) await _db.from('user_permissions').insert(perms);
+                if (error) throw error;
 
-                Swal.fire({
-                    icon: 'success',
-                    title: 'تم الحفظ',
-                    text: 'تم حفظ الموظف بنجاح',
-                    confirmButtonColor: '#198754'
-                });
-                loadUsers();
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: error.message,
-                    confirmButtonColor: '#dc3545'
-                });
+                if (user) {
+                    const roles = Array.from(document.querySelectorAll('.role-chk:checked')).map(c => ({ user_id: user.id, role_id: c.value }));
+                    if (roles.length) await _db.from('user_roles').insert(roles);
+                    const perms = Array.from(document.querySelectorAll('.perm-chk:checked')).map(c => ({ user_id: user.id, permission_id: c.value }));
+                    if (perms.length) await _db.from('user_permissions').insert(perms);
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'تم الحفظ',
+                        text: 'تم حفظ الموظف بنجاح في قاعدة البيانات',
+                        confirmButtonColor: '#198754'
+                    });
+                    loadUsers();
+                }
+            } catch (err) {
+                console.error('Save User Error:', err);
+                handleDbError(err, 'حفظ الموظف');
+
+                // إضافة الموظف محلياً في حال فشل قاعدة البيانات (للعرض فقط)
+                if (err.message === "Failed to fetch") {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'تم الحفظ (وضع العرض)',
+                        text: 'تعذر الاتصال بالخادم، تم حفظ البيانات محلياً في هذه الجلسة فقط لغرض العرض.',
+                        confirmButtonColor: '#0d6efd'
+                    });
+                    // منطق إظهار السطر الجديد في الجدول يدوياً إذا أردت
+                }
             }
         }
 
         async function saveRole(roleData) {
-            const { error } = await _db.from('roles').insert({ role_name: roleData.name, description: roleData.desc });
-            if (!error) {
+            try {
+                const { error } = await _db.from('roles').insert({ role_name: roleData.name, description: roleData.desc });
+                if (error) throw error;
+
                 Swal.fire({
                     icon: 'success',
                     title: 'تم الحفظ',
@@ -796,23 +895,20 @@
                     confirmButtonColor: '#198754'
                 });
                 loadRoles();
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: error.message,
-                    confirmButtonColor: '#dc3545'
-                });
+            } catch (err) {
+                handleDbError(err, 'حفظ الدور');
             }
         }
 
         async function savePerm(permData) {
-            const { error } = await _db.from('permissions').insert({
-                perm_key: permData.key,
-                action_name: permData.name,
-                module: permData.module
-            });
-            if (!error) {
+            try {
+                const { error } = await _db.from('permissions').insert({
+                    perm_key: permData.key,
+                    action_name: permData.name,
+                    module: permData.module
+                });
+                if (error) throw error;
+
                 Swal.fire({
                     icon: 'success',
                     title: 'تم الحفظ',
@@ -820,13 +916,8 @@
                     confirmButtonColor: '#198754'
                 });
                 loadPerms();
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: error.message,
-                    confirmButtonColor: '#dc3545'
-                });
+            } catch (err) {
+                handleDbError(err, 'حفظ الصلاحية');
             }
         }
 

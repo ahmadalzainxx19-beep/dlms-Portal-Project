@@ -69,8 +69,7 @@
         .form-control:focus {
             outline: none;
             border-color: #005941;
-            ring: 2px;
-            ring-color: #005941/20;
+            box-shadow: 0 0 0 2px rgba(0, 89, 65, 0.2);
         }
 
         .animate-fade-in {
@@ -332,6 +331,30 @@
     <script>
         // Initialize Feather Icons
         document.addEventListener('DOMContentLoaded', () => {
+            // Load Dynamic Data
+            const rawData = localStorage.getItem('selectedCoordinator');
+            if (rawData) {
+                const data = JSON.parse(rawData);
+                document.getElementById('coordinatorName').innerText = data.name;
+                document.getElementById('jobId').innerText = '#' + data.jobId;
+
+                // تحديث الإيميل والجوال بشكل تجريبي بناءً على الاسم
+                const firstName = data.name.split(' ')[0].replace('.', '');
+                document.getElementById('email').innerText = (firstName === 'نايف' ? 'n.aljuhani' : firstName === 'أمجد' ? 'a.khawja' : 'h.algarni') + '@kau.edu.sa';
+
+                // تحديث قائمة المقررات
+                const coursesList = document.getElementById('coursesList');
+                coursesList.innerHTML = `<span class="bg-primary/10 text-primary dark:bg-primary/20 dark:text-accent px-4 py-2 rounded-xl font-black text-sm border border-primary/20">${data.course}</span>`;
+
+                // تحديث حالة المنصات
+                if (data.platform === 'Questionmark') {
+                    // يمكنك هنا تخصيص عرض المنصة المختارة بشكل أوضح إذا أردت
+                }
+
+                // تنظيف localStorage
+                // localStorage.removeItem('selectedCoordinator'); 
+            }
+
             feather.replace();
         });
 

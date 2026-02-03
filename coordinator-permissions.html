@@ -247,15 +247,13 @@
                             <thead class="bg-gray-50 dark:bg-gray-800 border-b border-custom">
                                 <tr>
                                     <th class="px-6 py-4 text-sm font-bold text-gray-600 dark:text-gray-300 text-right"
-                                        data-ar="المنسق (أستاذ المادة)" data-en="Coordinator">المنسق (أستاذ المادة)</th>
+                                        data-ar="الرقم الوظيفي" data-en="Job ID">الرقم الوظيفي</th>
                                     <th class="px-6 py-4 text-sm font-bold text-gray-600 dark:text-gray-300 text-right"
-                                        data-ar="المقرر الدراسي" data-en="Course">المقرر الدراسي</th>
-                                    <th class="px-6 py-4 text-sm font-bold text-gray-600 dark:text-gray-300 text-center"
-                                        data-ar="المنصة" data-en="Platform">المنصة</th>
-                                    <th class="px-6 py-4 text-sm font-bold text-gray-600 dark:text-gray-300 text-center"
-                                        data-ar="حالة المزامنة" data-en="Sync Status">حالة المزامنة</th>
-                                    <th class="px-6 py-4 text-sm font-bold text-gray-600 dark:text-gray-300 text-center"
-                                        data-ar="صلاحيات المجلدات" data-en="Folder Permissions">صلاحيات المجلدات</th>
+                                        data-ar="إسم المنسق" data-en="Coordinator Name">إسم المنسق</th>
+                                    <th class="px-6 py-4 text-sm font-bold text-gray-600 dark:text-gray-300 text-right"
+                                        data-ar="البريد الإلكتروني" data-en="Email Address">البريد الإلكتروني</th>
+                                    <th class="px-6 py-4 text-sm font-bold text-gray-600 dark:text-gray-300 text-right"
+                                        data-ar="رقم الجوال" data-en="Mobile Number">رقم الجوال</th>
                                     <th class="px-6 py-4 text-sm font-bold text-gray-600 dark:text-gray-300 text-center"
                                         data-ar="الإجراءات" data-en="Actions">الإجراءات</th>
                                 </tr>
@@ -496,9 +494,9 @@
     <script>
         // Mock Data
         let coordinators = [
-            { id: 1, name: "د. نايف راضي الجهني", jobId: "41036", course: "CPCS-202", courseName: "مقدمة في البرمجة", platform: "Questionmark", status: "Synced", lastUpdate: "2024-03-20 10:30" },
-            { id: 2, name: "م. أمجد خوجة", jobId: "77750", course: "ELI-101", courseName: "لغة إنجليزية (1)", platform: "Blackboard", status: "Pending", lastUpdate: "2024-03-19 14:15" },
-            { id: 3, name: "م. حسين القرني", jobId: "14103", course: "CPCS-203", courseName: "برمجة الحاسب (2)", platform: "Questionmark", status: "Synced", lastUpdate: "2024-03-18 11:45" }
+            { id: 1, name: "د. نايف راضي الجهني", jobId: "00041036", email: "n.aljuhani@kau.edu.sa", mobile: "050XXXXX00", course: "CPCS-202", courseName: "مقدمة في البرمجة", platform: "Questionmark", status: "Synced", lastUpdate: "2024-03-20 10:30" },
+            { id: 2, name: "م. أمجد خوجة", jobId: "00077750", email: "a.khawja@kau.edu.sa", mobile: "055XXXXX11", course: "ELI-101", courseName: "لغة إنجليزية (1)", platform: "Blackboard", status: "Pending", lastUpdate: "2024-03-19 14:15" },
+            { id: 3, name: "م. حسين القرني", jobId: "00014103", email: "h.algarni@kau.edu.sa", mobile: "056XXXXX22", course: "CPCS-203", courseName: "برمجة الحاسب (2)", platform: "Questionmark", status: "Synced", lastUpdate: "2024-03-18 11:45" }
         ];
 
         // Initialize
@@ -533,44 +531,29 @@
             const isAr = document.documentElement.lang === 'ar';
 
             if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-400 font-bold">${isAr ? 'لا توجد نتائج مطابقة' : 'No matching results found'}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-400 font-bold">${isAr ? 'لا توجد نتائج مطابقة' : 'No matching results found'}</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = data.map(c => `
-                <tr class="hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors">
+                <tr class="hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors border-b border-gray-100 dark:border-gray-800">
+                    <td class="px-6 py-4">
+                        <span class="font-mono text-sm text-gray-600 dark:text-gray-400">${c.jobId.toString().padStart(8, '0')}</span>
+                    </td>
                     <td class="px-6 py-4">
                         <div class="font-bold text-gray-800 dark:text-gray-100 text-right">${c.name}</div>
                     </td>
                     <td class="px-6 py-4">
-                        <div class="flex items-center gap-2 justify-end">
-                            <span class="text-xs text-gray-500 font-bold">${c.courseName || ''}</span>
-                            <span class="bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded text-[10px] font-mono border dark:border-gray-600">${c.course}</span>
-                        </div>
+                        <div class="text-sm text-blue-600 dark:text-blue-400 text-right font-english">${c.email}</div>
                     </td>
-                    <td class="px-6 py-4 text-center">
-                        <span class="${c.platform === 'Questionmark' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-200' : 'bg-blue-900 text-white border-blue-950'} px-3 py-1 rounded-lg text-[10px] font-bold border inline-flex items-center gap-1">
-                            ${c.platform} 
-                            <i data-feather="${c.platform === 'Questionmark' ? 'check-square' : 'layout'}" class="w-3 h-3 text-current"></i>
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-center">
-                        <span class="px-3 py-1 rounded-full text-[10px] font-bold flex items-center justify-center gap-1 mx-auto w-fit ${c.status === 'Synced' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300'}">
-                            <i data-feather="${c.status === 'Synced' ? 'check-circle' : 'clock'}" class="w-3 h-3 text-current"></i>
-                            <span>${isAr ? (c.status === 'Synced' ? 'متزامن' : 'معلق') : c.status}</span>
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-center">
-                        <button onclick="viewFolderPermissions('${c.name}', '${c.course}')" class="text-accent hover:bg-yellow-50 dark:hover:bg-yellow-900/10 px-3 py-1 rounded-lg border border-yellow-100 dark:border-yellow-800 text-[10px] font-bold flex items-center gap-1 mx-auto transition-colors">
-                            <i data-feather="folder" class="w-3.5 h-3.5 text-current"></i>
-                            <span>${isAr ? 'عرض المجلدات' : 'View Folders'}</span>
-                        </button>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-500 dark:text-gray-400 text-right dir-ltr" dir="ltr">${c.mobile}</div>
                     </td>
                     <td class="px-6 py-4 text-center">
                         <div class="flex justify-center gap-2">
-                            <button onclick="confirmRemove('${c.name}')" class="text-red-500 hover:bg-red-50 p-1.5 rounded transition-colors"><i data-feather="trash-2" class="w-4 h-4"></i></button>
-                            <button onclick="syncSingle('${c.name}')" class="text-blue-500 hover:bg-blue-50 p-1.5 rounded transition-colors"><i data-feather="${c.status === 'Synced' ? 'refresh-ccw' : 'zap'}" class="w-4 h-4"></i></button>
-                            <button onclick="showUserDetails('${c.name}', '${c.jobId}', '${c.course}', '${c.platform}', '${c.status}')" class="text-gray-400 hover:bg-gray-100 p-1.5 rounded transition-colors"><i data-feather="info" class="w-4 h-4"></i></button>
+                            <button onclick="confirmRemove('${c.name}')" class="text-red-500 hover:bg-red-50 p-1.5 rounded transition-colors" title="${isAr ? 'حذف' : 'Delete'}"><i data-feather="trash-2" class="w-4 h-4"></i></button>
+                            <button onclick="syncSingle('${c.name}')" class="text-blue-500 hover:bg-blue-50 p-1.5 rounded transition-colors" title="${isAr ? 'مزامنة' : 'Sync'}"><i data-feather="refresh-cw" class="w-4 h-4"></i></button>
+                            <button onclick="showUserDetails('${c.name}', '${c.jobId}', '${c.course}', '${c.platform}', '${c.status}')" class="text-gray-400 hover:bg-gray-100 p-1.5 rounded transition-colors" title="${isAr ? 'التفاصيل' : 'Details'}"><i data-feather="info" class="w-4 h-4"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -626,7 +609,14 @@
 
         // Show User Details
         function showUserDetails(name, id, course, platform, status) {
-            // الانتقال لصفحة التفاصيل مع تمرير البيانات (تجريبياً)
+            // حفظ البيانات في localStorage لنقلها لصفحة التفاصيل
+            localStorage.setItem('selectedCoordinator', JSON.stringify({
+                name: name,
+                jobId: id,
+                course: course,
+                platform: platform,
+                status: status
+            }));
             window.location.href = 'coordinator-details.html';
         }
 
