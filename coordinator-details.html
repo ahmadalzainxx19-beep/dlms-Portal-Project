@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-ar="تفاصيل المنسق" data-en="Coordinator Details">تفاصيل المنسق - بوابة الأنظمة المتكاملة</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Cairo & Inter) -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#005941',
+                        accent: '#C89933',
+                    },
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                        english: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .sidebar {
+            background-color: #005941;
+            color: white;
+        }
+
+        .sidebar-link {
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+            background-color: #f9fafb;
+            transition: all 0.3s;
+        }
+
+        .dark .form-control {
+            background-color: #1f2937;
+            border-color: #374151;
+            color: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #005941;
+            ring: 2px;
+            ring-color: #005941/20;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="h-full flex overflow-hidden bg-gray-50 dark:bg-gray-950 text-gray-800 dark:text-gray-200">
+
+    <!-- Sidebar (نفس الشريط الجانبي المستخدم في بقية الصفحات) -->
+    <aside id="sidebar" class="sidebar w-64 flex-col hidden lg:flex h-full fixed lg:relative z-30">
+        <div class="h-20 flex items-center justify-center border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary font-bold border-2 border-accent">
+                    KAU</div>
+                <h1 class="text-white font-bold text-lg" data-ar="بوابة الأنظمة" data-en="KAU Portal">بوابة الأنظمة</h1>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+            <a href="index.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="grid" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</span>
+            </a>
+
+            <!-- Integrations -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="إدارة الربط"
+                data-en="Integrations">إدارة الربط</div>
+            <a href="questionmark-admin.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="link" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="ربط كويسشن مارك" data-en="Questionmark Sync">ربط كويسشن مارك</span>
+            </a>
+            <a href="coordinator-permissions.html"
+                class="sidebar-link active flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="link" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="ربط منسقي المواد" data-en="Coordinator Permissions">ربط منسقي
+                    المواد</span>
+            </a>
+
+            <!-- بقية الروابط ... -->
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <!-- Header -->
+        <header
+            class="h-20 bg-white dark:bg-gray-900 border-b dark:border-gray-800 flex items-center justify-between px-8 z-20">
+            <div class="flex items-center gap-4">
+                <button id="sidebarToggle"
+                    class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <i data-feather="menu" class="w-6 h-6"></i>
+                </button>
+                <div class="flex items-center gap-2 text-gray-400 text-sm">
+                    <a href="coordinator-permissions.html" class="hover:text-primary transition-colors"
+                        data-ar="ربط منسقي المواد" data-en="Coordinator Permissions">ربط منسقي المواد</a>
+                    <i data-feather="chevron-left" class="w-4 h-4"></i>
+                    <span class="text-primary dark:text-accent font-bold" data-ar="تفاصيل المنسق"
+                        data-en="Coordinator Details">تفاصيل المنسق</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button id="themeToggle"
+                    class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500">
+                    <i data-feather="moon" class="w-5 h-5"></i>
+                </button>
+                <button id="langToggle"
+                    class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    <span class="text-sm font-bold" id="langText">EN</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-8">
+            <div class="max-w-5xl mx-auto space-y-6 animate-fade-in">
+
+                <!-- Back Button -->
+                <div class="flex justify-start">
+                    <a href="coordinator-permissions.html"
+                        class="flex items-center gap-2 text-gray-500 hover:text-primary transition-colors font-bold text-sm">
+                        <i data-feather="arrow-right" class="w-4 h-4"></i>
+                        <span data-ar="العودة للقائمة" data-en="Back to List">العودة للقائمة</span>
+                    </a>
+                </div>
+
+                <!-- Coordinator Profile Card -->
+                <div
+                    class="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border dark:border-gray-800 overflow-hidden">
+                    <div class="bg-gradient-to-r from-primary to-[#147a58] p-8 text-white relative">
+                        <div class="flex flex-col md:flex-row items-center gap-6 relative z-10">
+                            <div
+                                class="w-24 h-24 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border-4 border-white/30 text-3xl font-bold shadow-xl">
+                                <i data-feather="user" class="w-12 h-12"></i>
+                            </div>
+                            <div class="text-center md:text-right">
+                                <h1 class="text-2xl md:text-3xl font-black mb-1" id="coordinatorName">د. نايف راضي
+                                    الجهني</h1>
+                                <p
+                                    class="text-white/80 font-bold flex items-center justify-center md:justify-start gap-2">
+                                    <i data-feather="briefcase" class="w-4 h-4"></i>
+                                    <span id="jobId">#41036</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-4">
+                            <h3
+                                class="text-primary dark:text-accent font-black flex items-center gap-2 border-b dark:border-gray-800 pb-2">
+                                <i data-feather="info" class="w-5 h-5"></i>
+                                <span data-ar="المعلومات الشخصية" data-en="Personal Information">المعلومات
+                                    الشخصية</span>
+                            </h3>
+                            <div class="grid grid-cols-1 gap-4">
+                                <div class="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl border dark:border-gray-800">
+                                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-1"
+                                        data-ar="البريد الإلكتروني" data-en="Email Address">البريد الإلكتروني</p>
+                                    <p class="font-bold text-gray-700 dark:text-gray-200" id="email">
+                                        n.aljuhani@kau.edu.sa</p>
+                                </div>
+                                <div class="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl border dark:border-gray-800">
+                                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-1" data-ar="رقم الجوال"
+                                        data-en="Mobile Number">رقم الجوال</p>
+                                    <p class="font-bold text-gray-700 dark:text-gray-200" id="mobile" dir="ltr">
+                                        050XXXXX00</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3
+                                class="text-primary dark:text-accent font-black flex items-center gap-2 border-b dark:border-gray-800 pb-2">
+                                <i data-feather="book-open" class="w-5 h-5"></i>
+                                <span data-ar="المقررات المسندة" data-en="Assigned Courses">المقررات المسندة</span>
+                            </h3>
+                            <div class="flex flex-wrap gap-2" id="coursesList">
+                                <span
+                                    class="bg-primary/10 text-primary dark:bg-primary/20 dark:text-accent px-4 py-2 rounded-xl font-black text-sm border border-primary/20">CPCS-202</span>
+                                <span
+                                    class="bg-primary/10 text-primary dark:bg-primary/20 dark:text-accent px-4 py-2 rounded-xl font-black text-sm border border-primary/20">CPCS-203</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Platforms & Sync Status -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Questionmark Platform -->
+                    <div
+                        class="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border dark:border-gray-800 overflow-hidden flex flex-col">
+                        <div
+                            class="p-6 bg-purple-50 dark:bg-purple-900/10 border-b dark:border-gray-800 flex justify-between items-center">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-purple-200 dark:shadow-none">
+                                    <i data-feather="check-square" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-black text-purple-900 dark:text-purple-300">Questionmark</h4>
+                                    <p class="text-[10px] text-purple-600 dark:text-purple-400 font-bold"
+                                        data-ar="منصة الاختبارات المركزية" data-en="Central Exams Platform">منصة
+                                        الاختبارات المركزية</p>
+                                </div>
+                            </div>
+                            <span
+                                class="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 px-3 py-1 rounded-full text-[10px] font-black border border-green-200 dark:border-green-800 flex items-center gap-1">
+                                <i data-feather="check-circle" class="w-3 h-3"></i>
+                                <span data-ar="متزامن" data-en="Synced">متزامن</span>
+                            </span>
+                        </div>
+                        <div class="p-8 flex-1 flex flex-col justify-between space-y-6">
+                            <div class="space-y-4">
+                                <p class="text-sm text-gray-500 dark:text-gray-400 font-bold leading-relaxed"
+                                    data-ar="تتم المزامنة التلقائية لصلاحيات المنسق على بنوك الأسئلة والاختبارات المرتبطة بالمقررات المسندة."
+                                    data-en="Coordinator permissions are automatically synced to question banks and assessments linked to the assigned courses.">
+                                    تضمن المزامنة صلاحيات المنسق على المجلدات والبنود في هذه المنصة.</p>
+                                <div class="flex items-center gap-2 text-[11px] font-bold text-gray-400">
+                                    <i data-feather="clock" class="w-3.5 h-3.5"></i>
+                                    <span data-ar="آخر تحديث:" data-en="Last update:">آخر تحديث:</span>
+                                    <span class="font-english">2024-03-20 10:30 AM</span>
+                                </div>
+                            </div>
+                            <button onclick="handleSync('Questionmark')"
+                                class="w-full py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-2xl font-black shadow-xl shadow-purple-100 dark:shadow-none transition-all flex items-center justify-center gap-2 group">
+                                <i data-feather="refresh-cw"
+                                    class="w-5 h-5 group-hover:rotate-180 transition-transform duration-500"></i>
+                                <span data-ar="تحديث المزامنة الآن" data-en="Update Sync Now">تحديث المزامنة الآن</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Blackboard Platform -->
+                    <div
+                        class="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border dark:border-gray-800 overflow-hidden flex flex-col">
+                        <div
+                            class="p-6 bg-blue-50 dark:bg-blue-900/10 border-b dark:border-gray-800 flex justify-between items-center">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 bg-blue-900 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200 dark:shadow-none">
+                                    <i data-feather="layout" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-black text-blue-900 dark:text-blue-300">Blackboard</h4>
+                                    <p class="text-[10px] text-blue-600 dark:text-blue-400 font-bold"
+                                        data-ar="نظام إدارة التعلم" data-en="Learning Management System">نظام إدارة
+                                        التعلم</p>
+                                </div>
+                            </div>
+                            <span
+                                class="bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300 px-3 py-1 rounded-full text-[10px] font-black border border-yellow-200 dark:border-yellow-800 flex items-center gap-1">
+                                <i data-feather="clock" class="w-3 h-3"></i>
+                                <span data-ar="معلق" data-en="Pending">معلق</span>
+                            </span>
+                        </div>
+                        <div class="p-8 flex-1 flex flex-col justify-between space-y-6">
+                            <div class="space-y-4">
+                                <p class="text-sm text-gray-500 dark:text-gray-400 font-bold leading-relaxed"
+                                    data-ar="يتم ربط المنسق بالفصول الدراسية وتفعيل صلاحيات إدارة المحتوى التعليمي تلقائياً."
+                                    data-en="Coordinators are linked to academic terms and instructional content management permissions automatically.">
+                                    يتم التحقق من صلاحيات المنسق للوصول إلى المحتوى التعليمي في الفصول النشطة.</p>
+                                <div class="flex items-center gap-2 text-[11px] font-bold text-gray-400">
+                                    <i data-feather="alert-circle" class="w-3.5 h-3.5 text-yellow-500"></i>
+                                    <span data-ar="في انتظار استجابة النظام الرئيسي"
+                                        data-en="Waiting for core system response">في انتظار استجابة النظام
+                                        الرئيسي</span>
+                                </div>
+                            </div>
+                            <button disabled
+                                class="w-full py-4 bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed rounded-2xl font-black transition-all flex items-center justify-center gap-2">
+                                <i data-feather="check" class="w-5 h-5"></i>
+                                <span data-ar="النظام مرتبط" data-en="System Linked">النظام مرتبط</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Feather Icons
+        document.addEventListener('DOMContentLoaded', () => {
+            feather.replace();
+        });
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            themeToggle.innerHTML = isDark ? '<i data-feather="sun" class="w-5 h-5"></i>' : '<i data-feather="moon" class="w-5 h-5"></i>';
+            feather.replace();
+        });
+
+        // Language Toggle
+        document.getElementById('langToggle').addEventListener('click', () => {
+            const currentLang = document.documentElement.lang;
+            const newLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.documentElement.lang = newLang;
+            document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
+
+            document.querySelectorAll('[data-ar]').forEach(el => {
+                el.textContent = newLang === 'ar' ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+            });
+            document.getElementById('langText').textContent = newLang === 'ar' ? 'EN' : 'AR';
+            feather.replace();
+        });
+
+        // Handle Sync Simulation
+        function handleSync(platform) {
+            const isAr = document.documentElement.lang === 'ar';
+            Swal.fire({
+                title: isAr ? 'تحديث المزامنة' : 'Update Sync',
+                text: isAr ? `هل تريد إعادة مزامنة بيانات المنسق مع ${platform}؟` : `Do you want to re-sync coordinator data with ${platform}?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#005941',
+                confirmButtonText: isAr ? 'نعم، ابدأ الآن' : 'Yes, Start Now',
+                cancelButtonText: isAr ? 'إلغاء' : 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: isAr ? 'جاري المزامنة...' : 'Syncing...',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        didOpen: () => { Swal.showLoading() }
+                    }).then(() => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: isAr ? 'تمت المزامنة بنجاح' : 'Synced Successfully',
+                            confirmButtonColor: '#005941'
+                        });
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

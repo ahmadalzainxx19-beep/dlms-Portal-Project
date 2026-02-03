@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,12 +10,14 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Google Fonts (Cairo & Inter) -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
     <!-- Custom Styles -->
     <link rel="stylesheet" href="assets/styles.css">
     <!-- Feather Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
-    
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -32,27 +35,46 @@
             }
         }
     </script>
-    
+
 </head>
+
 <body class="h-full flex overflow-hidden">
     <!-- Sidebar -->
     <aside id="sidebar" class="sidebar w-64 flex-col hidden lg:flex h-full fixed lg:relative z-30">
         <div class="h-20 flex items-center justify-center border-b border-white/10">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary font-bold border-2 border-accent">KAU</div>
+                <div
+                    class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary font-bold border-2 border-accent">
+                    KAU</div>
                 <h1 class="text-white font-bold text-lg" data-ar="بوابة الأنظمة" data-en="KAU Portal">بوابة الأنظمة</h1>
             </div>
-    </div>
-    
+        </div>
+
         <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
             <!-- Dashboard -->
             <a href="index.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
                 <i data-feather="grid" class="w-5 h-5 ms-3"></i>
                 <span class="font-medium" data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</span>
             </a>
-            
+
+            <!-- Integrations -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="إدارة الربط"
+                data-en="Integrations">إدارة الربط</div>
+            <a href="questionmark-admin.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="questionmark-admin">
+                <i data-feather="link" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="ربط كويسشن مارك" data-en="Questionmark Sync">ربط كويسشن مارك</span>
+            </a>
+            <a href="coordinator-permissions.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="coordinator-permissions">
+                <i data-feather="link" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="ربط منسقي المواد" data-en="Coordinator Permissions">ربط منسقي
+                    المواد</span>
+            </a>
+
             <!-- Buildings & Labs -->
-            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="إدارة المباني والمعامل" data-en="Buildings & Labs">إدارة المباني والمعامل</div>
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="إدارة المباني والمعامل" data-en="Buildings & Labs">إدارة المباني والمعامل</div>
             <a href="buildings.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
                 <i data-feather="home" class="w-5 h-5 ms-3"></i>
                 <span class="font-medium" data-ar="إدارة المباني" data-en="Buildings">إدارة المباني</span>
@@ -61,61 +83,74 @@
                 <i data-feather="monitor" class="w-5 h-5 ms-3"></i>
                 <span class="font-medium" data-ar="إدارة المعامل" data-en="Labs">إدارة المعامل</span>
             </a>
-            
+
             <!-- Exams -->
-            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="إدارة الاختبارات" data-en="Exams">إدارة الاختبارات</div>
-            <a href="create-exam.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group" data-page="create-exam">
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="إدارة الاختبارات" data-en="Exams">إدارة الاختبارات</div>
+            <a href="create-exam.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="create-exam">
                 <i data-feather="file-text" class="w-5 h-5 ms-3"></i>
                 <span class="font-medium" data-ar="جدولة اختبار" data-en="Schedule Exam">جدولة اختبار</span>
             </a>
-            
+
             <!-- Academic Calendar -->
-            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="التقويم الأكاديمي" data-en="Academic Calendar">التقويم الأكاديمي</div>
-            <a href="Calender-Mnagment.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group" data-page="Calender-Mnagment">
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="التقويم الأكاديمي" data-en="Academic Calendar">التقويم الأكاديمي</div>
+            <a href="Calender-Mnagment.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="Calender-Mnagment">
                 <i data-feather="settings" class="w-5 h-5 ms-3"></i>
-                <span class="font-medium" data-ar="إعدادات الفصول الدراسية" data-en="Term Configurations">إعدادات الفصول الدراسية</span>
+                <span class="font-medium" data-ar="إعدادات الفصول الدراسية" data-en="Term Configurations">إعدادات الفصول
+                    الدراسية</span>
             </a>
-            <a href="AcadmicCalnder.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group" data-page="AcadmicCalnder">
+            <a href="AcadmicCalnder.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="AcadmicCalnder">
                 <i data-feather="calendar" class="w-5 h-5 ms-3"></i>
                 <span class="font-medium" data-ar="عرض التقويم" data-en="View Calendar">عرض التقويم</span>
             </a>
-            <a href="view-archive-calendar.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group" data-page="view-archive-calendar">
+            <a href="view-archive-calendar.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="view-archive-calendar">
                 <i data-feather="archive" class="w-5 h-5 ms-3"></i>
                 <span class="font-medium" data-ar="الأرشيف" data-en="Archive">الأرشيف</span>
             </a>
-            
+
             <!-- Users -->
-            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="إدارة المستخدمين" data-en="Users">إدارة المستخدمين</div>
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="إدارة المستخدمين" data-en="Users">إدارة المستخدمين</div>
             <a href="users.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
                 <i data-feather="users" class="w-5 h-5 ms-3"></i>
                 <span class="font-medium" data-ar="إدارة المستخدمين" data-en="User Management">إدارة المستخدمين</span>
             </a>
-            
+
             <!-- Finance -->
-            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="الإدارة المالية" data-en="Finance">الإدارة المالية</div>
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="الإدارة المالية" data-en="Finance">الإدارة المالية</div>
             <a href="finance-sittings.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
                 <i data-feather="dollar-sign" class="w-5 h-5 ms-3"></i>
-                <span class="font-medium" data-ar="الإعدادات المالية" data-en="Finance Settings">الإعدادات المالية</span>
+                <span class="font-medium" data-ar="الإعدادات المالية" data-en="Finance Settings">الإعدادات
+                    المالية</span>
             </a>
             <a href="contracts-management.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
                 <i data-feather="file-text" class="w-5 h-5 ms-3"></i>
                 <span class="font-medium" data-ar="إدارة العقود" data-en="Contracts">إدارة العقود</span>
             </a>
-            
+
             <!-- Settings -->
-            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="الإعدادات" data-en="Settings">الإعدادات</div>
-            <a href="setting.html" class="sidebar-link active flex items-center px-4 py-3 rounded-lg group" data-page="setting">
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="الإعدادات"
+                data-en="Settings">الإعدادات</div>
+            <a href="setting.html" class="sidebar-link active flex items-center px-4 py-3 rounded-lg group"
+                data-page="setting">
                 <i data-feather="settings" class="w-5 h-5 ms-3"></i>
                 <span class="font-medium" data-ar="الإعدادات العامة" data-en="General Settings">الإعدادات العامة</span>
             </a>
-    </nav>
+        </nav>
 
         <div class="p-4 border-t border-white/10">
-            <a href="Login.html" class="w-full flex items-center justify-center gap-2 text-red-300 hover:text-red-100 transition-colors">
+            <a href="Login.html"
+                class="w-full flex items-center justify-center gap-2 text-red-300 hover:text-red-100 transition-colors">
                 <i data-feather="log-out" class="w-4 h-4"></i>
                 <span class="text-sm font-bold" data-ar="تسجيل خروج" data-en="Logout">تسجيل خروج</span>
             </a>
-    </div>
+        </div>
     </aside>
 
     <!-- Main Content -->
@@ -124,12 +159,15 @@
         <header class="sticky top-0 z-20 card-bg border-b border-custom shadow-sm">
             <div class="flex items-center justify-between px-6 py-4">
                 <div class="flex items-center gap-4">
-                    <button id="sidebarToggle" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <button id="sidebarToggle"
+                        class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
                         <i data-feather="menu" class="w-5 h-5"></i>
                     </button>
                     <div>
-                        <h2 class="text-xl font-bold" id="pageTitle" data-ar="الإعدادات العامة" data-en="General Settings">الإعدادات العامة</h2>
-                        <p class="text-sm text-muted" data-ar="إدارة إعدادات النظام العامة" data-en="Manage general system settings">إدارة إعدادات النظام العامة</p>
+                        <h2 class="text-xl font-bold" id="pageTitle" data-ar="الإعدادات العامة"
+                            data-en="General Settings">الإعدادات العامة</h2>
+                        <p class="text-sm text-muted" data-ar="إدارة إعدادات النظام العامة"
+                            data-en="Manage general system settings">إدارة إعدادات النظام العامة</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
@@ -141,10 +179,14 @@
                     </button>
                     <div class="flex items-center gap-2 ps-4 border-s border-custom">
                         <div class="text-end">
-                            <div class="font-semibold" data-ar="م. حسين القرني" data-en="Eng. Hussein Al-Qarni">م. حسين القرني</div>
-                            <small class="text-muted text-xs" data-ar="مدير نظام" data-en="System Admin">مدير نظام</small>
+                            <div class="font-semibold" data-ar="م. حسين القرني" data-en="Eng. Hussein Al-Qarni">م. حسين
+                                القرني</div>
+                            <small class="text-muted text-xs" data-ar="مدير نظام" data-en="System Admin">مدير
+                                نظام</small>
                         </div>
-                        <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">AH</div>
+                        <div
+                            class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">
+                            AH</div>
                     </div>
                 </div>
             </div>
@@ -154,190 +196,228 @@
         <main class="flex-1 overflow-y-auto main-content-full-width">
             <div class="w-full p-6">
 
-            <!-- 1. قسم التقويم الأكاديمي -->
-            <div id="section-calendar" class="content-section active-section">
-                <form>
+                <!-- 1. قسم التقويم الأكاديمي -->
+                <div id="section-calendar" class="content-section active-section">
+                    <form>
+                        <div class="card-bg rounded-xl shadow-lg border border-custom mb-6">
+                            <div class="p-6 border-b border-custom flex justify-between items-center">
+                                <span class="font-bold text-lg flex items-center gap-2">
+                                    <i data-feather="calendar" class="w-5 h-5 text-green-600"></i>
+                                    بيانات الفصل الدراسي
+                                </span>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="flexSwitchCheckChecked" checked
+                                        class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary">
+                                    <span class="text-sm font-semibold">تفعيل النظام</span>
+                                </label>
+                            </div>
+                            <div class="p-6">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-2">الفصل الدراسي</label>
+                                        <select
+                                            class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent">
+                                            <option selected>الفصل الدراسي الثاني 1447هـ</option>
+                                            <option>الفصل الصيفي 1447هـ</option>
+                                            <option>الفصل الدراسي الأول 1448هـ</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-2">بداية الفصل</label>
+                                        <input type="date"
+                                            class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                            value="2026-01-15">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-2">نهاية الفصل</label>
+                                        <input type="date"
+                                            class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                            value="2026-05-20">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <button
+                                class="btn-primary px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 inline-flex">
+                                <i data-feather="save" class="w-4 h-4"></i>
+                                حفظ التقويم
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 2. قسم الإعدادات المالية -->
+                <div id="section-finance" class="content-section hidden">
+                    <div
+                        class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-6 flex items-start gap-3">
+                        <i data-feather="alert-triangle"
+                            class="w-5 h-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <strong>تنبيه:</strong> تغيير هذه القيم سيؤثر على احتساب مستحقات أعضاء هيئة التدريس في
+                            الفواتير القادمة.
+                        </div>
+                    </div>
+
                     <div class="card-bg rounded-xl shadow-lg border border-custom mb-6">
-                        <div class="p-6 border-b border-custom flex justify-between items-center">
+                        <div class="p-6 border-b border-custom">
                             <span class="font-bold text-lg flex items-center gap-2">
-                                <i data-feather="calendar" class="w-5 h-5 text-green-600"></i>
-                                بيانات الفصل الدراسي
+                                <i data-feather="dollar-sign" class="w-5 h-5 text-green-600"></i>
+                                تسعيرة الأنشطة (Rate Card)
                             </span>
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" id="flexSwitchCheckChecked" checked class="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary">
-                                <span class="text-sm font-semibold">تفعيل النظام</span>
-                            </label>
                         </div>
                         <div class="p-6">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div>
-                                    <label class="block text-sm font-semibold mb-2">الفصل الدراسي</label>
-                                    <select class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent">
-                                        <option selected>الفصل الدراسي الثاني 1447هـ</option>
-                                        <option>الفصل الصيفي 1447هـ</option>
-                                        <option>الفصل الدراسي الأول 1448هـ</option>
-                                    </select>
+                            <div class="grid grid-cols-1 md:grid-cols-7 gap-4 items-end mb-4">
+                                <div class="md:col-span-4">
+                                    <label class="block text-sm font-semibold mb-2">سعر المحاضرة (الساعة)</label>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-semibold mb-2">بداية الفصل</label>
-                                    <input type="date" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" value="2026-01-15">
+                                <div class="md:col-span-3">
+                                    <div class="flex">
+                                        <input type="number"
+                                            class="flex-1 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-r-none rounded-l-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                            value="350">
+                                        <span
+                                            class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-none rounded-r-lg text-gray-700 dark:text-gray-300">ر.س</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-semibold mb-2">نهاية الفصل</label>
-                                    <input type="date" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" value="2026-05-20">
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-7 gap-4 items-end mb-4">
+                                <div class="md:col-span-4">
+                                    <label class="block text-sm font-semibold mb-2">سعر الواجب / النشاط</label>
+                                </div>
+                                <div class="md:col-span-3">
+                                    <div class="flex">
+                                        <input type="number"
+                                            class="flex-1 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-r-none rounded-l-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                            value="650">
+                                        <span
+                                            class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-none rounded-r-lg text-gray-700 dark:text-gray-300">ر.س</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-7 gap-4 items-end">
+                                <div class="md:col-span-4">
+                                    <label class="block text-sm font-semibold mb-2">مكافأة النهائي</label>
+                                </div>
+                                <div class="md:col-span-3">
+                                    <div class="flex">
+                                        <input type="number"
+                                            class="flex-1 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-r-none rounded-l-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                            value="800">
+                                        <span
+                                            class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-none rounded-r-lg text-gray-700 dark:text-gray-300">ر.س</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="text-end">
-                        <button class="btn-primary px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 inline-flex">
+                        <button
+                            class="btn-primary px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 inline-flex">
                             <i data-feather="save" class="w-4 h-4"></i>
-                            حفظ التقويم
+                            تحديث الأسعار
                         </button>
                     </div>
-                </form>
-            </div>
-
-            <!-- 2. قسم الإعدادات المالية -->
-            <div id="section-finance" class="content-section hidden">
-                <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-6 flex items-start gap-3">
-                    <i data-feather="alert-triangle" class="w-5 h-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5"></i>
-                    <div>
-                        <strong>تنبيه:</strong> تغيير هذه القيم سيؤثر على احتساب مستحقات أعضاء هيئة التدريس في الفواتير القادمة.
-                    </div>
-                </div>
-                
-                <div class="card-bg rounded-xl shadow-lg border border-custom mb-6">
-                    <div class="p-6 border-b border-custom">
-                        <span class="font-bold text-lg flex items-center gap-2">
-                            <i data-feather="dollar-sign" class="w-5 h-5 text-green-600"></i>
-                            تسعيرة الأنشطة (Rate Card)
-                        </span>
-                    </div>
-                    <div class="p-6">
-                        <div class="grid grid-cols-1 md:grid-cols-7 gap-4 items-end mb-4">
-                            <div class="md:col-span-4">
-                                <label class="block text-sm font-semibold mb-2">سعر المحاضرة (الساعة)</label>
-                            </div>
-                            <div class="md:col-span-3">
-                                <div class="flex">
-                                    <input type="number" class="flex-1 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-r-none rounded-l-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" value="350">
-                                    <span class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-none rounded-r-lg text-gray-700 dark:text-gray-300">ر.س</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-7 gap-4 items-end mb-4">
-                            <div class="md:col-span-4">
-                                <label class="block text-sm font-semibold mb-2">سعر الواجب / النشاط</label>
-                            </div>
-                            <div class="md:col-span-3">
-                                <div class="flex">
-                                    <input type="number" class="flex-1 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-r-none rounded-l-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" value="650">
-                                    <span class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-none rounded-r-lg text-gray-700 dark:text-gray-300">ر.س</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-7 gap-4 items-end">
-                            <div class="md:col-span-4">
-                                <label class="block text-sm font-semibold mb-2">مكافأة النهائي</label>
-                            </div>
-                            <div class="md:col-span-3">
-                                <div class="flex">
-                                    <input type="number" class="flex-1 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-r-none rounded-l-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" value="800">
-                                    <span class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-none rounded-r-lg text-gray-700 dark:text-gray-300">ر.س</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-end">
-                    <button class="btn-primary px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 inline-flex">
-                        <i data-feather="save" class="w-4 h-4"></i>
-                        تحديث الأسعار
-                    </button>
-                </div>
-            </div>
-
-            <!-- 3. قسم إدارة العقود (منفصل) -->
-            <div id="section-contracts" class="content-section hidden">
-                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6 flex items-start gap-3">
-                    <i data-feather="info" class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5"></i>
-                    <div>
-                        يتم حذف العقود غير الموقعة تلقائياً بعد تجاوز "تاريخ الإغلاق" المحدد أدناه.
-                    </div>
                 </div>
 
-                <div class="card-bg rounded-xl shadow-lg border border-custom mb-6">
-                    <div class="p-6 border-b border-custom">
-                        <span class="font-bold text-lg flex items-center gap-2">
-                            <i data-feather="file-text" class="w-5 h-5 text-primary"></i>
-                            دورة حياة العقد
-                        </span>
-                    </div>
-                    <div class="p-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label class="block text-sm font-semibold mb-2">تاريخ فتح توقيع العقود</label>
-                                <input type="date" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold mb-2 text-red-600">تاريخ إغلاق التوقيع (Deadline)</label>
-                                <input type="date" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent">
-                                <div class="text-xs text-red-600 mt-1">سيتم إلغاء العقود المعلقة بعد هذا التاريخ.</div>
-                            </div>
-                        </div>
-                        <hr class="my-4 border-custom">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-semibold mb-2">آخر موعد لاحتساب الحضور</label>
-                                <input type="date" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold mb-2">آخر موعد لرفع الدرجات</label>
-                                <input type="date" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent">
-                            </div>
+                <!-- 3. قسم إدارة العقود (منفصل) -->
+                <div id="section-contracts" class="content-section hidden">
+                    <div
+                        class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6 flex items-start gap-3">
+                        <i data-feather="info"
+                            class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            يتم حذف العقود غير الموقعة تلقائياً بعد تجاوز "تاريخ الإغلاق" المحدد أدناه.
                         </div>
                     </div>
-                </div>
-                
-                <div class="card-bg rounded-xl shadow-lg border border-custom mb-6">
-                    <div class="p-6 border-b border-custom">
-                        <span class="font-bold text-lg flex items-center gap-2">
-                            <i data-feather="gavel" class="w-5 h-5 text-gray-600"></i>
-                            شروط الاستحقاق
-                        </span>
-                    </div>
-                    <div class="p-6">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-sm font-semibold mb-2">الحد الأدنى لمدة التسجيل (للحضور)</label>
-                                <div class="flex">
-                                    <input type="number" class="flex-1 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-r-none rounded-l-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" value="60">
-                                    <span class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-none rounded-r-lg text-gray-700 dark:text-gray-300">دقيقة</span>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold mb-2">الحد الأدنى لعدد الطلاب</label>
-                                <div class="flex">
-                                    <input type="number" class="flex-1 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-r-none rounded-l-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" value="20">
-                                    <span class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-none rounded-r-lg text-gray-700 dark:text-gray-300">طالب</span>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold mb-2">التعويضات المسموحة</label>
-                                <input type="number" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" value="3">
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="text-end">
-                    <button class="btn-primary px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 inline-flex">
-                        <i data-feather="check-circle" class="w-4 h-4"></i>
-                        حفظ إعدادات العقود
-                    </button>
+                    <div class="card-bg rounded-xl shadow-lg border border-custom mb-6">
+                        <div class="p-6 border-b border-custom">
+                            <span class="font-bold text-lg flex items-center gap-2">
+                                <i data-feather="file-text" class="w-5 h-5 text-primary"></i>
+                                دورة حياة العقد
+                            </span>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">تاريخ فتح توقيع العقود</label>
+                                    <input type="date"
+                                        class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2 text-red-600">تاريخ إغلاق التوقيع
+                                        (Deadline)</label>
+                                    <input type="date"
+                                        class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <div class="text-xs text-red-600 mt-1">سيتم إلغاء العقود المعلقة بعد هذا التاريخ.
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="my-4 border-custom">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">آخر موعد لاحتساب الحضور</label>
+                                    <input type="date"
+                                        class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">آخر موعد لرفع الدرجات</label>
+                                    <input type="date"
+                                        class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-bg rounded-xl shadow-lg border border-custom mb-6">
+                        <div class="p-6 border-b border-custom">
+                            <span class="font-bold text-lg flex items-center gap-2">
+                                <i data-feather="gavel" class="w-5 h-5 text-gray-600"></i>
+                                شروط الاستحقاق
+                            </span>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">الحد الأدنى لمدة التسجيل
+                                        (للحضور)</label>
+                                    <div class="flex">
+                                        <input type="number"
+                                            class="flex-1 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-r-none rounded-l-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                            value="60">
+                                        <span
+                                            class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-none rounded-r-lg text-gray-700 dark:text-gray-300">دقيقة</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">الحد الأدنى لعدد الطلاب</label>
+                                    <div class="flex">
+                                        <input type="number"
+                                            class="flex-1 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-r-none rounded-l-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                            value="20">
+                                        <span
+                                            class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-none rounded-r-lg text-gray-700 dark:text-gray-300">طالب</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2">التعويضات المسموحة</label>
+                                    <input type="number"
+                                        class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                        value="3">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-end">
+                        <button
+                            class="btn-primary px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 inline-flex">
+                            <i data-feather="check-circle" class="w-4 h-4"></i>
+                            حفظ إعدادات العقود
+                        </button>
+                    </div>
                 </div>
-            </div>
             </div>
 
         </main>
@@ -345,98 +425,101 @@
         <!-- Footer -->
         <footer class="p-4 border-t border-custom text-center text-muted text-sm card-bg flex-shrink-0">
             <div id="liveDateTime" class="font-bold text-primary mb-1 font-english" style="direction: ltr;"></div>
-            <div data-ar="جميع الحقوق محفوظة © 2026 م. أحمد فلمبان | رقم الإصدار: 2.0" data-en="All rights reserved © 2026 Eng. Ahmed Filban | Version: 2.0">جميع الحقوق محفوظة © 2026 م. أحمد فلمبان | رقم الإصدار: 2.0</div>
+            <div data-ar="جميع الحقوق محفوظة © 2026 م. أحمد فلمبان | رقم الإصدار: 2.0"
+                data-en="All rights reserved © 2026 Eng. Ahmed Filban | Version: 2.0">جميع الحقوق محفوظة © 2026 م. أحمد
+                فلمبان | رقم الإصدار: 2.0</div>
         </footer>
     </div>
-</div>
-</div>
+    </div>
+    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // دالة التبديل بين الأقسام
-    function showSection(sectionId, element) {
-        // إخفاء جميع الأقسام
-        document.querySelectorAll('.content-section').forEach(el => {
-            el.classList.add('hidden');
-            el.classList.remove('active-section');
-        });
-        // إظهار القسم المطلوب
-        const targetSection = document.getElementById('section-' + sectionId);
-        targetSection.classList.remove('hidden');
-        targetSection.classList.add('active-section');
-        
-        // تحديث العنوان
-        const titles = {
-            'calendar': 'التقويم الأكاديمي',
-            'finance': 'الإعدادات المالية',
-            'contracts': 'إدارة العقود'
-        };
-        document.getElementById('pageTitle').innerText = titles[sectionId];
-        setTimeout(() => feather.replace(), 100);
-    }
-
-    function updateLiveTime() {
-        const now = new Date();
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-        document.getElementById('liveDateTime').innerText = now.toLocaleDateString('ar-SA', options);
-    }
-    setInterval(updateLiveTime, 1000); updateLiveTime();
-    
-    // Initialize Feather Icons
-    feather.replace();
-    
-    // Theme Toggle
-    const themeToggle = document.getElementById('themeToggle');
-    const html = document.documentElement;
-    const themeIcon = themeToggle?.querySelector('i');
-    
-    // Check for saved theme preference
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    if (currentTheme === 'dark') {
-        html.classList.add('dark');
-        if (themeIcon) themeIcon.setAttribute('data-feather', 'sun');
-    }
-    
-    themeToggle?.addEventListener('click', () => {
-        html.classList.toggle('dark');
-        const isDark = html.classList.contains('dark');
-        if (themeIcon) themeIcon.setAttribute('data-feather', isDark ? 'sun' : 'moon');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        feather.replace();
-    });
-    
-    // Language Toggle
-    let isArabic = true;
-    const langToggle = document.getElementById('langToggle');
-    langToggle?.addEventListener('click', () => {
-        isArabic = !isArabic;
-        document.documentElement.lang = isArabic ? 'ar' : 'en';
-        document.documentElement.dir = isArabic ? 'rtl' : 'ltr';
-        
-        // Update all text elements
-        document.querySelectorAll('[data-ar][data-en]').forEach(el => {
-            el.textContent = isArabic ? el.getAttribute('data-ar') : el.getAttribute('data-en');
-        });
-        feather.replace();
-    });
-    
-    // Set active page in sidebar
-    (function() {
-        const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
-        const activeLink = document.querySelector(`[data-page="${currentPage}"]`);
-        if (activeLink) {
-            activeLink.classList.add('active');
-        }
-        
-        // Sidebar Toggle for Mobile
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const sidebar = document.getElementById('sidebar');
-        if (sidebarToggle && sidebar) {
-            sidebarToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('hidden');
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // دالة التبديل بين الأقسام
+        function showSection(sectionId, element) {
+            // إخفاء جميع الأقسام
+            document.querySelectorAll('.content-section').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('active-section');
             });
+            // إظهار القسم المطلوب
+            const targetSection = document.getElementById('section-' + sectionId);
+            targetSection.classList.remove('hidden');
+            targetSection.classList.add('active-section');
+
+            // تحديث العنوان
+            const titles = {
+                'calendar': 'التقويم الأكاديمي',
+                'finance': 'الإعدادات المالية',
+                'contracts': 'إدارة العقود'
+            };
+            document.getElementById('pageTitle').innerText = titles[sectionId];
+            setTimeout(() => feather.replace(), 100);
         }
-    })();
-</script>
+
+        function updateLiveTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            document.getElementById('liveDateTime').innerText = now.toLocaleDateString('ar-SA', options);
+        }
+        setInterval(updateLiveTime, 1000); updateLiveTime();
+
+        // Initialize Feather Icons
+        feather.replace();
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        const themeIcon = themeToggle?.querySelector('i');
+
+        // Check for saved theme preference
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'dark') {
+            html.classList.add('dark');
+            if (themeIcon) themeIcon.setAttribute('data-feather', 'sun');
+        }
+
+        themeToggle?.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            if (themeIcon) themeIcon.setAttribute('data-feather', isDark ? 'sun' : 'moon');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            feather.replace();
+        });
+
+        // Language Toggle
+        let isArabic = true;
+        const langToggle = document.getElementById('langToggle');
+        langToggle?.addEventListener('click', () => {
+            isArabic = !isArabic;
+            document.documentElement.lang = isArabic ? 'ar' : 'en';
+            document.documentElement.dir = isArabic ? 'rtl' : 'ltr';
+
+            // Update all text elements
+            document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+                el.textContent = isArabic ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+            });
+            feather.replace();
+        });
+
+        // Set active page in sidebar
+        (function () {
+            const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
+            const activeLink = document.querySelector(`[data-page="${currentPage}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+
+            // Sidebar Toggle for Mobile
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            if (sidebarToggle && sidebar) {
+                sidebarToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('hidden');
+                });
+            }
+        })();
+    </script>
 </body>
+
 </html>
