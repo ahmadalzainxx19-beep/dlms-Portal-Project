@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بلاغ عطل - مراقب الاختبارات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        kau: { primary: '#005941', accent: '#C89933', light: '#f8f9fa' }
+                    },
+                    fontFamily: { sans: ['Cairo', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen pb-20">
+
+    <!-- Header (Mobile App Style) -->
+    <header class="bg-kau-primary text-white p-4 shadow-lg sticky top-0 z-50">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-kau-primary font-bold border-2 border-kau-accent">KAU</div>
+                <div>
+                    <h1 class="font-bold text-lg leading-none">نظام الاختبارات</h1>
+                    <span class="text-[10px] text-white/80">بوابة المراقبين الميدانية</span>
+                </div>
+            </div>
+            <button class="bg-white/10 p-2 rounded-full"><i data-feather="bell" class="w-5 h-5"></i></button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="p-4 max-w-lg mx-auto">
+        
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 mb-6">
+            <h2 class="font-bold text-xl text-gray-800 mb-1 flex items-center gap-2">
+                <i data-feather="alert-triangle" class="text-red-500"></i> رفع بلاغ عطل جديد
+            </h2>
+            <p class="text-gray-500 text-sm">يرجى تعبئة البيانات بدقة لضمان سرعة الاستجابة.</p>
+        </div>
+
+        <form id="reportForm" onsubmit="submitReport(event)" class="space-y-4">
+            
+            <!-- 1. بيانات الموقع (تلقائي أو يدوي) -->
+            <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">موقع المشكلة</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <select id="building" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-3 focus:ring-2 focus:ring-kau-primary outline-none text-sm font-bold">
+                        <option>مبنى الحاسبات (G)</option>
+                        <option>مبنى اللغة (ELI)</option>
+                    </select>
+                    <input type="text" placeholder="رقم المعمل" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-3 focus:ring-2 focus:ring-kau-primary outline-none text-sm text-center" value="101">
+                </div>
+            </div>
+
+            <!-- 2. بيانات الجهاز والطالب -->
+            <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">رقم الجهاز (Asset Tag)</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="pcID" placeholder="مثال: PC-05" class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-kau-primary outline-none text-sm font-bold uppercase">
+                        <button type="button" class="bg-gray-800 text-white p-3 rounded-xl shadow-lg active:scale-95 transition-transform" onclick="simulateScan()">
+                            <i data-feather="maximize" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">الرقم الجامعي للطالب</label>
+                    <div class="flex gap-2">
+                        <input type="number" id="studentID" placeholder="XXXXXXX" class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-kau-primary outline-none text-sm" oninput="fetchStudent(this.value)">
+                    </div>
+                    <!-- Student Card (Hidden by default) -->
+                    <div id="studentCard" class="hidden mt-3 bg-green-50 border border-green-100 rounded-xl p-3 flex items-center gap-3 animate-fade-in">
+                        <div class="w-10 h-10 bg-green-200 rounded-full flex items-center justify-center text-green-700 font-bold text-xs">ST</div>
+                        <div>
+                            <p class="text-sm font-bold text-gray-800">فيصل الغامدي</p>
+                            <p class="text-[10px] text-gray-500">شعبة CA - مادة برمجة</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. تفاصيل المشكلة (اللوجيك هنا) -->
+            <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">نوع العطل (التصنيف)</label>
+                    <select id="issueType" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-kau-primary outline-none text-sm font-bold" onchange="checkIssueType()">
+                        <option value="system">نظام الاختبارات (Safe Exam / Browser)</option>
+                        <option value="network">الشبكة / الإنترنت</option>
+                        <option value="hardware">أجهزة (ماوس، كيبورد، شاشة)</option>
+                        <option value="facility">مرافق (تكييف، إضاءة، كهرباء)</option>
+                    </select>
+                </div>
+
+                <!-- رسالة التوجيه التلقائي -->
+                <div id="redirectAlert" class="hidden bg-yellow-50 border border-yellow-100 rounded-xl p-3 flex items-start gap-3">
+                    <i data-feather="corner-up-left" class="w-5 h-5 text-yellow-600 mt-0.5"></i>
+                    <p class="text-xs text-yellow-800 font-bold leading-relaxed">
+                        هذا النوع من الأعطال خارج اختصاص الدعم الفني للاختبارات. <br>
+                        <span class="text-red-600">سيتم ترحيل البلاغ تلقائياً إلى "مشرف المعمل" و "إدارة الصيانة والتشغيل".</span>
+                    </p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">وصف المشكلة</label>
+                    <textarea class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-kau-primary outline-none text-sm h-24" placeholder="اكتب وصفاً مختصراً للمشكلة..."></textarea>
+                </div>
+
+                <!-- زر التصوير -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">توثيق (صورة)</label>
+                    <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <i data-feather="camera" class="w-8 h-8 text-gray-400 mb-2"></i>
+                            <p class="text-xs text-gray-500 font-bold">اضغط لالتقاط صورة</p>
+                        </div>
+                        <input type="file" accept="image/*" capture="environment" class="hidden" />
+                    </label>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="w-full bg-kau-primary text-white font-bold py-4 rounded-xl shadow-lg shadow-kau-primary/30 active:scale-95 transition-all flex justify-center items-center gap-2">
+                <i data-feather="send" class="w-5 h-5"></i> إرسال البلاغ
+            </button>
+
+        </form>
+    </main>
+
+    <script>
+        feather.replace();
+
+        function simulateScan() {
+            Swal.fire({
+                title: 'جاري المسح...',
+                text: 'وجه الكاميرا نحو باركود الجهاز',
+                timer: 1000,
+                timerProgressBar: true,
+                didOpen: () => { Swal.showLoading() }
+            }).then(() => {
+                document.getElementById('pcID').value = 'PC-LAB-05';
+                const Toast = Swal.mixin({
+                    toast: true, position: 'top-end', showConfirmButton: false, timer: 2000
+                });
+                Toast.fire({ icon: 'success', title: 'تم التعرف على الجهاز' });
+            });
+        }
+
+        function fetchStudent(val) {
+            if(val.length >= 7) {
+                document.getElementById('studentCard').classList.remove('hidden');
+            }
+        }
+
+        function checkIssueType() {
+            const type = document.getElementById('issueType').value;
+            const alertBox = document.getElementById('redirectAlert');
+            
+            if (type === 'hardware' || type === 'facility') {
+                alertBox.classList.remove('hidden');
+            } else {
+                alertBox.classList.add('hidden');
+            }
+        }
+
+        function submitReport(e) {
+            e.preventDefault();
+            const type = document.getElementById('issueType').value;
+            
+            // اللوجيك الذكي للترحيل
+            if (type === 'hardware' || type === 'facility') {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'تم ترحيل البلاغ',
+                    html: `تم تسجيل البلاغ وإحالته إلى <b>مشرف المعمل</b> لأن المشكلة تتعلق بـ (الأجهزة/المرافق).<br><br><span class="text-sm text-gray-500">رقم البلاغ: REF-9902</span>`,
+                    confirmButtonColor: '#C89933',
+                    confirmButtonText: 'حسناً'
+                }).then(() => {
+                    // Reset Form
+                    window.location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم الإرسال للدعم الفني',
+                    html: `وصل البلاغ لفريق الدعم الميداني.<br>جاري توجيه أقرب فني للموقع.<br><br><span class="text-sm text-gray-500">رقم البلاغ: SUP-1023</span>`,
+                    confirmButtonColor: '#005941',
+                    confirmButtonText: 'متابعة'
+                }).then(() => {
+                    window.location.reload();
+                });
+            }
+        }
+    </script>
+</body>
+</html>
+```

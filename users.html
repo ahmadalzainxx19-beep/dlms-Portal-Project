@@ -1,24 +1,26 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="h-full">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مركز إدارة الصلاحيات - KAU</title>
+    <title>إدارة المستخدمين - بوابة الأنظمة</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Google Fonts (Cairo & Inter) -->
     <link
         href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600&display=swap"
         rel="stylesheet">
-    <!-- Custom Styles -->
+    <!-- Custom Styles (Crucial for Identity) -->
     <link rel="stylesheet" href="assets/styles.css">
     <!-- Feather Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
+
+    <!-- Supabase Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase Config -->
+    <script src="assets/supabase-config.js"></script>
 
     <script>
         tailwind.config = {
@@ -37,9 +39,11 @@
             }
         }
     </script>
+    <!-- No Custom Style Block needed, using assets/styles.css -->
 </head>
 
 <body class="h-full flex overflow-hidden">
+
     <!-- Sidebar -->
     <aside id="sidebar" class="sidebar w-64 flex-col hidden lg:flex h-full fixed lg:relative z-30">
         <div class="h-20 flex items-center justify-center border-b border-white/10">
@@ -47,101 +51,86 @@
                 <div
                     class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary font-bold border-2 border-accent">
                     KAU</div>
-                <h1 class="text-white font-bold text-lg" data-ar="بوابة الأنظمة" data-en="KAU Portal">بوابة الأنظمة</h1>
+                <h1 class="text-white font-bold text-lg">بوابة الأنظمة</h1>
             </div>
         </div>
 
         <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
             <!-- Dashboard -->
-            <a href="index.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+            <a href="index.html" class="sidebar-link group">
                 <i data-feather="grid" class="w-5 h-5 ms-3"></i>
-                <span class="font-medium" data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</span>
+                <span class="font-medium">لوحة التحكم</span>
             </a>
 
             <!-- Integrations -->
-            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="إدارة الربط"
-                data-en="Integrations">إدارة الربط</div>
-            <a href="questionmark-admin.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
-                data-page="questionmark-admin">
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider">إدارة الربط</div>
+            <a href="questionmark-admin.html" class="sidebar-link group">
                 <i data-feather="link" class="w-5 h-5 ms-3"></i>
-                <span class="font-medium" data-ar="ربط كويسشن مارك" data-en="Questionmark Sync">ربط كويسشن مارك</span>
+                <span class="font-medium">ربط كويسشن مارك</span>
             </a>
-            <a href="coordinator-permissions.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
-                data-page="coordinator-permissions">
+            <a href="coordinator-permissions.html" class="sidebar-link group">
                 <i data-feather="link" class="w-5 h-5 ms-3"></i>
-                <span class="font-medium" data-ar="ربط منسقي المواد" data-en="Coordinator Permissions">ربط منسقي
-                    المواد</span>
+                <span class="font-medium">ربط منسقي المواد</span>
             </a>
 
             <!-- Buildings & Labs -->
-            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
-                data-ar="إدارة المباني والمعامل" data-en="Buildings & Labs">إدارة المباني والمعامل</div>
-            <a href="buildings.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider">إدارة المباني والمعامل
+            </div>
+            <a href="buildings.html" class="sidebar-link group">
                 <i data-feather="home" class="w-5 h-5 ms-3"></i>
-                <span class="font-medium" data-ar="إدارة المباني" data-en="Buildings">إدارة المباني</span>
+                <span class="font-medium">إدارة المباني</span>
             </a>
-            <a href="labs.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+            <a href="labs.html" class="sidebar-link group">
                 <i data-feather="monitor" class="w-5 h-5 ms-3"></i>
-                <span class="font-medium" data-ar="إدارة المعامل" data-en="Labs">إدارة المعامل</span>
+                <span class="font-medium">إدارة المعامل</span>
             </a>
 
             <!-- Exams -->
-            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
-                data-ar="إدارة الاختبارات" data-en="Exams">إدارة الاختبارات</div>
-            <a href="create-exam.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
-                data-page="create-exam">
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider">إدارة الاختبارات</div>
+            <a href="create-exam.html" class="sidebar-link group">
                 <i data-feather="file-text" class="w-5 h-5 ms-3"></i>
-                <span class="font-medium" data-ar="جدولة اختبار" data-en="Schedule Exam">جدولة اختبار</span>
+                <span class="font-medium">جدولة اختبار</span>
             </a>
 
             <!-- Academic Calendar -->
-            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
-                data-ar="التقويم الأكاديمي" data-en="Academic Calendar">التقويم الأكاديمي</div>
-            <a href="Calender-Mnagment.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
-                data-page="Calender-Mnagment">
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider">التقويم الأكاديمي</div>
+            <a href="Calender-Mnagment.html" class="sidebar-link group">
                 <i data-feather="settings" class="w-5 h-5 ms-3"></i>
-                <span class="font-medium" data-ar="إعدادات الفصول الدراسية" data-en="Term Configurations">إعدادات الفصول
-                    الدراسية</span>
+                <span class="font-medium">إعدادات الفصول الدراسية</span>
             </a>
-            <a href="AcadmicCalnder.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
-                data-page="AcadmicCalnder">
+            <a href="AcadmicCalnder.html" class="sidebar-link group">
                 <i data-feather="calendar" class="w-5 h-5 ms-3"></i>
-                <span class="font-medium" data-ar="عرض التقويم" data-en="View Calendar">عرض التقويم</span>
+                <span class="font-medium">عرض التقويم</span>
             </a>
-            <a href="view-archive-calendar.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
-                data-page="view-archive-calendar">
+            <a href="view-archive-calendar.html" class="sidebar-link group">
                 <i data-feather="archive" class="w-5 h-5 ms-3"></i>
-                <span class="font-medium" data-ar="الأرشيف" data-en="Archive">الأرشيف</span>
+                <span class="font-medium">الأرشيف</span>
             </a>
 
             <!-- Users -->
-            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
-                data-ar="إدارة المستخدمين" data-en="Users">إدارة المستخدمين</div>
-            <a href="users.html" class="sidebar-link active flex items-center px-4 py-3 rounded-lg group"
-                data-page="users">
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider">إدارة المستخدمين</div>
+            <a href="users.html" class="sidebar-link active flex items-center px-4 py-3 rounded-lg group">
+                <!-- Explicit active class structure match -->
                 <i data-feather="users" class="w-5 h-5 ms-3"></i>
-                <span class="font-medium" data-ar="إدارة المستخدمين" data-en="User Management">إدارة المستخدمين</span>
+                <span class="font-medium">إدارة المستخدمين</span>
             </a>
 
             <!-- Finance -->
-            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
-                data-ar="الإدارة المالية" data-en="Finance">الإدارة المالية</div>
-            <a href="finance-sittings.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider">الإدارة المالية</div>
+            <a href="finance-sittings.html" class="sidebar-link group">
                 <i data-feather="dollar-sign" class="w-5 h-5 ms-3"></i>
-                <span class="font-medium" data-ar="الإعدادات المالية" data-en="Finance Settings">الإعدادات
-                    المالية</span>
+                <span class="font-medium">الإعدادات المالية</span>
             </a>
-            <a href="contracts-management.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+            <a href="contracts-management.html" class="sidebar-link group">
                 <i data-feather="file-text" class="w-5 h-5 ms-3"></i>
-                <span class="font-medium" data-ar="إدارة العقود" data-en="Contracts">إدارة العقود</span>
+                <span class="font-medium">إدارة العقود</span>
             </a>
 
             <!-- Settings -->
-            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="الإعدادات"
-                data-en="Settings">الإعدادات</div>
-            <a href="setting.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider">الإعدادات</div>
+            <a href="setting.html" class="sidebar-link group">
                 <i data-feather="settings" class="w-5 h-5 ms-3"></i>
-                <span class="font-medium" data-ar="الإعدادات العامة" data-en="General Settings">الإعدادات العامة</span>
+                <span class="font-medium">الإعدادات العامة</span>
             </a>
         </nav>
 
@@ -149,13 +138,14 @@
             <a href="Login.html"
                 class="w-full flex items-center justify-center gap-2 text-red-300 hover:text-red-100 transition-colors">
                 <i data-feather="log-out" class="w-4 h-4"></i>
-                <span class="text-sm font-bold" data-ar="تسجيل خروج" data-en="Logout">تسجيل خروج</span>
+                <span class="text-sm font-bold">تسجيل خروج</span>
             </a>
         </div>
     </aside>
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+
         <!-- Header -->
         <header class="sticky top-0 z-20 card-bg border-b border-custom shadow-sm">
             <div class="flex items-center justify-between px-6 py-4">
@@ -165,25 +155,21 @@
                         <i data-feather="menu" class="w-5 h-5"></i>
                     </button>
                     <div>
-                        <h2 class="text-xl font-bold" data-ar="مركز إدارة الصلاحيات والوصول"
-                            data-en="Permissions & Access Management Center">مركز إدارة الصلاحيات والوصول</h2>
-                        <p class="text-sm text-muted" data-ar="نظام التحكم المركزي (RBAC)"
-                            data-en="Central Control System (RBAC)">نظام التحكم المركزي (RBAC)</p>
+                        <h2 class="text-xl font-bold">إدارة المستخدمين</h2>
+                        <p class="text-sm text-muted">إدارة شاملة للمستخدمين، الأدوار والصلاحيات</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <button class="header-icon-hover p-2 rounded-lg transition-colors" id="themeToggle">
+                    <button class="header-icon-hover p-2 rounded-lg transition-colors">
                         <i data-feather="moon" class="w-5 h-5"></i>
                     </button>
-                    <button class="header-icon-hover p-2 rounded-lg transition-colors" id="langToggle">
+                    <button class="header-icon-hover p-2 rounded-lg transition-colors">
                         <i data-feather="globe" class="w-5 h-5"></i>
                     </button>
                     <div class="flex items-center gap-2 ps-4 border-s border-custom">
                         <div class="text-end">
-                            <div class="font-semibold" data-ar="م. حسين القرني" data-en="Eng. Hussein Al-Qarni">م. حسين
-                                القرني</div>
-                            <small class="text-muted text-xs" data-ar="مدير النظام (Super Admin)"
-                                data-en="System Admin (Super Admin)">مدير النظام (Super Admin)</small>
+                            <div class="font-semibold">م. حسين القرني</div>
+                            <small class="text-muted text-xs">مدير نظام</small>
                         </div>
                         <div
                             class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">
@@ -195,788 +181,206 @@
 
         <!-- Main Content Area -->
         <main class="flex-1 overflow-y-auto main-content-full-width">
-            <div class="w-full p-6">
 
-                <!-- Tabs -->
-                <div class="flex gap-2 mb-6 border-b border-custom">
-                    <button class="px-6 py-3 font-bold border-b-2 border-primary text-primary transition-colors"
-                        onclick="switchTab('users')" id="tab-users">
-                        <i data-feather="users" class="w-4 h-4 inline me-2"></i>
-                        قائمة المستخدمين
-                    </button>
-                    <button class="px-6 py-3 font-bold text-muted hover:text-primary transition-colors"
-                        onclick="switchTab('roles')" id="tab-roles">
-                        <i data-feather="id-card" class="w-4 h-4 inline me-2"></i>
-                        دور المستخدم
-                    </button>
-                    <button class="px-6 py-3 font-bold text-muted hover:text-primary transition-colors"
-                        onclick="switchTab('keys')" id="tab-keys">
-                        <i data-feather="key" class="w-4 h-4 inline me-2"></i>
-                        مفاتيح الصلاحيات
-                    </button>
-                </div>
+            <!-- Management Tabs -->
+            <div class="flex border-b border-custom mb-6 gap-6">
+                <button onclick="switchTab('users')" id="tab-users-btn"
+                    class="pb-3 border-b-2 border-primary text-primary font-bold flex items-center gap-2 transition-all">
+                    <i data-feather="users" class="w-4 h-4"></i> قائمة المستخدمين
+                </button>
+                <button onclick="switchTab('roles')" id="tab-roles-btn"
+                    class="pb-3 border-b-2 border-transparent text-muted hover:text-primary font-medium flex items-center gap-2 transition-all">
+                    <i data-feather="shield" class="w-4 h-4"></i> إدارة الأدوار (Roles)
+                </button>
+                <button onclick="switchTab('perms')" id="tab-perms-btn"
+                    class="pb-3 border-b-2 border-transparent text-muted hover:text-primary font-medium flex items-center gap-2 transition-all">
+                    <i data-feather="key" class="w-4 h-4"></i> إدارة الصلاحيات (Keys)
+                </button>
+            </div>
 
-                <!-- Tab Content -->
-                <div>
-                    <!-- Users Tab -->
-                    <div id="users-pane" class="tab-pane">
-                        <div class="flex justify-between items-center mb-4">
-                            <input type="text"
-                                class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent w-64 shadow-sm"
-                                placeholder="بحث بالاسم أو الرقم...">
-                            <button class="btn-primary px-4 py-2 rounded-lg font-bold shadow-sm flex items-center gap-2"
-                                onclick="showAddUserModal()">
-                                <i data-feather="user-plus" class="w-4 h-4"></i>
-                                إضافة موظف
-                            </button>
-                        </div>
-                        <div class="card-bg rounded-xl shadow-lg border border-custom">
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-sm">
-                                    <thead class="bg-gray-50 dark:bg-gray-800 border-b border-custom">
-                                        <tr>
-                                            <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">
-                                                الموظف</th>
-                                            <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">
-                                                الرقم الوظيفي</th>
-                                            <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">
-                                                البريد الإلكتروني</th>
-                                            <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">
-                                                المسمى الوظيفي</th>
-                                            <th class="px-6 py-3 text-center font-semibold uppercase tracking-wider">
-                                                الحالة</th>
-                                            <th class="px-6 py-3 text-center font-semibold uppercase tracking-wider">
-                                                الإجراءات</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="usersTableBody" class="divide-y divide-custom">
-                                        <tr>
-                                            <td colspan="6" class="text-center p-8">جاري التحميل...</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+            <!-- Content -->
+            <div id="tab-contents" class="relative min-h-[500px]">
+                <!-- Users Content -->
+                <div id="users-content" class="tab-pane-content block">
+                    <div class="flex justify-between items-center mb-6">
+                        <!-- Search -->
+                        <div class="relative w-96">
+                            <input type="text" class="form-control pl-10 pr-4"
+                                placeholder="بحث باسم الموظف أو الدور...">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i data-feather="search" class="w-4 h-4 text-muted"></i>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Roles Tab -->
-                    <div id="roles-pane" class="tab-pane hidden">
-                        <div class="flex justify-end mb-4">
-                            <button class="btn-primary px-4 py-2 rounded-lg font-bold flex items-center gap-2"
-                                onclick="showAddRoleModal()">
-                                <i data-feather="plus" class="w-4 h-4"></i>
-                                تعريف دور مستخدم
-                            </button>
-                        </div>
-                        <div class="card-bg rounded-xl shadow-lg border border-custom">
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-sm">
-                                    <thead class="bg-gray-50 dark:bg-gray-800 border-b border-custom">
-                                        <tr>
-                                            <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">
-                                                الدور</th>
-                                            <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">
-                                                الوصف</th>
-                                            <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">
-                                                إجراءات</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="rolesTableBody" class="divide-y divide-custom"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Keys Tab -->
-                    <div id="keys-pane" class="tab-pane hidden">
-                        <div class="flex justify-end mb-4">
+                            <!-- Styled Search Button to match input height -->
                             <button
-                                class="px-4 py-2 bg-gray-800 dark:bg-gray-700 text-white rounded-lg font-bold hover:bg-gray-900 dark:hover:bg-gray-600 transition-colors flex items-center gap-2"
-                                onclick="showAddPermModal()">
-                                <i data-feather="key" class="w-4 h-4"></i>
-                                إضافة مفتاح صلاحية
-                            </button>
+                                class="absolute inset-y-0 left-0 bg-primary text-white px-4 rounded-l-lg hover:opacity-90 transition-opacity font-bold text-sm"
+                                style="border-top-right-radius: 0; border-bottom-right-radius: 0;">بحث</button>
                         </div>
-                        <div class="card-bg rounded-xl shadow-lg border border-custom">
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-sm">
-                                    <thead class="bg-gray-50 dark:bg-gray-800 border-b border-custom">
-                                        <tr>
-                                            <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">Key
-                                            </th>
-                                            <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">اسم
-                                                الصلاحية</th>
-                                            <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">
-                                                القسم</th>
-                                            <th class="px-6 py-3 text-right font-semibold uppercase tracking-wider">
-                                                إجراءات</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="keysTableBody" class="divide-y divide-custom"></tbody>
-                                </table>
-                            </div>
-                        </div>
+
+                        <button onclick="openModal('addUserModal')"
+                            class="btn-primary flex items-center gap-2 shadow-sm">
+                            <i data-feather="user-plus" class="w-4 h-4"></i> إضافة مستخدم جديد
+                        </button>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="card-bg rounded-xl shadow-sm overflow-hidden">
+                        <table class="w-full text-center custom-table">
+                            <thead class="border-b border-custom">
+                                <tr>
+                                    <th class="p-4 font-bold text-sm">اسم الموظف</th>
+                                    <th class="p-4 font-bold text-sm">الرقم الوظيفي</th>
+                                    <th class="p-4 font-bold text-sm">رقم الجوال</th>
+                                    <th class="p-4 font-bold text-sm">البريد الإلكتروني</th>
+                                    <th class="p-4 font-bold text-sm">الأدوار المسندة</th>
+                                    <th class="p-4 font-bold text-sm">الحالة</th>
+                                    <th class="p-4 font-bold text-sm">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody" class="divide-y divide-custom">
+                                <!-- JS Populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Roles Content -->
+                <div id="roles-content" class="tab-pane-content hidden">
+                    <div class="text-center p-10 text-muted">محتوى إدارة الأدوار هنا</div>
+                </div>
+
+                <!-- Perms Content -->
+                <div id="perms-content" class="tab-pane-content hidden">
+                    <div class="text-center p-10 text-muted">محتوى إدارة الصلاحيات هنا</div>
+                </div>
+
+            </div>
+
+            <!-- Footer (Matching Index) -->
+            <footer class="mt-8 pt-6 border-t border-custom">
+                <div class="flex flex-col items-center justify-center gap-2 text-center">
+                    <div id="liveDateTime" class="text-lg font-bold text-primary" dir="rtl">
+                        --:--
+                    </div>
+                    <div class="text-sm text-muted font-medium">
+                        جميع الحقوق محفوظة &copy; 2026 م. أحمد فلمبان
+                    </div>
+                </div>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="modalsContainer">
+        <!-- Add User Modal -->
+        <div id="addUserModal"
+            class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4 backdrop-blur-sm">
+            <div
+                class="card-bg rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl border border-custom">
+                <div class="p-6 border-b border-custom flex justify-between items-center bg-gray-50/50">
+                    <h3 class="font-bold text-lg">إضافة مستخدم جديد</h3>
+                    <button onclick="closeModal('addUserModal')"
+                        class="text-muted hover:text-primary transition-colors"><i data-feather="x"
+                            class="w-6 h-6"></i></button>
+                </div>
+                <div class="p-8">
+                    <div class="text-center py-10">
+                        <i data-feather="loader" class="w-10 h-10 text-primary mx-auto animate-spin mb-4"></i>
+                        <p class="text-muted">جاري تحميل خدمات الدليل النشط (AD)...</p>
+                        <button onclick="closeModal('addUserModal')"
+                            class="mt-4 text-primary font-bold hover:underline">إلغاء العملية</button>
                     </div>
                 </div>
             </div>
-        </main>
-
-        <!-- Footer -->
-        <footer class="p-4 border-t border-custom text-center text-muted text-sm card-bg flex-shrink-0">
-            <div id="liveDateTime" class="font-bold text-primary mb-1 font-english" style="direction: ltr;"></div>
-            <div data-ar="جميع الحقوق محفوظة © 2026 م. أحمد فلمبان | رقم الإصدار: 2.0"
-                data-en="All rights reserved © 2026 Eng. Ahmed Filban | Version: 2.0">جميع الحقوق محفوظة © 2026 م. أحمد
-                فلمبان | رقم الإصدار: 2.0</div>
-        </footer>
-    </div>
-    </div>
-
-    <div id="printArea" class="hidden">
-        <div class="flex justify-between items-center mb-8">
-            <div><img src="https://www.kau.edu.sa/Images/00000/logo_kau_green.png" width="100" alt="KAU Logo"></div>
-            <div class="text-center">
-                <h4 class="font-bold mb-1">جامعة الملك عبد العزيز</h4>
-                <h6 class="text-muted">عمادة التعلم الإلكتروني والتعليم عن بعد</h6>
-            </div>
-            <div style="opacity:0; width:100px;">LOGO</div>
         </div>
-        <h3 class="text-center font-bold mb-8 underline">بطاقة بيانات موظف</h3>
-        <div class="grid grid-cols-2 gap-4 mb-6 p-4 border rounded-lg" id="printUserDetails"></div>
-        <div class="text-center mt-8 text-sm text-muted">تمت الطباعة بواسطة النظام الآلي</div>
     </div>
 
     <script>
-        // Tab switching function
-        function switchTab(tabName) {
-            // Hide all panes
-            document.getElementById('users-pane').classList.add('hidden');
-            document.getElementById('roles-pane').classList.add('hidden');
-            document.getElementById('keys-pane').classList.add('hidden');
+        // Using index.html style config
+        const rolesConfig = {
+            'dean': { label: 'سعادة العميد', color: 'badge-warning' },
+            'admin': { label: 'مدير النظام', color: 'badge-danger' },
+            'architect': { label: 'محلل نظم أول', color: 'badge-info' },
+            'sys': { label: 'مدير النظام', color: 'badge-danger' }
+        };
 
-            // Remove active from all tabs
-            document.getElementById('tab-users').classList.remove('border-b-2', 'border-primary', 'text-primary');
-            document.getElementById('tab-users').classList.add('text-muted');
-            document.getElementById('tab-roles').classList.remove('border-b-2', 'border-primary', 'text-primary');
-            document.getElementById('tab-roles').classList.add('text-muted');
-            document.getElementById('tab-keys').classList.remove('border-b-2', 'border-primary', 'text-primary');
-            document.getElementById('tab-keys').classList.add('text-muted');
+        // Mock Data
+        const usersData = [
+            { name: 'د. نايف راضي الجهني', job: '00001000', mob: '050XXXXX00', email: 'n.aljuhani@kau.edu.sa', role: 'dean' },
+            { name: 'م. أحمد زين الدين فلمبان', job: '00001111', mob: '055XXXXX11', email: 'a.falamban@kau.edu.sa', role: 'architect' },
+            { name: 'م. حسين محمد القرني', job: '0000141036', mob: '050XXXXX36', email: 'h.qarni@kau.edu.sa', role: 'admin' },
+            { name: 'م. سعد سعيد الغامدي', job: '00005555', mob: '055XXXXX55', email: 's.alghamdi@kau.edu.sa', role: 'admin' },
+            { name: 'م. أمجد خوجة', job: '00003333', mob: '056XXXXX33', email: 'a.khoja@kau.edu.sa', role: 'admin' },
+            { name: 'م. ولاء الحبشي', job: '00074652', mob: '055XXXXX52', email: 'w.habashi@kau.edu.sa', role: 'admin' },
+            { name: 'م. محمد بابكير', job: '00006666', mob: '054XXXXX66', email: 'm.babkeer@kau.edu.sa', role: 'admin' }
+        ];
 
-            // Show selected pane
-            document.getElementById(tabName + '-pane').classList.remove('hidden');
-
-            // Activate selected tab
-            const activeTab = document.getElementById('tab-' + tabName);
-            activeTab.classList.add('border-b-2', 'border-primary', 'text-primary');
-            activeTab.classList.remove('text-muted');
-
-            feather.replace();
-        }
-
-        function showAddUserModal() {
-            Swal.fire({
-                title: 'إضافة موظف',
-                html: `
-                <form id="addUserForm" class="text-right">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                        <div>
-                            <label class="block text-xs font-bold mb-1">الرقم الوظيفي *</label>
-                            <input type="text" id="uJobId" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold mb-1">الهوية الوطنية</label>
-                            <input type="text" id="uNatId" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold mb-1">المسمى الوظيفي</label>
-                            <input type="text" id="uRole" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold mb-1">الجوال</label>
-                            <input type="text" id="uPhone" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                        <div>
-                            <label class="block text-xs font-bold mb-1">الاسم الكامل</label>
-                            <input type="text" id="uName" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold mb-1">البريد الإلكتروني</label>
-                            <input type="text" id="uEmail" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <h6 class="font-bold mb-2">دور المستخدم</h6>
-                            <div id="rolesList" class="p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800" style="height:150px; overflow-y:auto;"></div>
-                        </div>
-                        <div>
-                            <h6 class="font-bold mb-2">مفاتيح الصلاحيات</h6>
-                            <div id="permsList" class="p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800" style="height:150px; overflow-y:auto;"></div>
-                        </div>
-                    </div>
-                </form>
-            `,
-                width: '900px',
-                showCancelButton: true,
-                confirmButtonText: 'حفظ',
-                cancelButtonText: 'إلغاء',
-                confirmButtonColor: '#198754',
-                cancelButtonColor: '#6c757d',
-                reverseButtons: true,
-                didOpen: () => {
-                    loadRolesForModal();
-                    loadPermsForModal();
-                },
-                preConfirm: () => {
-                    const form = document.getElementById('addUserForm');
-                    if (!form.checkValidity()) {
-                        form.reportValidity();
-                        return false;
-                    }
-                    return {
-                        jobId: document.getElementById('uJobId').value,
-                        natId: document.getElementById('uNatId').value,
-                        role: document.getElementById('uRole').value,
-                        phone: document.getElementById('uPhone').value,
-                        name: document.getElementById('uName').value,
-                        email: document.getElementById('uEmail').value
-                    };
-                }
-            }).then((result) => {
-                if (result.isConfirmed && result.value) {
-                    saveUser(result.value);
-                }
-            });
-        }
-
-        function showAddRoleModal() {
-            Swal.fire({
-                title: 'تعريف دور مستخدم',
-                html: `
-                <div class="text-right">
-                    <input type="text" id="rName" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent mb-3" placeholder="الاسم">
-                    <input type="text" id="rDesc" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="الوصف">
-                </div>
-            `,
-                showCancelButton: true,
-                confirmButtonText: 'حفظ',
-                cancelButtonText: 'إلغاء',
-                confirmButtonColor: '#005941',
-                cancelButtonColor: '#6c757d',
-                reverseButtons: true,
-                preConfirm: () => {
-                    const name = document.getElementById('rName')?.value.trim();
-                    if (!name) {
-                        Swal.showValidationMessage('يرجى إدخال اسم الدور');
-                        return false;
-                    }
-                    return {
-                        name: name,
-                        desc: document.getElementById('rDesc')?.value.trim() || ''
-                    };
-                }
-            }).then((result) => {
-                if (result.isConfirmed && result.value) {
-                    saveRole(result.value);
-                }
-            });
-        }
-
-        function showAddPermModal() {
-            Swal.fire({
-                title: 'إضافة مفتاح صلاحية',
-                html: `
-                <div class="text-right space-y-3">
-                    <input type="text" id="pName" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="الاسم">
-                    <input type="text" id="pKey" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Key">
-                    <select id="pMod" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent">
-                        <option>مالية</option>
-                        <option>تقويم</option>
-                    </select>
-                </div>
-            `,
-                showCancelButton: true,
-                confirmButtonText: 'حفظ',
-                cancelButtonText: 'إلغاء',
-                confirmButtonColor: '#1f2937',
-                cancelButtonColor: '#6c757d',
-                reverseButtons: true,
-                preConfirm: () => {
-                    const name = document.getElementById('pName')?.value.trim();
-                    const key = document.getElementById('pKey')?.value.trim();
-                    if (!name || !key) {
-                        Swal.showValidationMessage('يرجى إدخال جميع الحقول المطلوبة');
-                        return false;
-                    }
-                    return {
-                        name: name,
-                        key: key,
-                        module: document.getElementById('pMod')?.value || ''
-                    };
-                }
-            }).then((result) => {
-                if (result.isConfirmed && result.value) {
-                    savePerm(result.value);
-                }
-            });
-        }
-
-        function showViewUserModal(jobId) {
-            // TODO: Load user data and show in SweetAlert2
-            Swal.fire({
-                title: 'بطاقة موظف',
-                html: `<div id="viewModalBody" class="text-center p-4">جاري التحميل...</div>`,
-                width: '800px',
-                showCancelButton: true,
-                cancelButtonText: 'إغلاق',
-                confirmButtonText: 'طباعة A4',
-                confirmButtonColor: '#005941',
-                cancelButtonColor: '#6c757d',
-                reverseButtons: true,
-                didOpen: async () => {
-                    // TODO: Load user data
-                    const modalBody = document.getElementById('viewModalBody');
-                    modalBody.innerHTML = 'بيانات الموظف...';
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.print();
-                }
-            });
-        }
-
-        const supabaseUrl = 'https://mwyjxknjdkqxsuxjvyaa.supabase.co';
-        const supabaseKey = 'sb_publishable_Bjk7BEIJZvv2fdtxWnqkJA_26aj1VJI';
-        const _db = supabase.createClient(supabaseUrl, supabaseKey);
-
-        window.onload = async function () { await loadUsers(); await loadRoles(); await loadPerms(); };
-
-        // --- 1. LOAD USERS with SOFT DELETE CHECK ---
-        async function loadUsers() {
-            try {
-                const { data, error } = await _db.from('profiles').select('*').order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                const tbody = document.getElementById('usersTableBody');
-                if (data && data.length) {
-                    tbody.innerHTML = data.map(u => {
-                        const isActive = u.is_active !== false;
-                        const statusBadge = isActive
-                            ? '<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200">نشط</span>'
-                            : '<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200">موقوف</span>';
-
-                        const deleteBtn = isActive
-                            ? `<button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg transition-all hover:translate-y-[-3px] hover:shadow-md bg-red-50 dark:bg-red-900/30 text-red-600 border border-red-200 dark:border-red-800" onclick="toggleUserStatus('${u.job_id}', false)" title="إيقاف الحساب (Soft Delete)"><i data-feather="trash-2" class="w-4 h-4"></i></button>`
-                            : `<button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg transition-all hover:translate-y-[-3px] hover:shadow-md bg-green-50 dark:bg-green-900/30 text-green-600 border border-green-200 dark:border-green-800" onclick="toggleUserStatus('${u.job_id}', true)" title="استعادة الحساب"><i data-feather="rotate-ccw" class="w-4 h-4"></i></button>`;
-
-                        return `
-                    <tr class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150 ${!isActive ? 'bg-gray-100 dark:bg-gray-800/50 text-muted' : ''}">
-                        <td class="px-6 py-4 font-bold text-right">${u.full_name || '-'}</td>
-                        <td class="px-6 py-4 text-right">
-                            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600">${u.job_id}</span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-right font-english">${u.email || '-'}</td>
-                        <td class="px-6 py-4 text-sm font-bold text-primary text-right">${u.role || '-'}</td>
-                        <td class="px-6 py-4 text-center">${statusBadge}</td>
-                        <td class="px-6 py-4 text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                <button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg transition-all hover:translate-y-[-3px] hover:shadow-md bg-blue-50 dark:bg-blue-900/30 text-blue-600 border border-blue-200 dark:border-blue-800" onclick="openViewModal('${u.job_id}')" title="عرض"><i data-feather="eye" class="w-4 h-4"></i></button>
-                                ${deleteBtn}
-                            </div>
-                        </td>
-                    </tr>
-                `}).join('');
-                    setTimeout(() => feather.replace(), 100);
-                } else {
-                    tbody.innerHTML = `<tr><td colspan="6" class="text-center p-5 text-muted">لا يوجد بيانات حالياً</td></tr>`;
-                }
-            } catch (err) {
-                console.error('Database Error:', err);
-                handleDbError(err, 'تحميل المستخدمين');
-                // عرض بيانات تجريبية في حالة الفشل لتجنب توقف الصفحة
-                loadMockUsers();
-            }
-        }
-
-        // دالة لعرض بيانات تجريبية في حال فشل الاتصال بقاعدة البيانات
-        function loadMockUsers() {
+        function renderTable() {
             const tbody = document.getElementById('usersTableBody');
-            const mockData = [
-                { full_name: 'م. حسين القرني', job_id: '00014103', email: 'h.algarni@kau.edu.sa', role: 'مدير النظام', is_active: true },
-                { full_name: 'د. نايف الجهني', job_id: '00041036', email: 'n.aljuhani@kau.edu.sa', role: 'منسق مقرر', is_active: true }
-            ];
-            tbody.innerHTML = mockData.map(u => `
-                <tr class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
-                    <td class="px-6 py-4 font-bold text-right">${u.full_name}</td>
-                    <td class="px-6 py-4 text-right">
-                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600">${u.job_id}</span>
+            tbody.innerHTML = usersData.map(u => {
+                const conf = rolesConfig[u.role] || rolesConfig['sys'];
+                return `
+                <tr class="transition-all hover:bg-gray-50 border-b border-gray-100 last:border-0">
+                    <td class="p-4 text-primary font-bold whitespace-nowrap text-right">${u.name}</td>
+                    <td class="p-4 whitespace-nowrap"><span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-mono font-bold">${u.job}</span></td>
+                    <td class="p-4 text-muted font-medium whitespace-nowrap" dir="ltr">${u.mob}</td>
+                    <td class="p-4 text-muted text-sm font-light italic whitespace-nowrap lowercase font-english">${u.email}</td>
+                    <td class="p-4 whitespace-nowrap">
+                        <span class="badge ${conf.color} shadow-sm block w-fit mx-auto min-w-[120px]">${conf.label}</span>
                     </td>
-                    <td class="px-6 py-4 text-sm text-right font-english">${u.email}</td>
-                    <td class="px-6 py-4 text-sm font-bold text-primary text-right">${u.role}</td>
-                    <td class="px-6 py-4 text-center"><span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200">نشط (تجريبي)</span></td>
-                    <td class="px-6 py-4 text-center">
-                        <div class="flex items-center justify-center gap-2">
-                            <button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg bg-blue-50 text-blue-600 border" disabled><i data-feather="eye" class="w-4 h-4"></i></button>
-                            <button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg bg-red-50 text-red-600 border" disabled><i data-feather="trash-2" class="w-4 h-4"></i></button>
+                    <td class="p-4 whitespace-nowrap">
+                        <div class="flex items-center justify-center gap-2 badge badge-success w-fit mx-auto px-3">
+                            <span class="font-bold text-xs">نشط</span>
+                            <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div> 
+                        </div>
+                    </td>
+                    <td class="p-4 whitespace-nowrap">
+                         <div class="flex justify-center gap-2">
+                            <button class="w-8 h-8 rounded border border-blue-200 text-blue-500 hover:bg-blue-500 hover:text-white transition-all flex items-center justify-center"><i data-feather="eye" class="w-4 h-4"></i></button>
+                            <button class="w-8 h-8 rounded border border-amber-200 text-amber-500 hover:bg-amber-500 hover:text-white transition-all flex items-center justify-center"><i data-feather="edit-2" class="w-4 h-4"></i></button>
+                            <button class="w-8 h-8 rounded border border-red-200 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center"><i data-feather="trash-2" class="w-4 h-4"></i></button>
                         </div>
                     </td>
                 </tr>
-            `).join('');
+            `;
+            }).join('');
             feather.replace();
         }
 
-        // دالة موحدة لمعالجة أخطاء قاعدة البيانات وترجمتها
-        function handleDbError(err, context) {
-            let message = "حدث خطأ غير متوقع.";
-            if (err.message === "Failed to fetch") {
-                message = `تعذر الاتصال بقاعدة البيانات (فشل الربط اللاسلكي أو الخادم غير متاح). تم تفعيل وضع المحاكاة للعرض.`;
-            } else if (err.code) {
-                message = `خطأ من قاعدة البيانات (${err.code}): ${err.message}`;
-            } else {
-                message = err.message || message;
-            }
+        function switchTab(id) {
+            document.querySelectorAll('.tab-pane-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(id + '-content').classList.remove('hidden');
 
-            Swal.fire({
-                icon: 'error',
-                title: `فشل في ${context}`,
-                text: message,
-                confirmButtonColor: '#dc3545',
-                confirmButtonText: 'حسناً'
-            });
-        }
-
-        // --- 2. SOFT DELETE FUNCTION (TOGGLE) ---
-        async function toggleUserStatus(jobId, newStatus) {
-            const action = newStatus ? "استعادة" : "إيقاف";
-            Swal.fire({
-                icon: 'question',
-                title: 'تأكيد العملية',
-                text: `هل أنت متأكد من ${action} هذا الموظف؟`,
-                showCancelButton: true,
-                confirmButtonText: 'نعم',
-                cancelButtonText: 'إلغاء',
-                confirmButtonColor: '#005941',
-                cancelButtonColor: '#6c757d',
-                reverseButtons: true
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    try {
-                        const { error } = await _db.from('profiles').update({ is_active: newStatus }).eq('job_id', jobId);
-                        if (error) throw error;
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'تم بنجاح',
-                            text: `تم ${action} الموظف بنجاح`,
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                        loadUsers();
-                    } catch (err) {
-                        handleDbError(err, `${action} الموظف`);
-                    }
+            const btns = ['users', 'roles', 'perms'];
+            btns.forEach(b => {
+                const btn = document.getElementById('tab-' + b + '-btn');
+                if (b === id) {
+                    btn.classList.add('border-primary', 'text-primary');
+                    btn.classList.remove('border-transparent', 'text-muted');
+                } else {
+                    btn.classList.remove('border-primary', 'text-primary');
+                    btn.classList.add('border-transparent', 'text-muted');
                 }
             });
         }
 
-        // --- 3. View & Print ---
-        async function openViewModal(jobId) {
-            try {
-                const { data: u, error } = await _db.from('profiles').select('*').eq('job_id', jobId).single();
-                if (error) throw error;
-
-                if (u) {
-                    // تعبئة نموذج الطباعة
-                    document.getElementById('printUserDetails').innerHTML = `
-                    <div><strong>الاسم الرباعي:</strong> ${u.full_name}</div>
-                    <div><strong>الرقم الوظيفي:</strong> ${u.job_id}</div>
-                    <div><strong>المسمى الوظيفي:</strong> ${u.role}</div>
-                    <div><strong>رقم الهوية:</strong> ${u.national_id || '-'}</div>
-                    <div class="col-span-2"><strong>حالة الموظف:</strong> ${u.is_active !== false ? 'على رأس العمل' : 'موقوف عن العمل'}</div>
-                `;
-
-                    Swal.fire({
-                        title: 'بطاقة موظف',
-                        html: `
-                        <div class="text-center">
-                            <h4 class="font-bold mb-2">${u.full_name}</h4>
-                            <p class="text-muted mb-4">${u.role}</p>
-                            <div class="grid grid-cols-2 gap-3 text-right">
-                                <div class="p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
-                                    <small class="text-muted block mb-1">الرقم الوظيفي</small>
-                                    <div class="font-bold">${u.job_id}</div>
-                                </div>
-                                <div class="p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
-                                    <small class="text-muted block mb-1">الهوية</small>
-                                    <div class="font-bold">${u.national_id || '-'}</div>
-                                </div>
-                                <div class="p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
-                                    <small class="text-muted block mb-1">الجوال</small>
-                                    <div class="font-bold">${u.phone || '-'}</div>
-                                </div>
-                                <div class="p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
-                                    <small class="text-muted block mb-1">البريد</small>
-                                    <div class="font-bold">${u.email || '-'}</div>
-                                </div>
-                                <div class="col-span-2 p-3 border rounded-lg bg-gray-50 dark:bg-gray-800">
-                                    <small class="text-muted block mb-1">الحالة</small>
-                                    <div class="font-bold ${u.is_active !== false ? 'text-green-600' : 'text-red-600'}">${u.is_active !== false ? 'نشط (Active)' : 'موقوف (Disabled)'}</div>
-                                </div>
-                            </div>
-                        </div>
-                    `,
-                        width: '800px',
-                        showCancelButton: true,
-                        cancelButtonText: 'إغلاق',
-                        confirmButtonText: 'طباعة A4',
-                        confirmButtonColor: '#005941',
-                        cancelButtonColor: '#6c757d',
-                        reverseButtons: true
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.print();
-                        }
-                    });
-                }
-            } catch (err) {
-                handleDbError(err, 'عرض بيانات الموظف');
-            }
+        function updateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            document.getElementById('liveDateTime').innerText = now.toLocaleDateString('ar-SA', options);
         }
 
-        // --- 4. Helpers (Load Roles/Keys & Save) ---
-        async function loadRoles() {
-            try {
-                const { data, error } = await _db.from('roles').select('*');
-                if (error) throw error;
-                if (data) {
-                    document.getElementById('rolesTableBody').innerHTML = data.map(r => `
-                    <tr class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
-                        <td class="px-6 py-4 font-bold text-right">${r.role_name}</td>
-                        <td class="px-6 py-4 text-right">${r.description || '-'}</td>
-                        <td class="px-6 py-4 text-center">
-                            <button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg bg-red-50 text-red-600 border border-red-200" title="حذف" disabled>
-                                <i data-feather="trash-2" class="w-4 h-4"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `).join('');
-                    setTimeout(() => feather.replace(), 100);
-                }
-            } catch (err) {
-                console.error('Load Roles Error:', err);
-                // Mock roles for fallback
-                document.getElementById('rolesTableBody').innerHTML = `
-                    <tr class="card-bg">
-                        <td class="px-6 py-4 font-bold text-right">مدير النظام (تجريبي)</td>
-                        <td class="px-6 py-4 text-right">صلاحيات كاملة</td>
-                        <td class="px-6 py-4 text-center">-</td>
-                    </tr>
-                `;
-                feather.replace();
-            }
-        }
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
 
-        async function loadRolesForModal() {
-            try {
-                const { data, error } = await _db.from('roles').select('*');
-                if (error) throw error;
-                if (data) {
-                    document.getElementById('rolesList').innerHTML = data.map(r => `
-                    <label class="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer mb-2">
-                        <input class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary role-chk" type="checkbox" value="${r.id}">
-                        <span class="ms-2 font-bold">${r.role_name}</span>
-                    </label>
-                `).join('');
-                }
-            } catch (err) {
-                document.getElementById('rolesList').innerHTML = '<p class="text-xs text-muted p-2">تعذر تحميل الأدوار من الخادم.</p>';
-            }
-        }
-
-        async function loadPerms() {
-            try {
-                const { data, error } = await _db.from('permissions').select('*');
-                if (error) throw error;
-                if (data) {
-                    document.getElementById('keysTableBody').innerHTML = data.map(p => `
-                    <tr class="card-bg hover:bg-primary/5 dark:hover:bg-primary/10 transition duration-150">
-                        <td class="px-6 py-4 text-right"><code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">${p.perm_key}</code></td>
-                        <td class="px-6 py-4 text-right">${p.action_name}</td>
-                        <td class="px-6 py-4 text-right">${p.module}</td>
-                        <td class="px-6 py-4 text-center">
-                            <button class="w-8 h-8 p-0 inline-flex items-center justify-center rounded-lg bg-red-50 text-red-600 border border-red-200" title="حذف" disabled>
-                                <i data-feather="trash-2" class="w-4 h-4"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `).join('');
-                    setTimeout(() => feather.replace(), 100);
-                }
-            } catch (err) {
-                console.error('Load Perms Error:', err);
-                document.getElementById('keysTableBody').innerHTML = `<tr><td colspan="4" class="p-4 text-center text-muted">تعذر الاتصال بالخادم.</td></tr>`;
-            }
-        }
-
-        async function loadPermsForModal() {
-            try {
-                const { data, error } = await _db.from('permissions').select('*');
-                if (error) throw error;
-                if (data) {
-                    document.getElementById('permsList').innerHTML = data.map(p => `
-                    <label class="flex items-center p-2 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer mb-2">
-                        <input class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary perm-chk" type="checkbox" value="${p.id}">
-                        <span class="ms-2 text-sm">${p.action_name}</span>
-                    </label>
-                `).join('');
-                }
-            } catch (err) {
-                document.getElementById('permsList').innerHTML = '<p class="text-xs text-muted p-2">تعذر تحميل الصلاحيات.</p>';
-            }
-        }
-
-        // Save User
-        async function saveUser(userData) {
-            try {
-                const { data: user, error } = await _db.from('profiles').upsert({
-                    job_id: userData.jobId,
-                    full_name: userData.name,
-                    email: userData.email,
-                    national_id: userData.natId,
-                    role: userData.role,
-                    phone: userData.phone,
-                    is_active: true
-                }).select().single();
-
-                if (error) throw error;
-
-                if (user) {
-                    const roles = Array.from(document.querySelectorAll('.role-chk:checked')).map(c => ({ user_id: user.id, role_id: c.value }));
-                    if (roles.length) await _db.from('user_roles').insert(roles);
-                    const perms = Array.from(document.querySelectorAll('.perm-chk:checked')).map(c => ({ user_id: user.id, permission_id: c.value }));
-                    if (perms.length) await _db.from('user_permissions').insert(perms);
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'تم الحفظ',
-                        text: 'تم حفظ الموظف بنجاح في قاعدة البيانات',
-                        confirmButtonColor: '#198754'
-                    });
-                    loadUsers();
-                }
-            } catch (err) {
-                console.error('Save User Error:', err);
-                handleDbError(err, 'حفظ الموظف');
-
-                // إضافة الموظف محلياً في حال فشل قاعدة البيانات (للعرض فقط)
-                if (err.message === "Failed to fetch") {
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'تم الحفظ (وضع العرض)',
-                        text: 'تعذر الاتصال بالخادم، تم حفظ البيانات محلياً في هذه الجلسة فقط لغرض العرض.',
-                        confirmButtonColor: '#0d6efd'
-                    });
-                    // منطق إظهار السطر الجديد في الجدول يدوياً إذا أردت
-                }
-            }
-        }
-
-        async function saveRole(roleData) {
-            try {
-                const { error } = await _db.from('roles').insert({ role_name: roleData.name, description: roleData.desc });
-                if (error) throw error;
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'تم الحفظ',
-                    text: 'تم حفظ الدور بنجاح',
-                    confirmButtonColor: '#198754'
-                });
-                loadRoles();
-            } catch (err) {
-                handleDbError(err, 'حفظ الدور');
-            }
-        }
-
-        async function savePerm(permData) {
-            try {
-                const { error } = await _db.from('permissions').insert({
-                    perm_key: permData.key,
-                    action_name: permData.name,
-                    module: permData.module
-                });
-                if (error) throw error;
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'تم الحفظ',
-                    text: 'تم حفظ الصلاحية بنجاح',
-                    confirmButtonColor: '#198754'
-                });
-                loadPerms();
-            } catch (err) {
-                handleDbError(err, 'حفظ الصلاحية');
-            }
-        }
-
-        // Initialize Feather Icons
-        feather.replace();
-
-        // Theme Toggle
-        const themeToggle = document.getElementById('themeToggle');
-        const html = document.documentElement;
-        const themeIcon = themeToggle?.querySelector('i');
-
-        // Check for saved theme preference
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        if (currentTheme === 'dark') {
-            html.classList.add('dark');
-            if (themeIcon) themeIcon.setAttribute('data-feather', 'sun');
-        }
-
-        themeToggle?.addEventListener('click', () => {
-            html.classList.toggle('dark');
-            const isDark = html.classList.contains('dark');
-            if (themeIcon) themeIcon.setAttribute('data-feather', isDark ? 'sun' : 'moon');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        window.onload = function () {
+            renderTable();
+            updateTime();
+            setInterval(updateTime, 1000);
             feather.replace();
-        });
-
-        // Language Toggle
-        let isArabic = true;
-        const langToggle = document.getElementById('langToggle');
-        langToggle?.addEventListener('click', () => {
-            isArabic = !isArabic;
-            document.documentElement.lang = isArabic ? 'ar' : 'en';
-            document.documentElement.dir = isArabic ? 'rtl' : 'ltr';
-
-            // Update all text elements
-            document.querySelectorAll('[data-ar][data-en]').forEach(el => {
-                el.textContent = isArabic ? el.getAttribute('data-ar') : el.getAttribute('data-en');
-            });
-            feather.replace();
-        });
-
-        // Set active page in sidebar
-        (function () {
-            const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
-            const activeLink = document.querySelector(`[data-page="${currentPage}"]`);
-            if (activeLink) {
-                activeLink.classList.add('active');
-            }
-
-            // Sidebar Toggle for Mobile
-            const sidebarToggle = document.getElementById('sidebarToggle');
-            const sidebar = document.getElementById('sidebar');
-            if (sidebarToggle && sidebar) {
-                sidebarToggle.addEventListener('click', () => {
-                    sidebar.classList.toggle('hidden');
-                });
-            }
-        })();
+        };
     </script>
+
 </body>
 
 </html>
