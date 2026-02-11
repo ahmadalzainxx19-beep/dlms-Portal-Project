@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>توجيه ودعم الاختبارات - KAU</title>
+
+    <!-- 1. المكتبات الخارجية (CDNs) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="assets/styles.css">
+
+    <!-- 2. إعدادات الثيم والألوان (الهوية الملكية) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#005941',
+                        accent: '#C89933',
+                        kau: {
+                            primary: '#005941', // الأخضر الملكي
+                            accent: '#C89933',  // الذهبي
+                            dark: '#062c26',
+                            light: '#f8f9fa'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                        english: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .status-badge-pending {
+            @apply bg-orange-100 text-orange-700 border-orange-200;
+        }
+
+        .status-badge-assigned {
+            @apply bg-blue-100 text-blue-700 border-blue-200;
+        }
+
+        /* Animation */
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar w-64 flex-col hidden lg:flex h-full fixed lg:relative z-30">
+        <div class="h-20 flex items-center justify-center border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary font-bold border-2 border-accent">
+                    KAU</div>
+                <h1 class="text-white font-bold text-lg" data-ar="بوابة الأنظمة" data-en="KAU Portal">بوابة الأنظمة</h1>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+            <!-- Dashboard -->
+            <a href="index.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="grid" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</span>
+            </a>
+
+            <!-- Integrations -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="إدارة الربط"
+                data-en="Integrations">إدارة الربط</div>
+            <a href="questionmark-admin.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="questionmark-admin">
+                <i data-feather="link" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="ربط كويسشن مارك" data-en="Questionmark Sync">ربط كويسشن مارك</span>
+            </a>
+            <a href="coordinator-permissions.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="coordinator-permissions">
+                <i data-feather="link" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="ربط منسقي المواد" data-en="Coordinator Permissions">ربط منسقي
+                    المواد</span>
+            </a>
+
+            <!-- Buildings & Labs -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="إدارة المباني والمعامل" data-en="Buildings & Labs">إدارة المباني والمعامل</div>
+            <a href="buildings.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="home" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المباني" data-en="Buildings">إدارة المباني</span>
+            </a>
+            <a href="labs.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="monitor" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المعامل" data-en="Labs">إدارة المعامل</span>
+            </a>
+
+            <!-- Exams -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="إدارة الاختبارات" data-en="Exams">إدارة الاختبارات</div>
+            <a href="create-exam.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="create-exam">
+                <i data-feather="file-text" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="جدولة اختبار" data-en="Schedule Exam">جدولة اختبار</span>
+            </a>
+
+            <!-- Academic Calendar -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="التقويم الأكاديمي" data-en="Academic Calendar">التقويم الأكاديمي</div>
+            <a href="Calender-Mnagment.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="Calender-Mnagment">
+                <i data-feather="settings" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إعدادات الفصول الدراسية" data-en="Term Configurations">إعدادات الفصول
+                    الدراسية</span>
+            </a>
+            <a href="AcadmicCalnder.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="AcadmicCalnder">
+                <i data-feather="calendar" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="عرض التقويم" data-en="View Calendar">عرض التقويم</span>
+            </a>
+            <a href="view-archive-calendar.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group"
+                data-page="view-archive-calendar">
+                <i data-feather="archive" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الأرشيف" data-en="Archive">الأرشيف</span>
+            </a>
+
+            <!-- Users -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="إدارة المستخدمين" data-en="Users">إدارة المستخدمين</div>
+            <a href="users.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="users" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة المستخدمين" data-en="User Management">إدارة المستخدمين</span>
+            </a>
+
+            <!-- Finance -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                data-ar="الإدارة المالية" data-en="Finance">الإدارة المالية</div>
+            <a href="finance-sittings.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="dollar-sign" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الإعدادات المالية" data-en="Finance Settings">الإعدادات
+                    المالية</span>
+            </a>
+            <a href="contracts-management.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="file-text" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة العقود" data-en="Contracts">إدارة العقود</span>
+            </a>
+
+            <!-- Task Management -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="إدارة المهام"
+                data-en="Task Management">إدارة المهام</div>
+            <a href="support-dispatch.html" class="sidebar-link active flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="send" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="توجيه فريق الدعم الفني" data-en="Support Team Dispatch">توجيه فريق
+                    الدعم الفني</span>
+            </a>
+            <a href="support-management.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="users" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="إدارة فريق الدعم" data-en="Support Team Management">إدارة فريق
+                    الدعم</span>
+            </a>
+
+            <!-- Settings -->
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider" data-ar="الإعدادات"
+                data-en="Settings">الإعدادات</div>
+            <a href="setting.html" class="sidebar-link flex items-center px-4 py-3 rounded-lg group">
+                <i data-feather="settings" class="w-5 h-5 ms-3"></i>
+                <span class="font-medium" data-ar="الإعدادات العامة" data-en="General Settings">الإعدادات العامة</span>
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-white/10">
+            <a href="Login.html"
+                class="w-full flex items-center justify-center gap-2 text-red-300 hover:text-red-100 transition-colors">
+                <i data-feather="log-out" class="w-4 h-4"></i>
+                <span class="text-sm font-bold" data-ar="تسجيل خروج" data-en="Logout">تسجيل خروج</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden text-right">
+
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 h-20 flex items-center justify-between px-8 sticky top-0 z-20">
+            <div class="flex items-center gap-4">
+                <button id="sidebarToggle" class="lg:hidden p-2 rounded-md hover:bg-gray-100 text-gray-600">
+                    <i data-feather="menu"></i>
+                </button>
+                <h2 class="text-2xl font-bold text-kau-primary" id="page-header-title">توجيه فريق الدعم الفني</h2>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <div class="relative">
+                    <button class="p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors">
+                        <i data-feather="bell" class="w-5 h-5"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+                    </button>
+                </div>
+                <div class="flex items-center gap-3 pl-4 border-r border-gray-200">
+                    <div class="text-left hidden md:block text-right">
+                        <p class="text-sm font-bold text-gray-700 leading-tight">م. حسين القرني</p>
+                        <p class="text-[10px] text-gray-500 font-bold tracking-wide">مسؤول التوجيه والعمليات</p>
+                    </div>
+                    <div
+                        class="w-10 h-10 rounded-full bg-kau-primary text-white flex items-center justify-center font-bold shadow-sm">
+                        HQ</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-4 lg:p-8">
+
+            <!-- Page Tabs -->
+            <div class="mb-6 border-b border-gray-200">
+                <nav class="-mb-px flex space-x-8 space-x-reverse" aria-label="Tabs">
+                    <button onclick="showSection('dispatch')" id="tab-dispatch"
+                        class="border-kau-primary text-kau-primary whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 transition-colors">
+                        <i data-feather="send" class="w-4 h-4"></i> توجيه أفراد الدعم
+                    </button>
+                    <button onclick="showSection('tracking')" id="tab-tracking"
+                        class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 transition-colors">
+                        <i data-feather="activity" class="w-4 h-4"></i> متابعة حالة الفريق
+                    </button>
+                    <button onclick="showSection('faults')" id="tab-faults"
+                        class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 transition-colors">
+                        <i data-feather="alert-triangle" class="w-4 h-4"></i> بلاغات الأعطال
+                    </button>
+                </nav>
+            </div>
+
+            <!-- ----------------------------------------- -->
+            <!-- SECTION 1: DISPATCH (توجيه الفريق) -->
+            <!-- ----------------------------------------- -->
+            <div id="section-dispatch" class="space-y-8 animate-fade-in">
+                <!-- Summary Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border-r-4 border-orange-500 flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-xs font-bold uppercase mb-1">اختبارات بانتظار التوجيه</p>
+                            <h3 class="text-3xl font-black text-gray-800">04</h3>
+                        </div>
+                        <i data-feather="alert-circle" class="text-orange-500 w-8 h-8"></i>
+                    </div>
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border-r-4 border-blue-500 flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-xs font-bold uppercase mb-1">فنيين في الميدان حالياً</p>
+                            <h3 class="text-3xl font-black text-gray-800">08</h3>
+                        </div>
+                        <i data-feather="users" class="text-blue-500 w-8 h-8"></i>
+                    </div>
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border-r-4 border-green-500 flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-xs font-bold uppercase mb-1">اختبارات اكتمل دعمها</p>
+                            <h3 class="text-3xl font-black text-gray-800">15</h3>
+                        </div>
+                        <i data-feather="check-circle" class="text-green-500 w-8 h-8"></i>
+                    </div>
+                </div>
+
+                <!-- Incoming Tasks Table -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                        <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2"><i data-feather="inbox"
+                                class="text-kau-accent"></i> طلبات الدعم الواردة</h3>
+                        <button onclick="syncAll()" class="text-xs font-bold text-kau-primary hover:underline"><i
+                                data-feather="refresh-cw" class="w-3 h-3 inline ml-1"></i> تحديث</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right">
+                            <thead
+                                class="bg-gray-50 text-gray-500 uppercase text-[10px] font-black tracking-widest border-b">
+                                <tr>
+                                    <th class="px-6 py-4">المقرر / الاختبار</th>
+                                    <th class="px-6 py-4">التاريخ والوقت</th>
+                                    <th class="px-6 py-4">الموقع</th>
+                                    <th class="px-6 py-4 text-center">الطلاب</th>
+                                    <th class="px-6 py-4 text-center">الإجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <tr class="hover:bg-gray-50/50 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="font-bold text-gray-800">CPCS-202: مقدمة برمجة</div>
+                                        <div class="text-[10px] text-gray-500 font-bold">اختبار دوري أول - Questionmark
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="font-bold text-gray-700">12 فبراير</div>
+                                        <div class="text-xs text-kau-primary font-bold">08:00 ص</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm font-bold text-gray-700">مبنى الحاسبات (G)</div>
+                                        <div class="text-xs text-gray-500">معمل 101</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-center"><span
+                                            class="bg-gray-100 px-3 py-1 rounded-full font-black text-xs">60</span></td>
+                                    <td class="px-6 py-4 text-center">
+                                        <button onclick="openDispatchModal('CPCS-202', 'مبنى الحاسبات (G)', '60')"
+                                            class="bg-kau-primary text-white px-4 py-2 rounded-lg text-xs font-bold shadow-sm hover:bg-kau-dark transition-all flex items-center gap-2 mx-auto">
+                                            <i data-feather="user-plus" class="w-3.5 h-3.5"></i> توجيه
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ----------------------------------------- -->
+            <!-- SECTION 2: TRACKING (متابعة حالة الفريق) -->
+            <!-- ----------------------------------------- -->
+            <div id="section-tracking" class="hidden space-y-8 animate-fade-in">
+                <div class="flex flex-wrap gap-4 items-center mb-6">
+                    <div
+                        class="bg-white border border-green-100 rounded-xl px-4 py-2 flex items-center gap-2 shadow-sm">
+                        <span class="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></span>
+                        <span class="text-xs font-bold text-gray-700">6 متصل (متاح)</span>
+                    </div>
+                    <div
+                        class="bg-white border border-orange-100 rounded-xl px-4 py-2 flex items-center gap-2 shadow-sm">
+                        <span class="w-2.5 h-2.5 bg-orange-500 rounded-full"></span>
+                        <span class="text-xs font-bold text-gray-700">2 مشغول بمهمة</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Member: Busy -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative p-6">
+                        <div class="absolute top-4 left-4"><span
+                                class="bg-orange-100 text-orange-700 text-[10px] font-black px-2 py-1 rounded-full">مشغول</span>
+                        </div>
+                        <div class="flex items-center gap-4 mb-6">
+                            <div
+                                class="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center border-2 border-orange-200 text-orange-600 font-bold">
+                                MA</div>
+                            <div>
+                                <h4 class="font-black text-gray-800 text-sm">م. محمد أحمد</h4>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">مبنى الحاسبات
+                                </p>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-xl space-y-3 mb-4 text-xs font-bold">
+                            <div class="flex justify-between"><span class="text-gray-500">المقرر:</span><span
+                                    class="text-gray-800">CPCS-202</span></div>
+                            <div class="flex justify-between"><span class="text-gray-500">الموقع:</span><span
+                                    class="text-gray-800">معمل 101</span></div>
+                            <div class="pt-2">
+                                <div class="w-full bg-gray-200 rounded-full h-1">
+                                    <div class="bg-orange-600 h-1 rounded-full" style="width: 65%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button
+                                class="flex-1 bg-white border border-gray-200 py-2 rounded-lg text-[10px] font-bold hover:bg-gray-50 flex items-center justify-center gap-1 transition-colors"><i
+                                    data-feather="phone" class="w-3 h-3 text-gray-500"></i> اتصال</button>
+                            <button
+                                class="flex-1 bg-white border border-gray-200 py-2 rounded-lg text-[10px] font-bold hover:bg-gray-50 flex items-center justify-center gap-1 transition-colors"><i
+                                    data-feather="message-square" class="w-3 h-3 text-blue-500"></i> رسالة</button>
+                        </div>
+                    </div>
+
+                    <!-- Member: Available -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative p-6">
+                        <div class="absolute top-4 left-4"><span
+                                class="bg-green-100 text-green-700 text-[10px] font-black px-2 py-1 rounded-full">متاح</span>
+                        </div>
+                        <div class="flex items-center gap-4 mb-6">
+                            <div
+                                class="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center border-2 border-green-200 text-green-600 font-bold">
+                                SA</div>
+                            <div>
+                                <h4 class="font-black text-gray-800 text-sm">أ. سلطان العتيبي</h4>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">مبنى اللغة</p>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-xl mb-4 text-center py-6">
+                            <p class="text-[10px] text-gray-400 font-bold">لا توجد مهام حالياً</p>
+                        </div>
+                        <button
+                            class="w-full bg-kau-primary text-white py-2 rounded-lg text-[10px] font-bold hover:bg-kau-dark flex items-center justify-center gap-1 shadow transition-all"><i
+                                data-feather="plus" class="w-3 h-3"></i> إسناد مهمة فورية</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ----------------------------------------- -->
+            <!-- SECTION 3: FAULTS (بلاغات الأعطال - الجديد) -->
+            <!-- ----------------------------------------- -->
+            <div id="section-faults" class="hidden space-y-8 animate-fade-in">
+
+                <!-- Fault Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border-b-4 border-red-500">
+                        <p class="text-gray-400 text-[10px] font-black uppercase mb-1">بلاغات حرجة</p>
+                        <h3 class="text-2xl font-black text-red-600">02</h3>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border-b-4 border-orange-500">
+                        <p class="text-gray-400 text-[10px] font-black uppercase mb-1">جاري المعالجة</p>
+                        <h3 class="text-2xl font-black text-orange-600">03</h3>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border-b-4 border-blue-500">
+                        <p class="text-gray-400 text-[10px] font-black uppercase mb-1">بانتظار الفني</p>
+                        <h3 class="text-2xl font-black text-blue-600">01</h3>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border-b-4 border-green-500">
+                        <p class="text-gray-400 text-[10px] font-black uppercase mb-1">تم الإصلاح اليوم</p>
+                        <h3 class="text-2xl font-black text-green-600">08</h3>
+                    </div>
+                </div>
+
+                <!-- Active Fault Reports Table -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-red-50/30">
+                        <h3 class="text-xl font-bold text-red-800 flex items-center gap-2">
+                            <i data-feather="tool" class="text-red-600"></i>
+                            بلاغات الأعطال النشطة (من الميدان)
+                        </h3>
+                        <span
+                            class="bg-red-600 text-white px-3 py-1 rounded-full text-[10px] font-black animate-pulse">مباشر</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right">
+                            <thead
+                                class="bg-gray-50 text-gray-500 uppercase text-[10px] font-black tracking-widest border-b">
+                                <tr>
+                                    <th class="px-6 py-4">الموقع / الجهاز</th>
+                                    <th class="px-6 py-4">وصف المشكلة</th>
+                                    <th class="px-6 py-4 text-center">الخطورة</th>
+                                    <th class="px-6 py-4 text-center">التوقيت</th>
+                                    <th class="px-6 py-4 text-center">الفني المكلف</th>
+                                    <th class="px-6 py-4 text-center">الإجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <!-- Fault 1: Critical -->
+                                <tr class="hover:bg-red-50/20 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="font-bold text-gray-800">مبنى الحاسبات (G)</div>
+                                        <div class="text-xs text-red-600 font-bold">معمل 102 - جهاز #PC-45</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-xs font-bold text-gray-700 leading-relaxed">متصفح Safe Exam
+                                            Browser لا يفتح، تظهر رسالة خطأ في التكوين.</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span
+                                            class="bg-red-100 text-red-700 px-2 py-1 rounded text-[10px] font-black border border-red-200 uppercase tracking-tighter">حرج
+                                            (Critical)</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center font-mono text-[10px] text-gray-500">08:12 ص</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <div
+                                                class="w-6 h-6 rounded-full bg-gray-200 text-[10px] flex items-center justify-center font-bold">
+                                                ?</div>
+                                            <span class="text-[10px] text-gray-400 font-bold">لم يتم التكليف</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <button onclick="dispatchToFault('PC-45', 'معمل 102 (G)')"
+                                            class="bg-red-600 text-white px-3 py-1.5 rounded-lg text-[10px] font-black shadow-sm hover:bg-red-700 transition-all flex items-center gap-1 mx-auto">
+                                            <i data-feather="external-link" class="w-3 h-3 text-current"></i> توجه فوراً
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- Fault 2: Normal -->
+                                <tr class="hover:bg-gray-50/50 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="font-bold text-gray-800">مبنى اللغة (ELI)</div>
+                                        <div class="text-xs text-gray-500 font-bold">معمل 201 - جهاز #PC-03</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-xs font-bold text-gray-700">الماوس لا يعمل، تم استبداله يدوياً
+                                            والمطلوب صيانة المنفذ.</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span
+                                            class="bg-orange-100 text-orange-700 px-2 py-1 rounded text-[10px] font-black border border-orange-200">عادي</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center font-mono text-[10px] text-gray-500">09:05 ص</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <div
+                                                class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 text-[10px] flex items-center justify-center font-bold border border-blue-200">
+                                                MA</div>
+                                            <span class="text-[10px] text-blue-700 font-bold">م. محمد أحمد</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span
+                                            class="text-[10px] text-green-600 font-black flex items-center justify-center gap-1"><i
+                                                data-feather="check" class="w-3 h-3"></i> قيد المعالجة</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- DISPATCH MODAL -->
+    <div id="dispatchModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden animate-fade-in text-right">
+            <div class="bg-kau-dark p-6 text-white flex justify-between items-center">
+                <div>
+                    <h3 class="text-xl font-bold flex items-center gap-2"><i data-feather="send"></i> توجيه الفريق الفني
+                    </h3>
+                    <p class="text-xs text-white/60 mt-1 uppercase font-bold tracking-widest">تنسيق المهمة الميدانية</p>
+                </div>
+                <button onclick="closeModal('dispatchModal')"
+                    class="hover:bg-white/10 p-2 rounded-full transition-all"><i data-feather="x"></i></button>
+            </div>
+
+            <div class="p-8 max-h-[75vh] overflow-y-auto space-y-8">
+                <!-- Task Preview -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                        <label class="block text-[10px] font-black text-gray-400 uppercase mb-1">المادة
+                            والاختبار</label>
+                        <p class="font-bold text-gray-800" id="m_course">-</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                        <label class="block text-[10px] font-black text-gray-400 uppercase mb-1">الموقع والسعة</label>
+                        <p class="font-bold text-gray-800" id="m_location">-</p>
+                        <p class="text-xs text-kau-primary font-bold"><span id="m_students">-</span> طالب</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                        <label class="block text-[10px] font-black text-gray-400 uppercase mb-1">التواصل
+                            الميداني</label>
+                        <p class="font-bold text-gray-800 text-xs">د. عاطف عاطف (دكتور المادة)</p>
+                    </div>
+                </div>
+
+                <!-- Invigilators -->
+                <div class="border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
+                    <div class="bg-blue-50 px-6 py-3 font-bold text-blue-800 text-xs flex items-center gap-2"><i
+                            data-feather="eye" class="w-4 h-4"></i> المراقبين وطرق التواصل</div>
+                    <table class="w-full text-right text-[10px]">
+                        <thead class="bg-gray-50 border-b">
+                            <tr>
+                                <th class="px-6 py-2 font-black text-gray-500">الاسم</th>
+                                <th class="px-6 py-2 font-black text-gray-500">الجوال</th>
+                                <th class="px-6 py-2 font-black text-gray-500">البريد</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr>
+                                <td class="px-6 py-2 font-bold text-gray-700">أ. خالد الحربي</td>
+                                <td class="px-6 py-2 font-mono font-bold">050XXXXX12</td>
+                                <td class="px-6 py-2 text-gray-400">k.harbi@kau.edu.sa</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-2 font-bold text-gray-700">أ. سارة الغامدي</td>
+                                <td class="px-6 py-2 font-mono font-bold">055XXXXX99</td>
+                                <td class="px-6 py-2 text-gray-400">s.ghamdi@kau.edu.sa</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Staff Selection -->
+                <div class="space-y-4">
+                    <h5 class="font-bold text-gray-800 text-sm flex items-center gap-2"><i data-feather="users"
+                            class="text-kau-primary w-4 h-4"></i> ترشيح أفراد الدعم</h5>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label
+                            class="flex items-center gap-4 p-4 border rounded-2xl cursor-pointer hover:bg-gray-50 transition-all has-[:checked]:border-kau-primary has-[:checked]:bg-green-50/50 group border-gray-200">
+                            <input type="checkbox"
+                                class="w-5 h-5 rounded text-kau-primary focus:ring-kau-primary border-gray-300 transition-all">
+                            <div
+                                class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-500 group-hover:bg-kau-primary group-hover:text-white transition-all">
+                                MA</div>
+                            <div>
+                                <p class="font-bold text-gray-800 text-sm">م. محمد أحمد</p>
+                                <p class="text-[9px] text-gray-400 font-black uppercase tracking-tighter">متوفر حالياً
+                                </p>
+                            </div>
+                        </label>
+                        <label
+                            class="flex items-center gap-4 p-4 border rounded-2xl cursor-pointer hover:bg-gray-50 transition-all has-[:checked]:border-kau-primary has-[:checked]:bg-green-50/50 group border-gray-200">
+                            <input type="checkbox"
+                                class="w-5 h-5 rounded text-kau-primary focus:ring-kau-primary border-gray-300 transition-all">
+                            <div
+                                class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-500 group-hover:bg-kau-primary group-hover:text-white transition-all">
+                                SA</div>
+                            <div>
+                                <p class="font-bold text-gray-800 text-sm">أ. سلطان العتيبي</p>
+                                <p class="text-[9px] text-gray-400 font-black uppercase tracking-tighter">متوفر حالياً
+                                </p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 bg-gray-50 border-t flex justify-end gap-3">
+                <button onclick="closeModal('dispatchModal')"
+                    class="px-8 py-2.5 rounded-xl border text-gray-500 font-bold text-xs hover:bg-white transition-all">إلغاء</button>
+                <button onclick="confirmDispatch()"
+                    class="px-12 py-2.5 rounded-xl bg-kau-primary text-white font-bold text-xs shadow-lg hover:bg-kau-dark transform active:scale-95 transition-all">تأكيد
+                    توجيه الفريق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Section -->
+    <script>
+        feather.replace();
+
+        function toggleSidebar() {
+            const sb = document.getElementById('sidebar');
+            sb.classList.toggle('hidden');
+            sb.classList.toggle('flex');
+        }
+
+        // دالة التبديل بين الأقسام (توجيه، متابعة، أعطال)
+        function showSection(section) {
+            const sections = ['dispatch', 'tracking', 'faults'];
+            sections.forEach(s => {
+                document.getElementById(`section-${s}`).classList.add('hidden');
+                // Remove active tab styles
+                const tab = document.getElementById(`tab-${s}`);
+                if (tab) {
+                    tab.classList.remove('border-kau-primary', 'text-kau-primary');
+                    tab.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                }
+            });
+
+            document.getElementById(`section-${section}`).classList.remove('hidden');
+            // Add active tab styles
+            const activeTab = document.getElementById(`tab-${section}`);
+            if (activeTab) {
+                activeTab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                activeTab.classList.add('border-kau-primary', 'text-kau-primary');
+            }
+
+            const titleMap = {
+                'dispatch': 'توجيه فريق الدعم الفني',
+                'tracking': 'متابعة حالة الفريق الميداني',
+                'faults': 'مركز إدارة بلاغات الأعطال'
+            };
+            document.getElementById('page-header-title').innerText = titleMap[section];
+            feather.replace();
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+            feather.replace();
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function openDispatchModal(course, location, students) {
+            document.getElementById('m_course').innerText = course;
+            document.getElementById('m_location').innerText = location;
+            document.getElementById('m_students').innerText = students;
+            openModal('dispatchModal');
+        }
+
+        // دالة تكليف فني بعطل محدد
+        function dispatchToFault(pcId, lab) {
+            Swal.fire({
+                title: 'توجيه فني للعطل',
+                html: `أنت بصدد تكليف فني لإصلاح <b>${pcId}</b> في <b>${lab}</b>.<br><br>اختر الفني المتاح:`,
+                input: 'select',
+                inputOptions: {
+                    '1': 'م. محمد أحمد (الأقرب حالياً)',
+                    '2': 'أ. سلطان العتيبي'
+                },
+                inputPlaceholder: 'اختر الفني...',
+                showCancelButton: true,
+                confirmButtonColor: '#005941',
+                confirmButtonText: 'إرسال التكليف',
+                cancelButtonText: 'إلغاء'
+            }).then((result) => {
+                if (result.isConfirmed && result.value) {
+                    Swal.fire('تم التوجيه!', 'تم إرسال إشعار فوري للفني.', 'success');
+                }
+            });
+        }
+
+        function confirmDispatch() {
+            const checkedCount = document.querySelectorAll('#dispatchModal input[type="checkbox"]:checked').length;
+            if (checkedCount === 0) {
+                Swal.fire({ icon: 'warning', title: 'تنبيه', text: 'يرجى اختيار فني واحد على الأقل للمهمة.', confirmButtonColor: '#005941' });
+                return;
+            }
+            closeModal('dispatchModal');
+            Swal.fire({
+                title: 'جاري إرسال التكليفات...',
+                timer: 1500,
+                timerProgressBar: true,
+                didOpen: () => { Swal.showLoading() }
+            }).then(() => {
+                Swal.fire({ icon: 'success', title: 'تم التوجيه بنجاح', text: `تم إرسال المهمة إلى ${checkedCount} فنيين.`, confirmButtonColor: '#005941' });
+            });
+        }
+
+        function syncAll() {
+            Swal.fire({ title: 'تحديث قائمة البلاغات والطلبات؟', icon: 'question', showCancelButton: true, confirmButtonColor: '#005941', confirmButtonText: 'تحديث الآن' }).then(r => r.isConfirmed && Swal.fire('تم التحديث!', 'البيانات محدثة الآن.', 'success'));
+        }
+    </script>
+</body>
+
+</html>
