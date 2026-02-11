@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة الاختبارات - جامعة الملك عبدالعزيز</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Font Setup */
+        @font-face {
+            font-family: 'YearOfTheCamel';
+            /* Placeholder if user has it locally */
+            src: local('The Year of The Camel'), local('YearOfTheCamel');
+        }
+
+        :root {
+            /* Primary Palette */
+            --color-primary: #055934;
+            /* Deep Green */
+            --color-primary-light: #208D44;
+            /* Medium Green */
+            --color-accent: #86C242;
+            /* Lime Green */
+            --color-border: #D3E6BE;
+            /* Pale Green */
+            --color-bg-warm: #F0EEE9;
+            /* Off-white */
+
+            /* Secondary Palette */
+            --color-text-dark: #0A353E;
+            /* Dark Teal */
+            --color-success: #2BB673;
+            /* Vibrant Green */
+            --color-hover: #A7E0C5;
+            /* Mint Green */
+            --color-bg-cool: #EFF8F5;
+            /* Light Mint */
+        }
+
+        body {
+            font-family: 'YearOfTheCamel', 'Alexandria', sans-serif;
+            /* Mixed Green Gradient Background */
+            background:
+                radial-gradient(circle at 10% 20%, rgba(211, 230, 190, 0.4) 0%, transparent 40%),
+                /* Pale Green #D3E6BE */
+                radial-gradient(circle at 90% 80%, rgba(167, 224, 197, 0.4) 0%, transparent 40%),
+                /* Mint Green #A7E0C5 */
+                linear-gradient(135deg, #F0EEE9 0%, #EFF8F5 100%);
+            /* Warm to Cool base */
+            color: var(--color-text-dark);
+            background-attachment: fixed;
+            letter-spacing: 0.025em;
+            /* tracking-wide */
+            line-height: 1.625;
+            /* leading-relaxed */
+        }
+
+        /* Glass / Card Effects */
+        .login-card {
+            background-color: #FFFFFF;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 4px 6px -1px rgba(5, 89, 52, 0.05), 0 2px 4px -1px rgba(5, 89, 52, 0.03);
+            transition: all 0.3s ease;
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(5, 89, 52, 0.1), 0 10px 10px -5px rgba(5, 89, 52, 0.04);
+            border-color: var(--color-accent);
+        }
+
+        /* Pattern Overlay */
+        .bg-pattern {
+            background-image: radial-gradient(var(--color-border) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            deep: '#055934',
+                            medium: '#208D44',
+                            light: '#86C242',
+                            pale: '#D3E6BE',
+                            warm: '#F0EEE9',
+                            dark: '#0A353E',
+                            mint: '#A7E0C5',
+                            cool: '#EFF8F5'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['YearOfTheCamel', 'Alexandria', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center bg-pattern relative overflow-hidden">
+
+    <!-- Decorative Elements -->
+    <div
+        class="absolute top-0 right-0 w-64 h-64 bg-brand-pale rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob">
+    </div>
+    <div
+        class="absolute top-0 left-0 w-64 h-64 bg-brand-light rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000">
+    </div>
+    <div
+        class="absolute -bottom-8 left-20 w-64 h-64 bg-brand-mint rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000">
+    </div>
+
+    <main class="relative z-10 w-full max-w-5xl px-4">
+
+        <!-- Header -->
+        <div class="text-center mb-16">
+            <div
+                class="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-sm mb-6 border border-brand-pale transform rotate-3 hover:rotate-0 transition-transform duration-300">
+                <i data-feather="book-open" class="w-10 h-10 text-brand-deep"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold text-brand-deep mb-3 tracking-tight"
+                data-ar="جامعة الملك عبدالعزيز" data-en="King Abdulaziz University">جامعة الملك عبدالعزيز</h1>
+            <div class="flex items-center justify-center gap-2 text-brand-medium">
+                <span class="h-px w-8 bg-brand-light"></span>
+                <p class="text-lg font-medium" data-ar="بوابة الاختبارات المركزية" data-en="Central Exam Portal">بوابة
+                    الاختبارات المركزية</p>
+                <span class="h-px w-8 bg-brand-light"></span>
+            </div>
+        </div>
+
+        <!-- Cards Grid -->
+        <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+
+            <!-- KAU Systems -->
+            <div onclick="handleKAULogin()"
+                class="login-card group cursor-pointer relative overflow-hidden rounded-3xl p-8">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i data-feather="award" class="w-32 h-32 text-brand-medium"></i>
+                </div>
+
+                <div class="relative z-10">
+                    <div
+                        class="w-14 h-14 rounded-xl bg-brand-cool flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i data-feather="monitor" class="w-7 h-7 text-brand-deep"></i>
+                    </div>
+
+                    <h2 class="text-2xl font-bold text-brand-deep mb-2" data-ar="أنظمة الجامعة" data-en="KAU Systems">
+                        أنظمة الجامعة</h2>
+                    <p class="text-brand-dark/70 mb-8 text-sm leading-relaxed"
+                        data-ar="تسجيل الدخول الموحد للوصول إلى أنظمة Blackboard و QuestionMark."
+                        data-en="Unified login for Blackboard and QuestionMark systems.">
+                        تسجيل الدخول الموحد للوصول إلى أنظمة Blackboard و QuestionMark.
+                    </p>
+
+                    <div
+                        class="flex items-center text-brand-medium font-semibold group-hover:translate-x-[-5px] rtl:group-hover:translate-x-[-5px] ltr:group-hover:translate-x-[5px] transition-transform">
+                        <span data-ar="تسجيل الدخول" data-en="Login">تسجيل الدخول</span>
+                        <i data-feather="arrow-left" class="w-4 h-4 mr-2 rtl:mr-2 ltr:ml-2"></i>
+                    </div>
+                </div>
+
+                <!-- Bottom Bar -->
+                <div
+                    class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-brand-deep to-brand-medium transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left">
+                </div>
+            </div>
+
+            <!-- Other Systems -->
+            <div onclick="handleOtherSystems()"
+                class="login-card group cursor-pointer relative overflow-hidden rounded-3xl p-8">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i data-feather="globe" class="w-32 h-32 text-brand-medium"></i>
+                </div>
+
+                <div class="relative z-10">
+                    <div
+                        class="w-14 h-14 rounded-xl bg-brand-cool flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i data-feather="external-link" class="w-7 h-7 text-brand-deep"></i>
+                    </div>
+
+                    <h2 class="text-2xl font-bold text-brand-deep mb-2" data-ar="أنظمة خارجية"
+                        data-en="External Systems">أنظمة خارجية</h2>
+                    <p class="text-brand-dark/70 mb-8 text-sm leading-relaxed"
+                        data-ar="الوصول المباشر إلى منصات الاختبارات الدولية (PearsonVue, etc)."
+                        data-en="Direct access to international exam platforms (PearsonVue, etc).">
+                        الوصول المباشر إلى منصات الاختبارات الدولية (PearsonVue, etc).
+                    </p>
+
+                    <div
+                        class="flex items-center text-brand-medium font-semibold group-hover:translate-x-[-5px] rtl:group-hover:translate-x-[-5px] ltr:group-hover:translate-x-[5px] transition-transform">
+                        <span data-ar="الانتقال للنظام" data-en="Go to System">الانتقال للنظام</span>
+                        <i data-feather="arrow-left" class="w-4 h-4 mr-2 rtl:mr-2 ltr:ml-2"></i>
+                    </div>
+                </div>
+
+                <!-- Bottom Bar -->
+                <div
+                    class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-brand-medium to-brand-light transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left">
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer Actions -->
+    <div class="fixed bottom-0 w-full p-6 text-center">
+        <div
+            class="inline-flex items-center justify-center gap-6 px-6 py-3 bg-white/80 backdrop-blur-md rounded-full shadow-sm border border-brand-pale">
+            <button onclick="toggleLang()"
+                class="flex items-center gap-2 text-sm font-semibold text-brand-deep hover:text-brand-medium transition-colors">
+                <i data-feather="globe" class="w-4 h-4"></i>
+                <span id="lang-text">English</span>
+            </button>
+            <div class="w-px h-4 bg-brand-pale"></div>
+            <p class="text-xs text-brand-dark/50" data-ar="© 2026 جامعة الملك عبدالعزيز"
+                data-en="© 2026 King Abdulaziz University">© 2026 جامعة الملك عبدالعزيز</p>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+
+        let currentLang = 'ar';
+
+        function toggleLang() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+            document.querySelectorAll('[data-ar]').forEach(el => {
+                el.textContent = currentLang === 'ar' ? el.dataset.ar : el.dataset.en;
+            });
+            document.getElementById('lang-text').textContent = currentLang === 'ar' ? 'English' : 'العربية';
+
+            // Fix arrow icons rotation
+            const arrows = document.querySelectorAll('.feather-arrow-left');
+            if (currentLang === 'en') {
+                arrows.forEach(a => a.style.transform = 'rotate(180deg)');
+            } else {
+                arrows.forEach(a => a.style.transform = 'rotate(0deg)');
+            }
+        }
+
+        function handleKAULogin() {
+            Swal.fire({
+                title: `<span style="font-family: 'Alexandria', sans-serif; color: #055934">${currentLang === 'ar' ? 'تسجيل الدخول الموحد' : 'SSO Login'}</span>`,
+                html: `
+                    <div class="text-start" style="font-family: 'Alexandria', sans-serif;">
+                        <label class="block mb-2 text-sm font-semibold text-[#0A353E]">${currentLang === 'ar' ? 'الرقم الجامعي' : 'University ID'}</label>
+                        <div class="relative">
+                            <input type="text" id="swal-input1" class="bg-[#EFF8F5] border border-[#D3E6BE] text-[#055934] text-sm rounded-lg focus:ring-[#208D44] focus:border-[#208D44] block w-full p-3 pl-10" placeholder="00123456">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="text-[#208D44]" data-feather="user"></i>
+                            </div>
+                        </div>
+                        
+                        <label class="block mt-4 mb-2 text-sm font-semibold text-[#0A353E]">${currentLang === 'ar' ? 'كلمة المرور' : 'Password'}</label>
+                        <input type="password" id="swal-input2" class="bg-[#EFF8F5] border border-[#D3E6BE] text-[#055934] text-sm rounded-lg focus:ring-[#208D44] focus:border-[#208D44] block w-full p-3" placeholder="********">
+                    </div>
+                `,
+                confirmButtonText: currentLang === 'ar' ? 'دخول' : 'Sign In',
+                confirmButtonColor: '#055934',
+                showCancelButton: true,
+                cancelButtonText: currentLang === 'ar' ? 'إلغاء' : 'Cancel',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'rounded-lg px-6 py-2.5 font-bold',
+                    cancelButton: 'rounded-lg px-6 py-2.5'
+                },
+                didOpen: () => {
+                    // Re-init feather icons in modal if needed, or use SVG directly in HTML string
+                    // But here we used an icon inside HTML string, feather.replace() is needed on popup
+                    const content = Swal.getHtmlContainer();
+                    if (content) feather.replace(content);
+                },
+                preConfirm: () => {
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'lab_dashboard.html';
+                }
+            })
+        }
+
+        function handleOtherSystems() {
+            Swal.fire({
+                icon: 'info',
+                iconColor: '#208D44',
+                title: `<span style="color: #055934; font-family: 'Alexandria'">${currentLang === 'ar' ? 'تحويل للنظام الخارجي' : 'Redirecting'}</span>`,
+                text: currentLang === 'ar' ? 'جاري نقلك إلى صفحة اختيار الأنظمة...' : 'Redirecting to external systems selection...',
+                confirmButtonColor: '#055934',
+                timer: 2000,
+                timerProgressBar: true
+            });
+        }
+    </script>
+    <style>
+        /* Animation utilities */
+        @keyframes blob {
+            0% {
+                transform: translate(0px, 0px) scale(1);
+            }
+
+            33% {
+                transform: translate(30px, -50px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+
+            100% {
+                transform: translate(0px, 0px) scale(1);
+            }
+        }
+
+        .animate-blob {
+            animation: blob 7s infinite;
+        }
+
+        .animation-delay-2000 {
+            animation-delay: 2s;
+        }
+
+        .animation-delay-4000 {
+            animation-delay: 4s;
+        }
+    </style>
+</body>
+
+</html>
