@@ -486,7 +486,7 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <!-- Wizard Steps (Left Column) -->
-                    <div class="lg:col-span-2">
+                    <div class="lg:col-span-2" id="wizardMainContent">
                         <form id="examWizardForm">
 
                             <!-- Step 1: بيانات المقرر -->
@@ -505,40 +505,150 @@
                                     </div>
                                 </div>
                                 <div class="p-6">
-                                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-                                        <div class="md:col-span-4">
-                                            <label
-                                                class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-                                                <span data-ar="المقرر الدراسي" data-en="Course">المقرر الدراسي</span>
-                                                <span class="text-red-500 mr-1">*</span>
-                                            </label>
-                                            <select
-                                                class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent"
-                                                id="courseSelect" onchange="loadSections()">
-                                                <option selected disabled value="" data-ar="اختر المقرر لعرض الشعب..."
-                                                    data-en="Select course to view sections...">اختر المقرر لعرض
-                                                    الشعب...</option>
-                                                <option value="CPCS-202">CPCS-202: مقدمة في البرمجة</option>
-                                                <option value="CPCS-203">CPCS-203: برمجة (2)</option>
-                                            </select>
+                                    <div class="space-y-6">
+                                        <!-- Course 1: CPCS-202 -->
+                                        <div
+                                            class="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 flex flex-col lg:flex-row items-stretch gap-6 transition-all hover:shadow-md">
+                                            <!-- Course Info -->
+                                            <div class="flex-1 flex items-center gap-4">
+                                                <div
+                                                    class="w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center shadow-sm text-primary">
+                                                    <i data-feather="book-open" class="w-8 h-8"></i>
+                                                </div>
+                                                <div>
+                                                    <h4 class="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                                                        <span class="text-primary">CPCS-202:</span> مقدمة في البرمجة
+                                                    </h4>
+                                                    <p class="text-sm text-gray-500 dark:text-gray-400"
+                                                        data-ar="شعبة: CA, CB, ZA" data-en="Sections: CA, CB, ZA">شعبة:
+                                                        CA, CB, ZA</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Platforms -->
+                                            <div class="flex gap-4">
+                                                <!-- Blackboard Card (Available) -->
+                                                <div onclick="selectCourseAndPlatform('CPCS-202', 'Blackboard', this)"
+                                                    class="platform-card cursor-pointer w-32 bg-white dark:bg-gray-800 rounded-xl border-2 border-transparent hover:border-purple-500 hover:shadow-lg transition-all p-3 flex flex-col items-center justify-center gap-2 group relative">
+                                                    <div
+                                                        class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center">
+                                                        <i data-feather="book" class="w-5 h-5"></i>
+                                                    </div>
+                                                    <span
+                                                        class="font-bold text-sm text-gray-700 dark:text-gray-200">Blackboard</span>
+                                                    <span
+                                                        class="text-[10px] font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full"
+                                                        data-ar="متاح" data-en="Available">متاح</span>
+                                                </div>
+
+                                                <!-- Questionmark Card (Available) -->
+                                                <div onclick="selectCourseAndPlatform('CPCS-202', 'Questionmark', this)"
+                                                    class="platform-card cursor-pointer w-32 bg-white dark:bg-gray-800 rounded-xl border-2 border-transparent hover:border-blue-500 hover:shadow-lg transition-all p-3 flex flex-col items-center justify-center gap-2 group relative">
+                                                    <div
+                                                        class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                                                        <i data-feather="help-circle" class="w-5 h-5"></i>
+                                                    </div>
+                                                    <span
+                                                        class="font-bold text-sm text-gray-700 dark:text-gray-200">QuestionMark</span>
+                                                    <span
+                                                        class="text-[10px] font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full"
+                                                        data-ar="متاح" data-en="Available">متاح</span>
+                                                </div>
+                                            </div>
                                         </div>
 
-                                        <div class="md:col-span-8">
-                                            <label
-                                                class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300"
-                                                data-ar="منصة الاختبار" data-en="Exam Platform">منصة الاختبار</label>
-                                            <select
-                                                class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary focus:border-transparent"
-                                                id="platformSelect" onchange="loadExamsFromPlatform(this.value)">
-                                                <option value="" selected disabled data-ar="اختر المنصة..."
-                                                    data-en="Select platform...">اختر المنصة...</option>
-                                                <option value="Questionmark" data-ar="كويسشن مارك (Questionmark)"
-                                                    data-en="Questionmark">كويسشن مارك (Questionmark)</option>
-                                                <option value="Blackboard" data-ar="بلاكبورد (Blackboard)"
-                                                    data-en="Blackboard">بلاكبورد (Blackboard)</option>
-                                            </select>
+                                        <!-- Course 2: CPCS-203 -->
+                                        <div
+                                            class="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 flex flex-col lg:flex-row items-stretch gap-6 transition-all hover:shadow-md">
+                                            <!-- Course Info -->
+                                            <div class="flex-1 flex items-center gap-4">
+                                                <div
+                                                    class="w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center shadow-sm text-primary">
+                                                    <i data-feather="code" class="w-8 h-8"></i>
+                                                </div>
+                                                <div>
+                                                    <h4 class="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                                                        <span class="text-primary">CPCS-203:</span> برمجة (2)
+                                                    </h4>
+                                                    <p class="text-sm text-gray-500 dark:text-gray-400"
+                                                        data-ar="شعبة: AA" data-en="Sections: AA">شعبة: AA</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Platforms -->
+                                            <div class="flex gap-4">
+                                                <!-- Blackboard Card (Available) -->
+                                                <div onclick="selectCourseAndPlatform('CPCS-203', 'Blackboard', this)"
+                                                    class="platform-card cursor-pointer w-32 bg-white dark:bg-gray-800 rounded-xl border-2 border-transparent hover:border-purple-500 hover:shadow-lg transition-all p-3 flex flex-col items-center justify-center gap-2 group relative">
+                                                    <div
+                                                        class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center">
+                                                        <i data-feather="book" class="w-5 h-5"></i>
+                                                    </div>
+                                                    <span
+                                                        class="font-bold text-sm text-gray-700 dark:text-gray-200">Blackboard</span>
+                                                    <span
+                                                        class="text-[10px] font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full"
+                                                        data-ar="متاح" data-en="Available">متاح</span>
+                                                </div>
+
+                                                <!-- Questionmark Card (Unavailable) -->
+                                                <div
+                                                    class="w-32 bg-gray-100 dark:bg-gray-900 rounded-xl border border-gray-200 p-3 flex flex-col items-center justify-center gap-2 opacity-60 cursor-not-allowed">
+                                                    <div
+                                                        class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center">
+                                                        <i data-feather="slash" class="w-5 h-5"></i>
+                                                    </div>
+                                                    <span class="font-bold text-sm text-gray-500">QuestionMark</span>
+                                                    <span
+                                                        class="text-[10px] font-bold text-red-500 bg-red-100 px-2 py-0.5 rounded-full"
+                                                        data-ar="غير متاح" data-en="Unavailable">غير متاح</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+
+                                    <!-- Key Helpers for JS Logic (Hidden) -->
+                                    <select id="courseSelect" class="hidden" onchange="loadSections()">
+                                        <option value="" selected>Select Course</option>
+                                        <option value="CPCS-202">CPCS-202</option>
+                                        <option value="CPCS-203">CPCS-203</option>
+                                    </select>
+                                    <select id="platformSelect" class="hidden">
+                                        <option value="">Select Platform</option>
+                                        <option value="Blackboard">Blackboard</option>
+                                        <option value="Questionmark">Questionmark</option>
+                                    </select>
+
+                                    <script>
+                                        function selectCourseAndPlatform(courseId, platformId, cardElement) {
+                                            // Update hidden selects
+                                            const courseSelect = document.getElementById('courseSelect');
+                                            const platformSelect = document.getElementById('platformSelect');
+
+                                            courseSelect.value = courseId;
+                                            platformSelect.value = platformId;
+
+                                            // Visual Selection
+                                            document.querySelectorAll('.platform-card').forEach(c => {
+                                                c.classList.remove('ring-2', 'ring-primary', 'bg-primary/5');
+                                                c.classList.add('bg-white', 'dark:bg-gray-800');
+                                            });
+
+                                            // Highlight selected
+                                            cardElement.classList.remove('bg-white', 'dark:bg-gray-800');
+                                            cardElement.classList.add('ring-2', 'ring-primary', 'bg-primary/5');
+
+                                            // Trigger Logic
+                                            loadSections();
+                                            loadExamsFromPlatform(platformId);
+
+                                            // Auto-advance logic (Optional: can be triggered immediately or user clicks Next)
+                                            // For now, we just select. The 'Next' button validates step 1.
+
+                                            // Force validation check
+                                            validateStep(1);
+                                        }
+                                    </script>
                                 </div>
                             </div>
 
@@ -619,24 +729,82 @@
                                     </div>
                                 </div>
                                 <div class="p-6">
-                                    <div class="mb-6 flex gap-4">
-                                        <div class="flex items-center">
-                                            <input class="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-                                                type="radio" name="targetMode" id="modeSections" checked
-                                                onclick="toggleTargetMode('sections')">
-                                            <label
-                                                class="ms-2 font-semibold text-gray-700 dark:text-gray-300 cursor-pointer"
-                                                for="modeSections" data-ar="اختيار شعب دراسية"
-                                                data-en="Select Study Sections">اختيار شعب دراسية</label>
-                                        </div>
-                                        <div class="flex items-center">
-                                            <input class="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-                                                type="radio" name="targetMode" id="modeIDs"
-                                                onclick="toggleTargetMode('ids')">
-                                            <label
-                                                class="ms-2 font-semibold text-gray-700 dark:text-gray-300 cursor-pointer"
-                                                for="modeIDs" data-ar="اختيار طلاب محددين"
-                                                data-en="Select Specific Students">اختيار طلاب محددين</label>
+                                    <!-- Unified Selection Card -->
+                                    <div
+                                        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+                                        <div class="space-y-6">
+                                            <!-- Option 1: Sections & Categories -->
+                                            <div
+                                                class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                                <!-- Radio: Sections -->
+                                                <label class="flex items-center gap-3 cursor-pointer group">
+                                                    <div
+                                                        class="bg-gray-100 dark:bg-gray-700 p-2 rounded-full group-hover:bg-primary/10 transition-colors">
+                                                        <input type="radio" name="scopeType" id="scopeSections"
+                                                            class="w-5 h-5 text-primary border-gray-300 focus:ring-primary cursor-pointer"
+                                                            checked onclick="toggleTargetMode('sections')">
+                                                    </div>
+                                                    <div>
+                                                        <span
+                                                            class="block font-bold text-gray-900 dark:text-gray-100 text-lg group-hover:text-primary transition-colors"
+                                                            data-ar="شعب دراسية" data-en="Study Sections">شعب
+                                                            دراسية</span>
+                                                        <span class="text-xs text-gray-500 dark:text-gray-400"
+                                                            data-ar="اختيار حسب الشعب"
+                                                            data-en="Select by Section">اختيار حسب الشعب</span>
+                                                    </div>
+                                                </label>
+
+                                                <!-- Checkboxes: Categories -->
+                                                <div
+                                                    class="flex items-center gap-8 bg-gray-50 dark:bg-gray-700/30 px-6 py-3 rounded-lg border border-gray-100 dark:border-gray-700">
+                                                    <label class="inline-flex items-center cursor-pointer">
+                                                        <input type="checkbox" id="checkboxMale"
+                                                            onchange="filterSectionsByCategory()"
+                                                            class="form-checkbox w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-600"
+                                                            checked>
+                                                        <span
+                                                            class="ms-3 font-semibold text-gray-700 dark:text-gray-300 text-base"
+                                                            data-ar="طلاب" data-en="Male">طلاب</span>
+                                                    </label>
+
+                                                    <div class="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
+
+                                                    <label class="inline-flex items-center cursor-pointer">
+                                                        <input type="checkbox" id="checkboxFemale"
+                                                            onchange="filterSectionsByCategory()"
+                                                            class="form-checkbox w-5 h-5 text-pink-500 border-gray-300 rounded focus:ring-pink-500"
+                                                            checked>
+                                                        <span
+                                                            class="ms-3 font-semibold text-gray-700 dark:text-gray-300 text-base"
+                                                            data-ar="طالبات" data-en="Female">طالبات</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Divider -->
+                                            <div class="border-t border-gray-100 dark:border-gray-700"></div>
+
+                                            <!-- Option 2: Specific Students -->
+                                            <div class="flex items-center gap-4">
+                                                <label class="flex items-center gap-3 cursor-pointer group">
+                                                    <div
+                                                        class="bg-gray-100 dark:bg-gray-700 p-2 rounded-full group-hover:bg-primary/10 transition-colors">
+                                                        <input type="radio" name="scopeType" id="scopeSpecific"
+                                                            class="w-5 h-5 text-primary border-gray-300 focus:ring-primary cursor-pointer"
+                                                            onclick="toggleTargetMode('ids')">
+                                                    </div>
+                                                    <div>
+                                                        <span
+                                                            class="block font-bold text-gray-900 dark:text-gray-100 text-lg group-hover:text-primary transition-colors"
+                                                            data-ar="طلاب محددين" data-en="Specific Students">طلاب
+                                                            محددين</span>
+                                                        <span class="text-xs text-gray-500 dark:text-gray-400"
+                                                            data-ar="بحث بالرقم الجامعي" data-en="Search by ID">بحث
+                                                            بالرقم الجامعي</span>
+                                                    </div>
+                                                </label>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -1369,7 +1537,7 @@
                     </div>
 
                     <!-- Summary Sidebar (Right Column) -->
-                    <div class="lg:col-span-1">
+                    <div class="lg:col-span-1" id="summarySidebar">
                         <div class="card-bg rounded-xl shadow-lg border border-custom sticky top-6">
                             <div class="px-6 py-4 border-b border-custom">
                                 <h4 class="font-bold text-lg flex items-center gap-2">
@@ -1507,6 +1675,22 @@
             // التحقق الفوري من الخطوة الحالية
             checkStepValidation(step);
 
+            // Toggle sidebar visibility based on step
+            const summarySidebar = document.getElementById('summarySidebar');
+            const wizardMainContent = document.getElementById('wizardMainContent');
+
+            if (summarySidebar && wizardMainContent) {
+                if (step === 1) {
+                    summarySidebar.classList.add('hidden');
+                    wizardMainContent.classList.remove('lg:col-span-2');
+                    wizardMainContent.classList.add('lg:col-span-3');
+                } else {
+                    summarySidebar.classList.remove('hidden');
+                    wizardMainContent.classList.remove('lg:col-span-3');
+                    wizardMainContent.classList.add('lg:col-span-2');
+                }
+            }
+
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1531,6 +1715,22 @@
                     isValid = totalStudents > 0;
                     break;
                 case 4:
+                    // Blackboard Logic: Show duration even if Step 2 was skipped
+                    const currPlatformValidation = document.getElementById('platformSelect').value;
+                    const durationDisplay = document.getElementById('selectedExamDurationDisplay');
+                    const durationValue = document.getElementById('examDurationValue');
+
+                    if (currPlatformValidation === 'Blackboard') {
+                        // Set a default or mock duration for Blackboard since Step 2 is skipped
+                        if (durationDisplay && durationValue) {
+                            durationValue.textContent = "60"; // Default duration
+                            durationDisplay.classList.remove('hidden');
+                        }
+                    } else if (currPlatformValidation === 'Questionmark') {
+                        // Ensure it's hidden for Questionmark
+                        if (durationDisplay) durationDisplay.classList.add('hidden');
+                    }
+
                     const examDate = document.getElementById('examDate').value;
                     const startTime = document.getElementById('startTime').value;
                     isValid = !!(examDate && startTime);
@@ -1605,7 +1805,17 @@
         function nextStep() {
             if (validateStep(currentStep)) {
                 if (currentStep < totalSteps) {
-                    currentStep++;
+                    let nextStepNum = currentStep + 1;
+
+                    // Skip Step 2 if platform is Blackboard
+                    if (currentStep === 1) {
+                        const platform = document.getElementById('platformSelect').value;
+                        if (platform === 'Blackboard') {
+                            nextStepNum = 3;
+                        }
+                    }
+
+                    currentStep = nextStepNum;
                     showStep(currentStep);
                     updateSummary();
                 }
@@ -1614,7 +1824,17 @@
 
         function previousStep() {
             if (currentStep > 1) {
-                currentStep--;
+                let prevStepNum = currentStep - 1;
+
+                // Skip Step 2 if coming back from Step 3 and platform is Blackboard
+                if (currentStep === 3) {
+                    const platform = document.getElementById('platformSelect').value;
+                    if (platform === 'Blackboard') {
+                        prevStepNum = 1;
+                    }
+                }
+
+                currentStep = prevStepNum;
                 showStep(currentStep);
             }
         }
@@ -2656,6 +2876,10 @@
             }
 
             selectedPlatform = platform;
+            selectedExamId = null; // Reset selection
+            updateSummary();
+            const durationDisplay = document.getElementById('selectedExamDurationDisplay');
+            if (durationDisplay) durationDisplay.classList.add('hidden');
 
             if (!examsCard || !loadingState || !emptyState || !examsList || !examsListInner) {
                 console.error('Exam card elements not found');
@@ -2747,8 +2971,13 @@
                 const durationDisplay = document.getElementById('selectedExamDurationDisplay');
                 const durationValue = document.getElementById('examDurationValue');
                 if (durationDisplay && durationValue) {
-                    durationValue.textContent = selectedExam.duration;
-                    durationDisplay.classList.remove('hidden');
+                    // Hide duration for Questionmark platform
+                    if (selectedPlatform === 'Questionmark') {
+                        durationDisplay.classList.add('hidden');
+                    } else {
+                        durationValue.textContent = selectedExam.duration;
+                        durationDisplay.classList.remove('hidden');
+                    }
                 }
             }
 
@@ -2899,8 +3128,21 @@
 
         // === بقية الدوال (المباني والمعامل) ===
         const courseSections = {
-            'CPCS-202': [{ id: 'CA', name: 'شعبة CA (طلاب)', count: 25 }, { id: 'CB', name: 'شعبة CB (طلاب)', count: 30 }, { id: 'ZA', name: 'شعبة ZA (طالبات)', count: 35 }],
-            'CPCS-203': [{ id: 'AA', name: 'شعبة AA (طلاب)', count: 40 }]
+            'CPCS-202': [
+                { id: 'CA', name: 'شعبة CA', category: 'Male', categoryAr: 'طلاب', count: 25, crn: '4589210' },
+                { id: 'CB', name: 'شعبة CB', category: 'Male', categoryAr: 'طلاب', count: 30, crn: '4589211' },
+                { id: 'CC', name: 'شعبة CC', category: 'Male', categoryAr: 'طلاب', count: 28, crn: '4589215' },
+                { id: 'CD', name: 'شعبة CD', category: 'Male', categoryAr: 'طلاب', count: 22, crn: '4589216' },
+                { id: 'ZA', name: 'شعبة ZA', category: 'Female', categoryAr: 'طالبات', count: 35, crn: '4589212' },
+                { id: 'ZB', name: 'شعبة ZB', category: 'Female', categoryAr: 'طالبات', count: 38, crn: '4589213' },
+                { id: 'ZC', name: 'شعبة ZC', category: 'Female', categoryAr: 'طالبات', count: 32, crn: '4589214' }
+            ],
+            'CPCS-203': [
+                { id: 'AA', name: 'شعبة AA', category: 'Male', categoryAr: 'طلاب', count: 40, crn: '6723401' },
+                { id: 'AB', name: 'شعبة AB', category: 'Female', categoryAr: 'طالبات', count: 45, crn: '6723402' },
+                { id: 'AC', name: 'شعبة AC', category: 'Male', categoryAr: 'طلاب', count: 42, crn: '6723403' },
+                { id: 'AD', name: 'شعبة AD', category: 'Female', categoryAr: 'طالبات', count: 44, crn: '6723404' }
+            ]
         };
 
         const buildingsData = {
@@ -2954,22 +3196,183 @@
             const listContainer = document.getElementById('sectionsDynamicList');
             const hint = document.getElementById('courseHint');
             const list = document.getElementById('sectionsList');
-            listContainer.innerHTML = '';
-            if (course && courseSections[course]) {
-                hint.classList.add('hidden');
-                list.classList.remove('hidden');
-                courseSections[course].forEach(sec => {
-                    const sectionId = `${course}-${sec.id}`; // معرف ثابت: course-sectionId
-                    listContainer.innerHTML += `<div class="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <div class="flex items-center flex-1">
-                        <input class="w-4 h-4 text-primary border-gray-300 focus:ring-primary section-checkbox" type="checkbox" id="section-${sectionId}" value="${sec.count}" data-section-id="${sectionId}" data-section-name="${sec.name}" onchange="recalculateTotal()">
-                        <label class="ms-3 font-semibold text-sm text-gray-700 dark:text-gray-300 cursor-pointer flex-1" for="section-${sectionId}">${sec.name}</label>
-                    </div>
-                    <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded text-xs font-bold">${sec.count}</span>
-                </div>`;
-                });
+            const isArabic = document.documentElement.lang === 'ar';
+
+            if (!course || !courseSections[course]) {
+                return;
             }
-            recalculateTotal();
+
+            hint.classList.add('hidden');
+            list.classList.remove('hidden');
+
+            // Initial Render of everything
+            renderSectionList();
+        }
+
+        function renderSectionList(searchTerm = '') {
+            const course = document.getElementById('courseSelect').value;
+            const listContainer = document.getElementById('sectionsDynamicList');
+            const isArabic = document.documentElement.lang === 'ar';
+
+            if (!course || !courseSections[course] || !listContainer) return;
+
+            // Clear current list
+            listContainer.innerHTML = '';
+
+            // Add Search Bar (Sticky at top of list)
+            // Added ID 'sectionSearchInput' for focus management
+            const searchBarHTML = `
+                <div class="sticky top-0 z-20 bg-white dark:bg-gray-800 p-3 border-b border-gray-200 dark:border-gray-700 mb-2">
+                    <div class="relative">
+                        <i data-feather="search" class="absolute top-3 left-3 w-4 h-4 text-gray-400"></i>
+                         <input type="text" 
+                               id="sectionSearchInput"
+                               value="${searchTerm}"
+                               oninput="renderSectionList(this.value)"
+                               class="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent"
+                               placeholder="${isArabic ? 'بحث برقم الشعبة (CRN)...' : 'Search by CRN...'}">
+                    </div>
+                </div>
+            `;
+            listContainer.innerHTML = searchBarHTML;
+
+            // Filter Sections based on Search AND Category Checkboxes
+            const allSections = courseSections[course];
+
+            // Get Checkbox States
+            const showMale = document.getElementById('checkboxMale')?.checked ?? true;
+            const showFemale = document.getElementById('checkboxFemale')?.checked ?? true;
+
+            const filteredSections = allSections.filter(sec => {
+                const term = searchTerm.toLowerCase();
+                const matchesSearch = sec.crn.includes(term) || sec.name.toLowerCase().includes(term);
+
+                // Filter by Category
+                let matchesCategory = false;
+                if (sec.category === 'Male' && showMale) matchesCategory = true;
+                if (sec.category === 'Female' && showFemale) matchesCategory = true;
+
+                return matchesSearch && matchesCategory;
+            });
+
+            if (filteredSections.length === 0) {
+                listContainer.innerHTML += `
+                    <div class="p-8 text-center text-gray-400 text-sm">
+                        ${isArabic ? 'لا توجد شعب مطابقة للبحث' : 'No sections match your search'}
+                    </div>
+                `;
+                feather.replace();
+                // Restore focus if searching
+                if (searchTerm) {
+                    const input = document.getElementById('sectionSearchInput');
+                    if (input) {
+                        input.focus();
+                        input.setSelectionRange(input.value.length, input.value.length);
+                    }
+                }
+                return;
+            }
+
+            // Group by Category
+            const grouped = filteredSections.reduce((acc, sec) => {
+                const key = sec.category; // 'Male' or 'Female'
+                if (!acc[key]) acc[key] = [];
+                acc[key].push(sec);
+                return acc;
+            }, {});
+
+            // Render Accordions
+            for (const [category, sections] of Object.entries(grouped)) {
+                // Determine Category Label & Style
+                const isMale = category === 'Male';
+                const catLabel = isArabic ? (isMale ? 'طلاب' : 'طالبات') : category;
+                const catIcon = isMale ? 'user' : 'users';
+                const catColor = isMale ? 'text-blue-600 bg-blue-50 dark:bg-blue-900/20 border-blue-100' : 'text-pink-600 bg-pink-50 dark:bg-pink-900/20 border-pink-100';
+
+                // Create Accordion HTML
+                const groupHTML = `
+                    <div class="mb-3 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+                        <!-- Accordion Header -->
+                        <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full ${catColor} flex items-center justify-center">
+                                    <i data-feather="${catIcon}" class="w-4 h-4"></i>
+                                </div>
+                                <span class="font-bold text-gray-800 dark:text-gray-200">${catLabel}</span>
+                                <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">${sections.length}</span>
+                            </div>
+                            <i data-feather="chevron-down" class="w-4 h-4 text-gray-500 transition-transform duration-200"></i>
+                        </button>
+                        
+                        <!-- Accordion Body -->
+                        <div class="hidden border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                            <div class="p-2 space-y-2">
+                                ${sections.map(sec => `
+                                    <label class="relative flex items-center p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-all group gap-4">
+                                        <div class="flex items-center h-5">
+                                            <input type="checkbox" 
+                                                   class="section-checkbox w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary"
+                                                   id="section-${sec.id}" 
+                                                   value="${sec.count}" 
+                                                   data-section-id="${sec.id}" 
+                                                   data-section-name="${sec.name}" 
+                                                   onchange="recalculateTotal()">
+                                        </div>
+                                        <div class="flex-1 grid grid-cols-2 gap-6 items-center">
+                                            <div class="flex flex-col gap-1">
+                                                <span class="font-bold text-base text-gray-900 dark:text-gray-100">${sec.name}</span>
+                                                <span class="text-xs text-gray-500 dark:text-gray-400 font-mono tracking-wide">CRN: ${sec.crn}</span>
+                                            </div>
+                                            <div class="flex items-center justify-end gap-3">
+                                                <div class="bg-gray-100 dark:bg-gray-700 p-1.5 rounded-full">
+                                                    <i data-feather="users" class="w-4 h-4 text-gray-500 dark:text-gray-400"></i>
+                                                </div>
+                                                <span class="text-sm font-bold text-gray-700 dark:text-gray-300">${sec.count}</span>
+                                            </div>
+                                        </div>
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                listContainer.innerHTML += groupHTML;
+            }
+
+            // Expand all accordions by default if searching, otherwise keep collapsed or expand first?
+            // Let's expand all by default for better visibility
+            document.querySelectorAll('#sectionsDynamicList .hidden').forEach(el => el.classList.remove('hidden'));
+
+            // Re-initialize icons
+            feather.replace();
+
+            // Restore focus and cursor position
+            if (searchTerm) {
+                const input = document.getElementById('sectionSearchInput');
+                if (input) {
+                    input.focus();
+                    // Set cursor to the end
+                    const len = input.value.length;
+                    input.setSelectionRange(len, len);
+                }
+            }
+        }
+
+        function toggleAccordion(btn) {
+            const body = btn.nextElementSibling;
+            const icon = btn.querySelector('[data-feather="chevron-down"]');
+
+            body.classList.toggle('hidden');
+            if (body.classList.contains('hidden')) {
+                icon.style.transform = 'rotate(0deg)';
+                // Remove filled icon if you want
+            } else {
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        function filterSectionsByCategory() {
+            renderSectionList();
         }
 
         function toggleAllSections() {

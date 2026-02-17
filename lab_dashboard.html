@@ -200,7 +200,7 @@
                     </div>
                     <h2 class="text-lg font-bold text-white mb-1 leading-tight" data-ar="أحمد محمد علي"
                         data-en="Ahmed Mohammed Ali">أحمد محمد علي</h2>
-                    <div class="px-3 py-1 bg-white/10 rounded-lg border border-white/10 mt-2">
+                    <div class="px-6 py-3 bg-white/10 rounded-xl border border-white/10 mt-4">
                         <span class="text-[10px] text-white/60 block font-bold mb-0.5" data-ar="الرقم الجامعي"
                             data-en="Student ID">الرقم الجامعي</span>
                         <span class="text-lg font-mono font-bold text-white tracking-widest">4410123</span>
@@ -208,9 +208,9 @@
                 </div>
 
                 <!-- Details List -->
-                <div class="space-y-4">
+                <div class="space-y-8">
                     <!-- College -->
-                    <div class="bg-white/5 rounded-xl p-3 border border-white/5 hover:bg-white/10 transition-colors">
+                    <div class="bg-white/5 rounded-xl p-5 border border-white/5 hover:bg-white/10 transition-colors">
                         <div class="flex items-center gap-3 mb-1">
                             <i data-feather="book" class="w-4 h-4 text-brand-accent"></i>
                             <span class="text-[10px] uppercase tracking-wide text-white/50 font-bold" data-ar="الكلية"
@@ -221,7 +221,7 @@
                     </div>
 
                     <!-- Major -->
-                    <div class="bg-white/5 rounded-xl p-3 border border-white/5 hover:bg-white/10 transition-colors">
+                    <div class="bg-white/5 rounded-xl p-5 border border-white/5 hover:bg-white/10 transition-colors">
                         <div class="flex items-center gap-3 mb-1">
                             <i data-feather="layers" class="w-4 h-4 text-brand-accent"></i>
                             <span class="text-[10px] uppercase tracking-wide text-white/50 font-bold" data-ar="التخصص"
@@ -232,7 +232,7 @@
                     </div>
 
                     <!-- Status -->
-                    <div class="bg-white/5 rounded-xl p-3 border border-white/5 hover:bg-white/10 transition-colors">
+                    <div class="bg-white/5 rounded-xl p-5 border border-white/5 hover:bg-white/10 transition-colors">
                         <div class="flex items-center gap-3 mb-1">
                             <i data-feather="check-circle" class="w-4 h-4 text-brand-success"></i>
                             <span class="text-[10px] uppercase tracking-wide text-white/50 font-bold"
@@ -277,113 +277,76 @@
             <!-- Exams Table -->
             <div class="card shadow-sm overflow-hidden bg-white">
                 <div class="p-5 border-b border-brand-pale flex justify-between items-center bg-brand-cool/30">
-                    <h3 class="font-bold text-lg text-brand-deep" data-ar="الاختبارات القادمة" data-en="Upcoming Exams">
-                        الاختبارات القادمة</h3>
+                    <h3 class="font-bold text-lg text-brand-deep" data-ar="الاختبارات الحالية" data-en="Current Exams">
+                        الاختبارات الحالية</h3>
                     <span
                         class="text-xs font-bold bg-brand-pale/50 text-brand-dark px-3 py-1 rounded-full border border-brand-pale"
                         data-ar="الفصل الدراسي الأول 2026" data-en="First Semester 2026">الفصل الدراسي الأول 2026</span>
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-right text-brand-dark">
+                    <table class="w-full text-sm text-center text-brand-dark">
                         <thead class="text-xs text-brand-deep/70 uppercase bg-brand-cool/50 font-bold">
                             <tr>
                                 <th scope="col" class="px-6 py-4" data-ar="اسم الاختبار" data-en="Exam Name">اسم
                                     الاختبار</th>
-                                <th scope="col" class="px-6 py-4" data-ar="النظام" data-en="System">النظام</th>
-                                <th scope="col" class="px-6 py-4" data-ar="التاريخ والوقت" data-en="Date & Time">التاريخ
-                                    والوقت</th>
+                                <th scope="col" class="px-6 py-4" data-ar="نظام الاختبار" data-en="Exam System">نظام
+                                    الاختبار</th>
+                                <th scope="col" class="px-6 py-4" data-ar="وقت بدء الاختبار" data-en="Exam Start Time">
+                                    وقت بدء الاختبار</th>
+                                <th scope="col" class="px-6 py-4" data-ar="مدة الاختبار" data-en="Exam Duration">مدة
+                                    الاختبار</th>
                                 <th scope="col" class="px-6 py-4" data-ar="الحالة" data-en="Status">الحالة</th>
                                 <th scope="col" class="px-6 py-4" data-ar="الإجراء" data-en="Action">الإجراء</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-brand-pale font-medium">
                             <!-- Row 1 -->
-                            <tr class="table-row group hover:bg-brand-cool transiton-colors">
-                                <td class="px-6 py-5 text-brand-dark font-bold font-sans">
-                                    CS-101 Introduction to CS
-                                </td>
-                                <td class="px-6 py-5">
-                                    <span
-                                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-100">
-                                        QuestionMark
-                                    </span>
-                                </td>
-                                <td class="px-6 py-5">
-                                    <div class="flex flex-col font-sans">
-                                        <span class="text-brand-dark">2026-02-15</span>
-                                        <span class="text-xs text-brand-dark/50">10:00 AM</span>
+                            <td class="px-6 pt-3 pb-7 text-brand-dark font-sans text-center">
+                                <div class="flex flex-col items-center gap-1.5">
+                                    <div class="flex items-center gap-2">
+                                        <span
+                                            class="bg-brand-pale text-brand-deep text-xs font-bold px-2 py-0.5 rounded border border-brand-medium/20">CS-101</span>
                                     </div>
-                                </td>
-                                <td class="px-6 py-5">
-                                    <span class="text-brand-success font-bold flex items-center gap-1">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-brand-success"></span>
-                                        <span data-ar="متاح" data-en="Available">متاح</span>
-                                    </span>
-                                </td>
-                                <td class="px-6 py-5">
-                                    <button onclick="startExam('CS-101')"
-                                        class="text-white bg-brand-light hover:bg-brand-medium font-bold rounded-lg text-xs px-4 py-2 transition-all shadow-sm transform hover:-translate-y-0.5">
-                                        <span data-ar="بدء الاختبار" data-en="Start Exam">بدء الاختبار</span>
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <!-- Row 2 -->
-                            <tr class="table-row group hover:bg-brand-cool transiton-colors">
-                                <td class="px-6 py-5 text-brand-dark font-bold font-sans">
-                                    MATH-202 Calculus II
-                                </td>
-                                <td class="px-6 py-5">
-                                    <span
-                                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-100">
-                                        Blackboard
-                                    </span>
-                                </td>
-                                <td class="px-6 py-5">
-                                    <div class="flex flex-col font-sans">
-                                        <span class="text-brand-dark">2026-02-20</span>
-                                        <span class="text-xs text-brand-dark/50">01:00 PM</span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-5">
-                                    <span class="text-brand-dark/50 font-medium" data-ar="لم يحن الموعد"
-                                        data-en="Upcoming">لم يحن الموعد</span>
-                                </td>
-                                <td class="px-6 py-5">
-                                    <button disabled
-                                        class="text-white bg-gray-300 cursor-not-allowed font-medium rounded-lg text-xs px-4 py-2 opacity-70">
-                                        <span data-ar="بدء الاختبار" data-en="Start Exam">بدء الاختبار</span>
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <!-- Row 3 -->
-                            <tr class="table-row group hover:bg-brand-cool transiton-colors">
-                                <td class="px-6 py-5 text-brand-dark font-bold font-sans">
-                                    PHY-105 General Physics
-                                </td>
-                                <td class="px-6 py-5">
-                                    <span
-                                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-100">
-                                        QuestionMark
-                                    </span>
-                                </td>
-                                <td class="px-6 py-5">
-                                    <div class="flex flex-col font-sans">
-                                        <span class="text-brand-dark">2026-02-10</span>
-                                        <span class="text-xs text-brand-dark/50">09:00 AM</span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-5">
-                                    <span class="text-red-500 font-bold" data-ar="منتهي" data-en="Expired">منتهي</span>
-                                </td>
-                                <td class="px-6 py-5">
-                                    <button disabled
-                                        class="text-white bg-gray-300 cursor-not-allowed font-medium rounded-lg text-xs px-4 py-2 opacity-70">
-                                        <span data-ar="عرض النتائج" data-en="View Results">عرض النتائج</span>
-                                    </button>
-                                </td>
+                                    <span class="font-bold text-sm text-brand-deep leading-tight">Introduction to
+                                        CS</span>
+                                </div>
+                            </td>
+                            <!-- System -->
+                            <td class="px-6 py-5">
+                                <span
+                                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-100">
+                                    QuestionMark
+                                </span>
+                            </td>
+                            <!-- Date & Time -->
+                            <td class="px-6 py-5">
+                                <div class="flex flex-col font-sans items-center">
+                                    <span class="font-bold text-brand-dark" dir="ltr">10:00 <span
+                                            class="text-xs">AM</span></span>
+                                </div>
+                            </td>
+                            <!-- Duration -->
+                            <td class="px-6 py-5">
+                                <div class="flex flex-col items-center">
+                                    <span class="font-bold text-brand-dark font-sans" data-ar="60 دقيقة"
+                                        data-en="60 Mins">60 دقيقة</span>
+                                </div>
+                            </td>
+                            <!-- Status -->
+                            <td class="px-6 py-5">
+                                <span class="text-brand-success font-bold flex items-center justify-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-brand-success"></span>
+                                    <span data-ar="متاح" data-en="Available">متاح</span>
+                                </span>
+                            </td>
+                            <!-- Action -->
+                            <td class="px-6 py-5">
+                                <button onclick="startExam('CS-101')"
+                                    class="text-white bg-brand-light hover:bg-brand-medium font-bold rounded-lg text-xs px-4 py-2 transition-all shadow-sm transform hover:-translate-y-0.5">
+                                    <span data-ar="بدء الاختبار" data-en="Start Exam">بدء الاختبار</span>
+                                </button>
+                            </td>
                             </tr>
                         </tbody>
                     </table>
