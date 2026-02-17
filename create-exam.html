@@ -2065,7 +2065,7 @@
             // Step 3 Summary
             const totalStudents = parseInt(document.getElementById('totalStudentCount').value) || 0;
             if (totalStudents > 0) {
-                const mode = document.getElementById('modeSections').checked ? (isArabic ? 'شعب دراسية' : 'Study Sections') : (isArabic ? 'طلاب محددين' : 'Specific Students');
+                const mode = document.getElementById('scopeSections').checked ? (isArabic ? 'شعب دراسية' : 'Study Sections') : (isArabic ? 'طلاب محددين' : 'Specific Students');
                 const selectedSections = document.querySelectorAll('.section-checkbox:checked');
                 let summaryText = `<p><strong>${isArabic ? 'العدد الإجمالي:' : 'Total:'}</strong> ${totalStudents} ${isArabic ? 'طالب' : 'students'}</p>`;
                 summaryText += `<p><strong>${isArabic ? 'النمط:' : 'Mode:'}</strong> ${mode}</p>`;
